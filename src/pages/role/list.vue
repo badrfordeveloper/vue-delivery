@@ -1,11 +1,11 @@
 <script setup>
-
 definePage({
   meta: {
     action: 'list',
     subject: 'role',
   },
 })
+
 const headers = [
   {
     title: 'Role',
@@ -38,7 +38,7 @@ const rolePermissions = ref({
 
 const editPermission = value => {
 
-  rolePermissions.value = {...value}
+  rolePermissions.value = { ...value }
   isEditRoleDialogVisible.value = true
 
 }
@@ -206,10 +206,14 @@ const resolveStatus = statusMsg => {
       </VDataTableServer>
     </VCard>
   </div>
-  <AddEditRoleDialog @fetchRoles="fetchRoles" v-model:is-dialog-visible="isAddRoleDialogVisible" />
+  <AddEditRoleDialog
+    v-model:is-dialog-visible="isAddRoleDialogVisible"
+    @fetch-roles="fetchRoles"
+  />
 
-  <AddEditRoleDialog @fetchRoles="fetchRoles"
+  <AddEditRoleDialog
     v-model:is-dialog-visible="isEditRoleDialogVisible"
     v-model:role-permissions="rolePermissions"
+    @fetch-roles="fetchRoles"
   />
 </template>

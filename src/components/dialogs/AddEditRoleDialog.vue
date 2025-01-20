@@ -1,5 +1,4 @@
 <script setup>
-import { toast } from '@/composables/toast'
 import { VForm } from 'vuetify/components/VForm'
 
 const props = defineProps({
@@ -20,7 +19,7 @@ const props = defineProps({
 const emit = defineEmits([
   'update:isDialogVisible',
   'update:rolePermissions',
-  'fetchRole',
+  'fetchRoles',
 ])
 
 
@@ -60,32 +59,46 @@ watch(
 
 
 const onSubmit = async () => {
+  const { valid } = await refPermissionForm.value.validate()
+  if (valid) {
+    let url = "/api/roles"
+    if (method.value == "PUT") {
+      url = "/api/roles/" + props.rolePermissions.id
+    }
 
-  let url = "/api/roles"
-  if(method.value == "PUT" ){
-     url = "/api/roles/"+props.rolePermissions.id
+    const res = await $api(url, {
+      method: method.value,
+      body: {
+        name: role.value,
+        permissions: selectedPermissions.value,
+      },
+
+      async onResponse({ request, response, options }) {
+        console.log('1')
+        if (response.status === 200) {
+          toast.success(response._data)
+          emit('fetchRoles')
+          emit('update:isDialogVisible', false)
+          refPermissionForm.value?.reset()
+        }
+      },
+
+      /* async onResponseError({ response }) {
+        if (response.status === 422) {
+          const errors = response._data.errors
+
+          Object.values(errors).forEach(errorMessages => {
+            errorMessages.forEach(message => {
+              toast.error(message) // Show each validation error in a toast
+            })
+          })
+        } else {
+          toast.error('An unexpected error occurred. Please try again.')
+        }
+      }, */
+    })
+
   }
-
-  const res = await $api(url, {
-    method: method.value,
-    body: {
-      name: role.value,
-      permissions: selectedPermissions.value,
-    },
- 
-    onResponse({ request, response, options }) {
-      if(response.status == 200){
-        toast.success(response._data )
-        emit('fetchRoles')
-        emit('update:isDialogVisible', false)
-        refPermissionForm.value?.reset() 
-      }
-    },
-  })
-
-
-
-
 }
 
 const onReset = () => {
@@ -118,6 +131,7 @@ const onReset = () => {
           <!-- 👉 Role name -->
           <AppTextField
             v-model="role"
+            :rules="[requiredValidator]"
             label="Role Name"
             placeholder="Enter Role Name"
           />
