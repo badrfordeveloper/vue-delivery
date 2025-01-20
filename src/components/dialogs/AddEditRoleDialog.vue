@@ -20,6 +20,7 @@ const props = defineProps({
 const emit = defineEmits([
   'update:isDialogVisible',
   'update:rolePermissions',
+  'fetchRole',
 ])
 
 
@@ -31,6 +32,7 @@ const permissions = await $api('/api/permissions')
 
 
 const role = ref('')
+const method = ref('POST')
 const refPermissionForm = ref()
 const selectedPermissions =  ref([])
 
@@ -43,10 +45,14 @@ watch(selectedPermissions, () => {
 watch(
   () => props.rolePermissions, // Watch props.rolePermissions
   newVal => {
-    if (newVal && newVal.permissions?.length) {
-      console.log('Updated rolePermissions:', newVal)
+    console.log('hii')
+    console.log(newVal.permissions)
+    if (newVal && newVal.permissions?.length && newVal.name != "" ) {
+      method.value="PUT"
       role.value = newVal.name
-      selectedPermissions.value = newVal.permissions
+      selectedPermissions.value = newVal.permissions.map(permission => permission.name)
+    }else{
+      method.value="POST"
     }
   },
   { immediate: true }, // Ensure the watcher runs on mount
@@ -55,8 +61,13 @@ watch(
 
 const onSubmit = async () => {
 
-  const res = await $api('/api/roles', {
-    method: 'POST',
+  let url = "/api/roles"
+  if(method.value == "PUT" ){
+     url = "/api/roles/"+props.rolePermissions.id
+  }
+
+  const res = await $api(url, {
+    method: method.value,
     body: {
       name: role.value,
       permissions: selectedPermissions.value,
@@ -65,6 +76,7 @@ const onSubmit = async () => {
     onResponse({ request, response, options }) {
       if(response.status == 200){
         toast.success(response._data )
+        emit('fetchRoles')
         emit('update:isDialogVisible', false)
         refPermissionForm.value?.reset() 
       }

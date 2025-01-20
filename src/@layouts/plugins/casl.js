@@ -11,8 +11,6 @@ import { useAbility } from '@casl/vue'
  * @param {string} subject CASL Subject // https://casl.js.org/v4/en/guide/intro#basics
  */
 export const can = (action, subject) => {
-  console.log('can')
-
   const vm = getCurrentInstance()
   if (!vm)
     return false
@@ -27,8 +25,6 @@ export const can = (action, subject) => {
  * @param {object} item navigation object item
  */
 export const canViewNavMenuGroup = item => {
-  console.log('canViewNavMenuGroup')
-
   const hasAnyVisibleChild = item.children.some(i => can(i.action, i.subject))
 
   // If subject and action is defined in item => Return based on children visibility (Hide group if no child is visible)
@@ -39,20 +35,14 @@ export const canViewNavMenuGroup = item => {
   return can(item.action, item.subject) && hasAnyVisibleChild
 }
 export const canNavigate = to => {
-  console.log('canNavigate')
-  
-  return true
   const ability = useAbility()
 
   // Get the most specific route (last one in the matched array)
   const targetRoute = to.matched[to.matched.length - 1]
 
   // If the target route has specific permissions, check those first
-  if (targetRoute?.meta?.action && targetRoute?.meta?.subject){
+  if (targetRoute?.meta?.action && targetRoute?.meta?.subject)
     return ability.can(targetRoute.meta.action, targetRoute.meta.subject)
-  }else{
-    return true
-  }
 
   // If no specific permissions, fall back to checking if any parent route allows access
     

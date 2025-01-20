@@ -1,16 +1,26 @@
 <script setup>
+
+definePage({
+  meta: {
+    action: 'list',
+    subject: 'role',
+  },
+})
 const headers = [
   {
     title: 'Role',
     key: 'name',
+    sortable: false,
   },
   {
     title: 'guard_name',
     key: 'guard_name',
+    sortable: false,
   },
   {
     title: 'actions',
     key: 'actions',
+    sortable: false,
   },
 ]
 
@@ -27,10 +37,8 @@ const rolePermissions = ref({
 })
 
 const editPermission = value => {
-  rolePermissions.value = {
-    name: value.name,
-    permissions: value.permissions.map(permission => permission.name),
-  }
+
+  rolePermissions.value = {...value}
   isEditRoleDialogVisible.value = true
 
 }
@@ -62,7 +70,7 @@ const updateOptions = options => {
 
 const {
   data: productsData, error, statusCode, isFetching,
-  execute: fetchProducts,
+  execute: fetchRoles,
 } = await useApi(createUrl('/api/roles', {
   query: {
     guard_name: selectedStatus,
@@ -198,9 +206,9 @@ const resolveStatus = statusMsg => {
       </VDataTableServer>
     </VCard>
   </div>
-  <AddEditRoleDialog v-model:is-dialog-visible="isAddRoleDialogVisible" />
+  <AddEditRoleDialog @fetchRoles="fetchRoles" v-model:is-dialog-visible="isAddRoleDialogVisible" />
 
-  <AddEditRoleDialog
+  <AddEditRoleDialog @fetchRoles="fetchRoles"
     v-model:is-dialog-visible="isEditRoleDialogVisible"
     v-model:role-permissions="rolePermissions"
   />
