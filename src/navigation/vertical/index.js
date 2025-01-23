@@ -14,10 +14,10 @@ export default [
     subject: 'role',
   },
   {
-    title: 'Second page',
-    to: { name: 'second-page' },
-    icon: { icon: 'tabler-file' },
-    action: 'ok',
-    subject: 'subject',
+    title: 'Utilisateurs',
+    to: { name: 'user-list' },
+    icon: { icon: 'tabler-smart-home' },
+    action: 'list',
+    subject: 'user',
   },
 ]

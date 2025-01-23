@@ -1,4 +1,6 @@
 <script setup>
+import { can } from '@layouts/plugins/casl'
+
 definePage({
   meta: {
     action: 'list',
@@ -13,20 +15,14 @@ const headers = [
     sortable: false,
   },
   {
-    title: 'guard_name',
-    key: 'guard_name',
-    sortable: false,
-  },
-  {
     title: 'actions',
     key: 'actions',
     sortable: false,
   },
 ]
 
-const selectedStatus = ref()
+const searchName = ref()
 
-const selectedRows = ref([])
 const isAddRoleDialogVisible = ref(false)
 const isEditRoleDialogVisible = ref(false)
 const roleLoading = ref(false)
@@ -37,22 +33,11 @@ const rolePermissions = ref({
 })
 
 const editPermission = value => {
-
   rolePermissions.value = { ...value }
   isEditRoleDialogVisible.value = true
-
 }
 
-const status = ref([
-  {
-    title: 'web',
-    value: 'web',
-  },
-  {
-    title: 'guard',
-    value: 'guard',
-  },
-])
+
 
 
 // Data table options
@@ -69,11 +54,11 @@ const updateOptions = options => {
 
 
 const {
-  data: productsData, error, statusCode, isFetching,
+  data: rolesData, error, statusCode, isFetching,
   execute: fetchRoles,
 } = await useApi(createUrl('/api/roles', {
   query: {
-    guard_name: selectedStatus,
+    name: searchName,
     page,
     itemsPerPage,
     sortBy,
@@ -86,7 +71,7 @@ const {
 // Handle response
 /* if (!error.value) {
   console.log('Request successful:', response)
-  productsData.value = data.value
+  rolesData.value = data.value
   responseMessage.value = 'Data fetched successfully!'
 } else {
   console.error('Error during request:', error.value)
@@ -101,27 +86,14 @@ console.log(statusCode.value) */
 
 
 
-const products = computed(() => productsData.value.items)
-const totalProduct = computed(() => productsData.value.total)
+const roles = computed(() => rolesData.value.items)
+const totalRoles = computed(() => rolesData.value.total)
 
-const resolveStatus = statusMsg => {
-  if (statusMsg === 'web')
-    return {
-      text: 'web',
-      color: 'success',
-    }
-  if (statusMsg === 'guard')
-    return {
-      text: 'guard',
-      color: 'warning',
-    }
-
-}
 </script>
 
 <template>
   <div>
-    <!-- 👉 products -->
+    <!-- 👉 roles -->
     <VCard
       title="Filters"
       class="mb-6"
@@ -133,13 +105,11 @@ const resolveStatus = statusMsg => {
             cols="12"
             sm="4"
           >
-            <AppSelect
-              v-model="selectedStatus"
-              placeholder="Status"
-              :items="status"
-              clearable
-              clear-icon="tabler-x"
-            />
+          <AppTextField
+            v-model="searchName"
+            placeholder="Recherche role"
+            style="inline-size: 15.625rem;"
+          />
           </VCol>
         </VRow>
       </VCardText>
@@ -155,6 +125,7 @@ const resolveStatus = statusMsg => {
           />
 
           <VBtn
+          v-if="can('create','role')"
             color="primary"
             prepend-icon="tabler-plus"
             @click="isAddRoleDialogVisible = true"
@@ -173,24 +144,16 @@ const resolveStatus = statusMsg => {
         v-model:page="page"
         :loading="isFetching"
         :headers="headers"
-        :items="products"
-        :items-length="totalProduct"
+        :items="roles"
+        :items-length="totalRoles"
         class="text-no-wrap"
         @update:options="updateOptions"
       >
-        <!-- status -->
-        <template #item.guard_name="{ item }">
-          <VChip
-            v-bind="resolveStatus(item.guard_name)"
-            density="default"
-            label
-            size="small"
-          />
-        </template>
+
 
         <!-- Actions -->
         <template #item.actions="{ item }">
-          <IconBtn @click="editPermission(item)">
+          <IconBtn  v-if="can('update','role')"  @click="editPermission(item)">
             <VIcon icon="tabler-edit" />
           </IconBtn>
         </template>
@@ -200,7 +163,7 @@ const resolveStatus = statusMsg => {
           <TablePagination
             v-model:page="page"
             :items-per-page="itemsPerPage"
-            :total-items="totalProduct"
+            :total-items="totalRoles"
           />
         </template>
       </VDataTableServer>

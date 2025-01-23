@@ -24,7 +24,7 @@ const emit = defineEmits([
 
 
 
-const permissions = await $api('/api/permissions')
+const permissions = await $api('/api/permissions').then(response => response.data)
 
 
 
@@ -35,18 +35,11 @@ const method = ref('POST')
 const refPermissionForm = ref()
 const selectedPermissions =  ref([])
 
-console.log(selectedPermissions)
-watch(selectedPermissions, () => {
-  console.log(selectedPermissions)
-  console.log(selectedPermissions.value)
-})
 
 watch(
   () => props.rolePermissions, // Watch props.rolePermissions
   newVal => {
-    console.log('hii')
-    console.log(newVal.permissions)
-    if (newVal && newVal.permissions?.length && newVal.name != "" ) {
+    if (newVal && (newVal.permissions?.length || newVal.name != "") ) {
       method.value="PUT"
       role.value = newVal.name
       selectedPermissions.value = newVal.permissions.map(permission => permission.name)
@@ -65,38 +58,23 @@ const onSubmit = async () => {
     if (method.value == "PUT") {
       url = "/api/roles/" + props.rolePermissions.id
     }
-
-    const res = await $api(url, {
-      method: method.value,
-      body: {
+    $api({
+      method : method.value,
+      url,
+      data: {
         name: role.value,
         permissions: selectedPermissions.value,
-      },
-
-      async onResponse({ request, response, options }) {
-        console.log('1')
+      }
+    })
+    .then(async (response) => {
         if (response.status === 200) {
-          toast.success(response._data)
+          toast.success(response.data)
           emit('fetchRoles')
           emit('update:isDialogVisible', false)
           refPermissionForm.value?.reset()
         }
-      },
-
-      /* async onResponseError({ response }) {
-        if (response.status === 422) {
-          const errors = response._data.errors
-
-          Object.values(errors).forEach(errorMessages => {
-            errorMessages.forEach(message => {
-              toast.error(message) // Show each validation error in a toast
-            })
-          })
-        } else {
-          toast.error('An unexpected error occurred. Please try again.')
-        }
-      }, */
-    })
+     })
+  
 
   }
 }

@@ -1,31 +1,46 @@
-import { ability } from '@/plugins/casl/ability'
-import { ofetch } from 'ofetch'
+import { ability } from '@/plugins/casl/ability';
+import axios from 'axios';
 
-
-
-export const $api = ofetch.create({
+const $api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
-  retry: 0,
-  async onRequest({ options }) {
-    const accessToken = useCookie('accessToken').value
-    if (accessToken)
-      options.headers.append('Authorization', `Bearer ${accessToken}`)
-  },
-  async onResponse({ request, response, options }) {   
-  },
-  async onResponseError({  response }) {
-    if(response.status == 401){
-      useCookie('userData').value = {}
-      useCookie('accessToken').value = ""
-      useCookie('userAbilityRules').value = []
-      ability.update([])
-      window.location.href='/login'
-    }
+  timeout: 10000, // Optional: Set a timeout for requests
+});
 
-    // Log error
-    if(response.status == 500){
-      toast.error("server error")
+// Request Interceptor
+$api.interceptors.request.use(
+  (config) => {
+    const accessToken = useCookie('accessToken').value;
+    if (accessToken) {
+      config.headers['Authorization'] = `Bearer ${accessToken}`;
     }
+    return config;
   },
-  
-})
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// Response Interceptor
+$api.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    const { response } = error;
+
+    if (response) {
+      if (response.status === 401) {
+        useCookie('userData').value = {};
+        useCookie('accessToken').value = '';
+        useCookie('userAbilityRules').value = [];
+        ability.update([]);
+        window.location.href = '/login';
+      } else if (response.status === 500) {
+        toast.error('Server error');
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
+export { $api };

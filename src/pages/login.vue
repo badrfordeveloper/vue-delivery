@@ -26,7 +26,7 @@ definePage({
 
 const form = ref({
   email: 'admin@gmail.com',
-  password: 'admin',
+  password: 'admin@gmail.com',
   remember: false,
 })
 
@@ -39,25 +39,30 @@ const refVForm = ref()
 
 const login = async () => {
   try {
-    const res = await $api('/api/auth/login', {
-      method: 'POST',
-      body: {
-        email: form.value.email,
-        password: form.value.password,
-      },
-      onResponseError({ response }) {
-      },
-    })
 
-    const { accessToken, userData, userAbilityRules } = res
+    $api
+    .post('/api/auth/login', {
+      email: form.value.email,
+      password: form.value.password,
+    }).then(async (res) => { 
+      const { accessToken, userData, userAbilityRules } = res.data
 
-    useCookie('userAbilityRules').value = userAbilityRules
-    ability.update(userAbilityRules)
-    useCookie('userData').value = userData
-    useCookie('accessToken').value = accessToken
-    await nextTick(() => {
-      router.replace(route.query.to ? String(route.query.to) : '/')
-    })
+      useCookie('userAbilityRules').value = userAbilityRules
+      ability.update(userAbilityRules)
+      useCookie('userData').value = userData
+      useCookie('accessToken').value = accessToken
+      await nextTick(() => {
+        router.replace(route.query.to ? String(route.query.to) : '/')
+      })
+     })
+    .catch((err) => { 
+      console.log('error login')
+    });
+
+
+
+
+  
   } catch (err) {
     console.error(err)
   }
