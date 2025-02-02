@@ -41,23 +41,23 @@ const login = async () => {
   try {
 
     $api
-    .post('/api/auth/login', {
-      email: form.value.email,
-      password: form.value.password,
-    }).then(async (res) => { 
-      const { accessToken, userData, userAbilityRules } = res.data
+      .post('/api/auth/login', {
+        email: form.value.email,
+        password: form.value.password,
+      }).then(async res => { 
+        const { accessToken, userData, userAbilityRules } = res.data
 
-      useCookie('userAbilityRules').value = userAbilityRules
-      ability.update(userAbilityRules)
-      useCookie('userData').value = userData
-      useCookie('accessToken').value = accessToken
-      await nextTick(() => {
-        router.replace(route.query.to ? String(route.query.to) : '/')
+        useCookie('userAbilityRules').value = userAbilityRules
+        ability.update(userAbilityRules)
+        useCookie('userData').value = userData
+        useCookie('accessToken').value = accessToken
+        await nextTick(() => {
+          router.replace(route.query.to ? String(route.query.to) : '/')
+        })
       })
-     })
-    .catch((err) => { 
-      console.log('error login')
-    });
+      .catch(err => { 
+        console.log('error login')
+      })
 
 
 
@@ -95,17 +95,6 @@ const onSubmit = () => {
       class="d-none d-md-flex"
     >
       <div class="position-relative bg-background w-100 me-0">
-        <div
-          class="d-flex align-center justify-center w-100 h-100"
-          style="padding-inline: 6.25rem;"
-        >
-          <VImg
-            max-width="613"
-            :src="authThemeImg"
-            class="auth-illustration mt-16 mb-2"
-          />
-        </div>
-
         <img
           class="auth-footer-mask flip-in-rtl"
           :src="authThemeMask"
@@ -128,11 +117,8 @@ const onSubmit = () => {
       >
         <VCardText>
           <h4 class="text-h4 mb-1">
-            Welcome to <span class="text-capitalize">{{ themeConfig.app.title }}</span>! 👋🏻
+            Login
           </h4>
-          <p class="mb-0">
-            Please sign-in to your account and start the adventure
-          </p>
         </VCardText>
         <VCardText>
           <VForm
@@ -145,7 +131,7 @@ const onSubmit = () => {
                 <AppTextField
                   v-model="form.email"
                   autofocus
-                  label="Email or Username"
+                  label="Email"
                   type="email"
                   placeholder="johndoe@email.com"
                 />
@@ -155,27 +141,14 @@ const onSubmit = () => {
               <VCol cols="12">
                 <AppTextField
                   v-model="form.password"
-                  label="Password"
+                  label="Mot de passe"
                   placeholder="············"
                   :type="isPasswordVisible ? 'text' : 'password'"
                   autocomplete="password"
                   :append-inner-icon="isPasswordVisible ? 'tabler-eye-off' : 'tabler-eye'"
                   @click:append-inner="isPasswordVisible = !isPasswordVisible"
                 />
-
-                <div class="d-flex align-center flex-wrap justify-space-between my-6">
-                  <VCheckbox
-                    v-model="form.remember"
-                    label="Remember me"
-                  />
-                  <a
-                    class="text-primary"
-                    href="javascript:void(0)"
-                  >
-                    Forgot Password?
-                  </a>
-                </div>
-
+                <div class="my-5" />              
                 <VBtn
                   block
                   type="submit"
@@ -184,21 +157,7 @@ const onSubmit = () => {
                 </VBtn>
               </VCol>
 
-              <!-- create account -->
-              <VCol
-                cols="12"
-                class="text-body-1 text-center"
-              >
-                <span class="d-inline-block">
-                  New on our platform?
-                </span>
-                <a
-                  class="text-primary ms-1 d-inline-block text-body-1"
-                  href="javascript:void(0)"
-                >
-                  Create an account
-                </a>
-              </VCol>
+
 
               <VCol
                 cols="12"
