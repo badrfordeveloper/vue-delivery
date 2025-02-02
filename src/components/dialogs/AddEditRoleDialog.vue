@@ -59,21 +59,32 @@ const onSubmit = async () => {
       url = "/api/roles/" + props.rolePermissions.id
     }
     $api({
-      method : method.value,
+      method: method.value,
       url,
       data: {
         name: role.value,
         permissions: selectedPermissions.value,
-      }
+      },
     })
-    .then(async (response) => {
+      .then(async response => {
         if (response.status === 200) {
           toast.success(response.data)
           emit('fetchRoles')
           emit('update:isDialogVisible', false)
           refPermissionForm.value?.reset()
         }
-     })
+      }).catch(error => {
+        // Check if there are validation errors
+        if (error.response && error.response.status === 422) {
+          // Laravel validation errors are typically in the `data.errors` object
+          const errors = error.response.data.errors
+
+          // Loop through the errors and show each in a toast
+          for (let field in errors) {
+            toast.error(`${field}: ${errors[field].join(', ')}`)
+          }
+        }
+      })
   
 
   }

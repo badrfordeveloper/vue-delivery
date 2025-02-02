@@ -23,7 +23,7 @@ const headers = [
     title: 'role',
     key: 'role',
     sortable: false,
-    align: can('show','role') ? ' start' : ' d-none'
+    align: can('show', 'role') ? ' start' : ' d-none',
   },
   {
     title: 'statut',
@@ -36,6 +36,7 @@ const headers = [
     sortable: false,
   },
 ]
+
 const filterRole = ref()
 const selectedStatus = ref()
 const searchName = ref()
@@ -72,6 +73,8 @@ const status = ref([
 const roles = await $api('/api/rolesList').then(response => response.data)
 
 console.log(roles)
+
+
 // Data table options
 const itemsPerPage = ref(5)
 const page = ref(1)
@@ -100,6 +103,7 @@ const {
   },
 }),  
 )
+
 const router = useRouter()
 
 
@@ -120,7 +124,6 @@ const resolveStatus = statusMsg => {
     }
 
 }
-
 </script>
 
 <template>
@@ -137,11 +140,10 @@ const resolveStatus = statusMsg => {
             cols="12"
             sm="2"
           >
-          <AppTextField
-            v-model="searchName"
-            placeholder="Nom ou prenom"
-            
-          />
+            <AppTextField
+              v-model="searchName"
+              placeholder="Nom ou prenom"
+            />
           </VCol>
           <VCol
             cols="12"
@@ -168,7 +170,6 @@ const resolveStatus = statusMsg => {
               clear-icon="tabler-x"
             />
           </VCol>
-        
         </VRow>
       </VCardText>
 
@@ -183,9 +184,9 @@ const resolveStatus = statusMsg => {
           />
 
           <VBtn
-          v-if="can('create','user')"
+            v-if="can('create','user')"
             color="primary"
-              prepend-icon="tabler-plus"
+            prepend-icon="tabler-plus"
             @click="router.push({name: 'user-add'})"
           >
             Ajouter Utilisateur
@@ -207,15 +208,17 @@ const resolveStatus = statusMsg => {
         class="text-no-wrap"
         @update:options="updateOptions"
       >
-
-
-
         <template #item.lastName="{ item }">
-          <VBtn variant="text" >{{ item.lastName }}</VBtn> 
+          <VBtn variant="text">
+            {{ item.lastName }}
+          </VBtn> 
         </template>
 
         <template #item.role="{ item }">
-          <span v-for="myrole in item.roles" :key="myrole.id">
+          <span
+            v-for="myrole in item.roles"
+            :key="myrole.id"
+          >
             {{ myrole.name +' ' }}
           </span>
         </template>
@@ -233,7 +236,10 @@ const resolveStatus = statusMsg => {
 
         <!-- Actions -->
         <template #item.actions="{ item }">
-          <IconBtn v-if="can('update','user')" @click="editPermission(item)">
+          <IconBtn
+            v-if="can('update','user')"
+            @click="router.push('/user/'+item.id)"
+          >
             <VIcon icon="tabler-edit" />
           </IconBtn>
         </template>

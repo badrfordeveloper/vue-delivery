@@ -1,46 +1,52 @@
-import { ability } from '@/plugins/casl/ability';
-import axios from 'axios';
+import { ability } from '@/plugins/casl/ability'
+import axios from 'axios'
 
 const $api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
   timeout: 10000, // Optional: Set a timeout for requests
-});
+})
 
 // Request Interceptor
 $api.interceptors.request.use(
-  (config) => {
-    const accessToken = useCookie('accessToken').value;
+  config => {
+    const accessToken = useCookie('accessToken').value
     if (accessToken) {
-      config.headers['Authorization'] = `Bearer ${accessToken}`;
+      config.headers['Authorization'] = `Bearer ${accessToken}`
     }
-    return config;
+    
+    return config
   },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
+  error => {
+    return Promise.reject(error)
+  },
+)
 
 // Response Interceptor
 $api.interceptors.response.use(
-  (response) => {
-    return response;
+  response => {    
+    return response
   },
-  (error) => {
-    const { response } = error;
+  error => {
+    const { response, request } = error
+
 
     if (response) {
       if (response.status === 401) {
-        useCookie('userData').value = {};
-        useCookie('accessToken').value = '';
-        useCookie('userAbilityRules').value = [];
-        ability.update([]);
-        window.location.href = '/login';
+        useCookie('userData').value = {}
+        useCookie('accessToken').value = ''
+        useCookie('userAbilityRules').value = []
+        ability.update([])
+        window.location.href = '/login'
       } else if (response.status === 500) {
-        toast.error('Server error');
+        toast.error('Server error')
       }
+    }else if(request){
+      toast.error('Server error')
     }
-    return Promise.reject(error);
-  }
-);
+    
+    return Promise.reject(error)
+  },
+)
 
-export { $api };
+export { $api }
+
