@@ -33,31 +33,46 @@ const form = ref({
 
 
 const refVForm = ref()
+const errorMessage = ref(false)
+const isError = ref(false)
+const loadingLogin = ref(false)
 
 
 
 
 const login = async () => {
   try {
-
+    isError.value= false
+    loadingLogin.value= true
     $api
       .post('/api/auth/login', {
         email: form.value.email,
         password: form.value.password,
       }).then(async res => { 
-        const { accessToken, userData, userAbilityRules } = res.data
-
-        useCookie('userAbilityRules').value = userAbilityRules
-        ability.update(userAbilityRules)
-        useCookie('userData').value = userData
-        useCookie('accessToken').value = accessToken
-        await nextTick(() => {
-          router.replace(route.query.to ? String(route.query.to) : '/')
-        })
+          const { accessToken, userData, userAbilityRules } = res.data
+          useCookie('userAbilityRules').value = userAbilityRules
+          ability.update(userAbilityRules)
+          useCookie('userData').value = userData
+          useCookie('accessToken').value = accessToken
+          isError.value=false
+          await nextTick(() => {
+            router.replace(route.query.to ? String(route.query.to) : '/')
+          })
       })
       .catch(err => { 
+        if (err.status === 403) {
+          errorMessage.value=err.response.data.message
+          isError.value=true
+        }
+        else if (err.status === 422) {
+          errorMessage.value="Email ou mot de passe est incorrect"
+          isError.value=true
+        }
         console.log('error login')
-      })
+      }).then(() => { 
+        // always executed
+        loadingLogin.value= false
+       }) 
 
 
 
@@ -120,13 +135,22 @@ const onSubmit = () => {
             Login
           </h4>
         </VCardText>
+
+
+
         <VCardText>
           <VForm
             ref="refVForm"
             @submit.prevent="onSubmit"
           >
             <VRow>
+
               <!-- email -->
+                <VAlert
+                  v-if="isError"
+                  :title="errorMessage"
+                  type="error"
+                />
               <VCol cols="12">
                 <AppTextField
                   v-model="form.email"
@@ -150,6 +174,7 @@ const onSubmit = () => {
                 />
                 <div class="my-5" />              
                 <VBtn
+                :loading="loadingLogin"
                   block
                   type="submit"
                 >

@@ -1,3 +1,4 @@
+import { router } from '@/plugins/1.router/index'
 import { ability } from '@/plugins/casl/ability'
 import axios from 'axios'
 
@@ -28,15 +29,17 @@ $api.interceptors.response.use(
   },
   error => {
     const { response, request } = error
-
-
     if (response) {
-      if (response.status === 401) {
+      if (response.status === 401 || response.status === 403 ) {
+        // clear user data and permissions 
         useCookie('userData').value = {}
         useCookie('accessToken').value = ''
         useCookie('userAbilityRules').value = []
         ability.update([])
-        window.location.href = '/login'
+       // show not authhorized page if we are not in login page
+        if(router.currentRoute.value.name != "login" ){
+          router.push('not-authorized')
+        }
       } else if (response.status === 500) {
         toast.error('Server error')
       }
