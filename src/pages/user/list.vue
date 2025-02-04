@@ -130,7 +130,7 @@ const resolveStatus = statusMsg => {
   <div>
     <!-- 👉 products -->
     <VCard
-      title="Filters"
+      title="Filtres"
       class="mb-6"
     >
       <VCardText>

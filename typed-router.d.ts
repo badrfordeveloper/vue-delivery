@@ -24,9 +24,12 @@ declare module 'vue-router/auto-routes' {
     'not-authorized': RouteRecordInfo<'not-authorized', '/not-authorized', Record<never, never>, Record<never, never>>,
     'role-list': RouteRecordInfo<'role-list', '/role/list', Record<never, never>, Record<never, never>>,
     'second-page': RouteRecordInfo<'second-page', '/second-page', Record<never, never>, Record<never, never>>,
+    'tarif-id': RouteRecordInfo<'tarif-id', '/tarif/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
+    'tarif-add': RouteRecordInfo<'tarif-add', '/tarif/add', Record<never, never>, Record<never, never>>,
+    'tarif-add copy': RouteRecordInfo<'tarif-add copy', '/tarif/add copy', Record<never, never>, Record<never, never>>,
+    'tarif-list': RouteRecordInfo<'tarif-list', '/tarif/list', Record<never, never>, Record<never, never>>,
     'user-id': RouteRecordInfo<'user-id', '/user/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
     'user-add': RouteRecordInfo<'user-add', '/user/add', Record<never, never>, Record<never, never>>,
-    'user-addxx': RouteRecordInfo<'user-addxx', '/user/addxx', Record<never, never>, Record<never, never>>,
     'user-list': RouteRecordInfo<'user-list', '/user/list', Record<never, never>, Record<never, never>>,
   }
 }

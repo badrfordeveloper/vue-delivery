@@ -288,7 +288,7 @@ const isCurrentPasswordVisible = ref(false)
         class="d-flex flex-wrap justify-center gap-4"
       >
         <VBtn @click="onSubmit">
-          Save changes
+          Enregistrer 
         </VBtn>
       </VCol>
     </VRow>

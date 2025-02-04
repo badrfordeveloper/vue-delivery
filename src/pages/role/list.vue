@@ -95,7 +95,7 @@ const totalRoles = computed(() => rolesData.value.total)
   <div>
     <!-- 👉 roles -->
     <VCard
-      title="Filters"
+      title="Filtres"
       class="mb-6"
     >
       <VCardText>

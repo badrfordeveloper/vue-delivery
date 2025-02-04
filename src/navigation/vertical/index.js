@@ -20,4 +20,11 @@ export default [
     action: 'list',
     subject: 'user',
   },
+  {
+    title: 'Tarifs des villes',
+    to: { name: 'tarif-list' },
+    icon: { icon: 'tabler-smart-home' },
+    action: 'list',
+    subject: 'tarif',
+  },
 ]

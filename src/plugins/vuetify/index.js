@@ -1,10 +1,12 @@
 import { deepMerge } from '@antfu/utils'
+import { themeConfig } from '@themeConfig'
 import { createVuetify } from 'vuetify'
 import { VBtn } from 'vuetify/components/VBtn'
+import { fr } from 'vuetify/locale'
+import 'vuetify/styles'
 import defaults from './defaults'
 import { icons } from './icons'
 import { staticPrimaryColor, staticPrimaryDarkenColor, themes } from './theme'
-import { themeConfig } from '@themeConfig'
 
 // Styles
 import { cookieRef } from '@/@layouts/stores/config'
@@ -33,12 +35,17 @@ export default function (app) {
   const optionTheme = deepMerge({ themes }, cookieThemeValues)
 
   const vuetify = createVuetify({
+   
     aliases: {
       IconBtn: VBtn,
     },
     defaults,
     icons,
     theme: optionTheme,
+    locale: {
+      locale: 'fr',
+      messages: { fr },
+    },
   })
 
   app.use(vuetify)
