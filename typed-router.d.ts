@@ -20,16 +20,19 @@ declare module 'vue-router/auto-routes' {
   export interface RouteNamedMap {
     'root': RouteRecordInfo<'root', '/', Record<never, never>, Record<never, never>>,
     '$error': RouteRecordInfo<'$error', '/:error(.*)', { error: ParamValue<true> }, { error: ParamValue<false> }>,
+    'colis-id': RouteRecordInfo<'colis-id', '/colis/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
+    'colis-add': RouteRecordInfo<'colis-add', '/colis/add', Record<never, never>, Record<never, never>>,
+    'colis-list': RouteRecordInfo<'colis-list', '/colis/list', Record<never, never>, Record<never, never>>,
     'login': RouteRecordInfo<'login', '/login', Record<never, never>, Record<never, never>>,
     'not-authorized': RouteRecordInfo<'not-authorized', '/not-authorized', Record<never, never>, Record<never, never>>,
     'role-list': RouteRecordInfo<'role-list', '/role/list', Record<never, never>, Record<never, never>>,
     'second-page': RouteRecordInfo<'second-page', '/second-page', Record<never, never>, Record<never, never>>,
     'tarif-id': RouteRecordInfo<'tarif-id', '/tarif/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
     'tarif-add': RouteRecordInfo<'tarif-add', '/tarif/add', Record<never, never>, Record<never, never>>,
-    'tarif-add copy': RouteRecordInfo<'tarif-add copy', '/tarif/add copy', Record<never, never>, Record<never, never>>,
     'tarif-list': RouteRecordInfo<'tarif-list', '/tarif/list', Record<never, never>, Record<never, never>>,
     'user-id': RouteRecordInfo<'user-id', '/user/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
     'user-add': RouteRecordInfo<'user-add', '/user/add', Record<never, never>, Record<never, never>>,
     'user-list': RouteRecordInfo<'user-list', '/user/list', Record<never, never>, Record<never, never>>,
+    'xxxx': RouteRecordInfo<'xxxx', '/xxxx', Record<never, never>, Record<never, never>>,
   }
 }

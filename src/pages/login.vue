@@ -26,7 +26,7 @@ definePage({
 
 const form = ref({
   email: 'admin@gmail.com',
-  password: 'admin@gmail.com',
+  password: '',
   remember: false,
 })
 
@@ -49,15 +49,16 @@ const login = async () => {
         email: form.value.email,
         password: form.value.password,
       }).then(async res => { 
-          const { accessToken, userData, userAbilityRules } = res.data
-          useCookie('userAbilityRules').value = userAbilityRules
-          ability.update(userAbilityRules)
-          useCookie('userData').value = userData
-          useCookie('accessToken').value = accessToken
-          isError.value=false
-          await nextTick(() => {
-            router.replace(route.query.to ? String(route.query.to) : '/')
-          })
+        const { accessToken, userData, userAbilityRules } = res.data
+
+        useCookie('userAbilityRules').value = userAbilityRules
+        ability.update(userAbilityRules)
+        useCookie('userData').value = userData
+        useCookie('accessToken').value = accessToken
+        isError.value=false
+        await nextTick(() => {
+          router.replace(route.query.to ? String(route.query.to) : '/')
+        })
       })
       .catch(err => { 
         if (err.status === 403) {
@@ -72,7 +73,7 @@ const login = async () => {
       }).then(() => { 
         // always executed
         loadingLogin.value= false
-       }) 
+      }) 
 
 
 
@@ -144,16 +145,16 @@ const onSubmit = () => {
             @submit.prevent="onSubmit"
           >
             <VRow>
-
               <!-- email -->
-                <VAlert
-                  v-if="isError"
-                  :title="errorMessage"
-                  type="error"
-                />
+              <VAlert
+                v-if="isError"
+                :title="errorMessage"
+                type="error"
+              />
               <VCol cols="12">
                 <AppTextField
                   v-model="form.email"
+                  :rules="[requiredValidator]"
                   autofocus
                   label="Email"
                   type="email"
@@ -165,6 +166,7 @@ const onSubmit = () => {
               <VCol cols="12">
                 <AppTextField
                   v-model="form.password"
+                  :rules="[requiredValidator]"
                   label="Mot de passe"
                   placeholder="············"
                   :type="isPasswordVisible ? 'text' : 'password'"
@@ -174,7 +176,7 @@ const onSubmit = () => {
                 />
                 <div class="my-5" />              
                 <VBtn
-                :loading="loadingLogin"
+                  :loading="loadingLogin"
                   block
                   type="submit"
                 >

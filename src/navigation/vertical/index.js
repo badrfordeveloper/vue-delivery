@@ -27,4 +27,11 @@ export default [
     action: 'list',
     subject: 'tarif',
   },
+  {
+    title: 'Gestion Colis',
+    to: { name: 'colis-list' },
+    icon: { icon: 'tabler-smart-home' },
+    action: 'list',
+    subject: 'colis',
+  },
 ]

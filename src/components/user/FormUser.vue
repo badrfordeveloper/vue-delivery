@@ -187,7 +187,7 @@ const isCurrentPasswordVisible = ref(false)
               >
                 <AppTextField
                   v-model="userData.phone"
-                  :rules="[requiredValidator]"
+                  :rules="[requiredValidator,PhoneValidator]"
                   label="Telephone"
                   placeholder="0655554747"
                 />

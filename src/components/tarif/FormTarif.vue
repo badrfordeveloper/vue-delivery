@@ -27,7 +27,8 @@ const refForm = ref()
 
 const itemData = ref({
   destination: '',
-  tarif: ''
+  tarif: '',
+  prefix: '',
 })
 
 watch(
@@ -70,6 +71,7 @@ const onSubmit = async () => {
         if (error.response && error.response.status === 422) {
           // Laravel validation errors are typically in the `data.errors` object
           const errors = error.response.data.errors
+
           // Loop through the errors and show each in a toast
           for (let field in errors) {
             toast.error(`${field}: ${errors[field].join(', ')}`)
@@ -80,7 +82,6 @@ const onSubmit = async () => {
 
   }
 }
-
 </script>
 
 <template>
@@ -125,12 +126,21 @@ const onSubmit = async () => {
                   placeholder="tarif"
                   label="tarif"
                 />
+              </VCol><VCol
+                md="6"
+                cols="12"
+              >
+                <AppTextField
+                  v-model="itemData.prefix"
+                  :rules="[requiredValidator]"
+                  placeholder="ex : CAZN"
+                  label="Prefix"
+                />
               </VCol>
             </VRow>
           </VCardText>
         </VCard>
       </VCol>
-
     </VRow>
 
     <VRow>

@@ -47,6 +47,19 @@ export const integerValidator = value => {
   return /^-?\d+$/.test(String(value)) || 'Ce champ doit être un entier.'
 }
 
+
+//phone number 
+export const PhoneValidator = value => {
+  if (isEmpty(value))
+    return true
+  let regeX = '^0\\d{9}$'
+  regeX = new RegExp(regeX)
+  
+  return regeX.test(String(value)) || 'Le format du numéro de téléphone est invalide.'
+
+}
+
+
 // 👉 Regex Validator
 export const regexValidator = (value, regex) => {
   if (isEmpty(value))
@@ -57,7 +70,7 @@ export const regexValidator = (value, regex) => {
   if (Array.isArray(value))
     return value.every(val => regexValidator(val, regeX))
   
-  return regeX.test(String(value)) || 'Le format du champ Regex est invalide.'
+  return regeX.test(String(value)) || 'Le format du champ est invalide.'
 }
 
 // 👉 Alpha Validator

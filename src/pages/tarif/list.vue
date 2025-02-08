@@ -1,9 +1,6 @@
 <script setup>
-import { can } from '@layouts/plugins/casl';
-import { useLocale } from 'vuetify';
+import { can } from '@layouts/plugins/casl'
 
-const { current } = useLocale();
-current.value = 'fr';
 definePage({
   meta: {
     action: 'list',
@@ -23,13 +20,19 @@ const headers = [
     sortable: false,
   },
   {
+    title: 'prefix',
+    key: 'prefix',
+    sortable: false,
+  },
+  {
     title: 'actions',
     key: 'actions',
     sortable: false,
-  }
+  },
 ]
 
-const searchName = ref()
+const searchDestination = ref()
+const searchPrefix= ref()
 
 
 // Data table options
@@ -50,7 +53,8 @@ const {
   execute: fetchItems,
 } = await useApi(createUrl('/api/tarifs', {
   query: {
-    fullName: searchName,
+    destination: searchDestination,
+    prefix: searchPrefix,
     page,
     itemsPerPage,
     sortBy,
@@ -58,10 +62,10 @@ const {
   },
 }),  
 )
+
 const router = useRouter()
 const items = computed(() => itemsData.value.items)
 const totalProduct = computed(() => itemsData.value.total)
-
 </script>
 
 <template>
@@ -79,8 +83,16 @@ const totalProduct = computed(() => itemsData.value.total)
             sm="2"
           >
             <AppTextField
-              v-model="searchName"
+              v-model="searchDestination"
               placeholder="Destination"
+            />
+          </VCol><VCol
+            cols="12"
+            sm="2"
+          >
+            <AppTextField
+              v-model="searchPrefix"
+              placeholder="Prefix"
             />
           </VCol>
         </VRow>
@@ -97,7 +109,7 @@ const totalProduct = computed(() => itemsData.value.total)
           />
 
           <VBtn
-            v-if="can('create','user')"
+            v-if="can('create','tarif')"
             color="primary"
             prepend-icon="tabler-plus"
             @click="router.push({name: 'tarif-add'})"
@@ -124,7 +136,7 @@ const totalProduct = computed(() => itemsData.value.total)
         <!-- Actions -->
         <template #item.actions="{ item }">
           <IconBtn
-            v-if="can('update','user')"
+            v-if="can('update','tarif')"
             @click="router.push('/tarif/'+item.id)"
           >
             <VIcon icon="tabler-edit" />
@@ -143,5 +155,4 @@ const totalProduct = computed(() => itemsData.value.total)
       </VDataTableServer>
     </VCard>
   </div>
-
 </template>

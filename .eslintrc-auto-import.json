@@ -362,6 +362,7 @@
     "whenever": true,
     "useAbility": true,
     "useToast": true,
-    "toast": true
+    "toast": true,
+    "PhoneValidator": true
   }
 }
