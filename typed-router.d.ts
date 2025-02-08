@@ -33,6 +33,5 @@ declare module 'vue-router/auto-routes' {
     'user-id': RouteRecordInfo<'user-id', '/user/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
     'user-add': RouteRecordInfo<'user-add', '/user/add', Record<never, never>, Record<never, never>>,
     'user-list': RouteRecordInfo<'user-list', '/user/list', Record<never, never>, Record<never, never>>,
-    'xxxx': RouteRecordInfo<'xxxx', '/xxxx', Record<never, never>, Record<never, never>>,
   }
 }
