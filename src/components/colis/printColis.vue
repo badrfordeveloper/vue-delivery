@@ -168,12 +168,7 @@ const onReset = () => {
   </VDialog>
 </template>
 
-<style lang="scss">
-th,
-td {
-  height: 0 !important;
-}
-
+<style lang="scss" scoped>
 .props.item-preview-table {
   --v-table-header-color: var(--v-theme-surface);
 
@@ -192,7 +187,8 @@ td {
 }
 
 @media print {
-  th {
+  th,
+  td {
     height: 0 !important;
   }
 
