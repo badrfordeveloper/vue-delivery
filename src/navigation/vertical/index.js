@@ -34,11 +34,12 @@ export default [
     action: 'list',
     subject: 'colis',
   },
-  {
+
+  /*  {
     title: 'Gestion Ramassage',
     to: { name: 'ramassage-list' },
     icon: { icon: 'tabler-smart-home' },
     action: 'list',
     subject: 'ramassage',
-  },
+  }, */
 ]

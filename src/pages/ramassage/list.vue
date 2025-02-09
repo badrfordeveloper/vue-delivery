@@ -82,7 +82,7 @@ const dialogDelete = object =>{
 
 const deleteItem = async () => {
 
-  let url = "/api/ramassage/"+deleteObject.value.id
+  let url = "/api/colis/"+deleteObject.value.id
 
   loadingDelete.value = true
   $api({
@@ -104,7 +104,7 @@ const deleteItem = async () => {
 const {
   data: itemsData, error, statusCode, isFetching,
   execute: fetchItems,
-} = await useApi(createUrl('/api/ramassage', {
+} = await useApi(createUrl('/api/colis', {
   query: {
     code: searchCode,
     statut: searchStatut,
