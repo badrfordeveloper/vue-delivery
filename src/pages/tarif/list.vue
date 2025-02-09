@@ -25,6 +25,11 @@ const headers = [
     sortable: false,
   },
   {
+    title: 'delai de livraison',
+    key: 'delai_livraison',
+    sortable: false,
+  },
+  {
     title: 'actions',
     key: 'actions',
     sortable: false,

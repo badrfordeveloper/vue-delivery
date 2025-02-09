@@ -16,6 +16,8 @@ const props = defineProps({
   },
 })
 
+const router = useRouter()
+
 definePage({
   meta: {
     subject: 'user',
@@ -75,8 +77,12 @@ const onSubmit = async () => {
 
           /*   emit('fetchRoles')
           emit('update:isDialogVisible', false) */
-          if (props.method == "POST") 
+          if (props.method == "POST") {
             refForm.value?.reset()
+          }else{
+            router.push({ name: 'user-list' })
+          }
+           
         }
       }).catch(error => {
         // Check if there are validation errors

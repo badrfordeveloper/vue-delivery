@@ -15,6 +15,7 @@ const props = defineProps({
   },
 })
 
+const router = useRouter()
 
 
 const refForm = ref()
@@ -75,13 +76,12 @@ const onSubmit = async () => {
         if (response.status === 200) {
           toast.success(response.data)
 
-          /*   emit('fetchRoles')
-          emit('update:isDialogVisible', false) */
           if (props.method == "POST") {
             refForm.value?.reset()
             itemData.value = structuredClone(toRaw(defaultItem))
 
-            //refForm.value?.resetValidation()
+          }else{
+            router.push({ name: 'colis-list' })
           }
          
         }

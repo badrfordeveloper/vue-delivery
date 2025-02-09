@@ -158,7 +158,7 @@ const onSubmit = () => {
                   autofocus
                   label="Email"
                   type="email"
-                  placeholder="johndoe@email.com"
+                  placeholder="test@gmail.com"
                 />
               </VCol>
 

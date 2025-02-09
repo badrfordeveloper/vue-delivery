@@ -16,6 +16,8 @@ const props = defineProps({
   },
 })
 
+const router = useRouter()
+
 definePage({
   meta: {
     subject: 'tarif',
@@ -28,6 +30,7 @@ const refForm = ref()
 const itemData = ref({
   destination: '',
   tarif: '',
+  delai_livraison: '',
   prefix: '',
 })
 
@@ -63,8 +66,12 @@ const onSubmit = async () => {
 
           /*   emit('fetchRoles')
           emit('update:isDialogVisible', false) */
-          if (props.method == "POST") 
+          if (props.method == "POST"){
             refForm.value?.reset()
+          }else{
+            router.push({ name: 'tarif-list' })
+          }
+           
         }
       }).catch(error => {
         // Check if there are validation errors
@@ -126,7 +133,8 @@ const onSubmit = async () => {
                   placeholder="tarif"
                   label="tarif"
                 />
-              </VCol><VCol
+              </VCol>
+              <VCol
                 md="6"
                 cols="12"
               >
@@ -135,6 +143,17 @@ const onSubmit = async () => {
                   :rules="[requiredValidator]"
                   placeholder="ex : CAZN"
                   label="Prefix"
+                />
+              </VCol>
+              <VCol
+                md="6"
+                cols="12"
+              >
+                <AppTextField
+                  v-model="itemData.delai_livraison"
+                  :rules="[requiredValidator]"
+                  placeholder="ex : 24h"
+                  label="délai de livraison"
                 />
               </VCol>
             </VRow>

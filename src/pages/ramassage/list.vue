@@ -1,11 +1,11 @@
 <script setup>
-import PrintColis from '@/components/colis/printColis.vue'
+import PrintRamassage from '@/components/ramassage/printRamassage.vue'
 import { can } from '@layouts/plugins/casl'
 
 definePage({
   meta: {
     action: 'list',
-    subject: 'colis',
+    subject: 'ramassage',
   },
 })
 
@@ -16,21 +16,6 @@ const headers = [
     sortable: false,
   },
   {
-    title: 'Statut',
-    key: 'statut',
-    sortable: false,
-  },
-  {
-    title: 'destination',
-    key: 'destination',
-    sortable: false,
-  },
-  {
-    title: 'Montant',
-    key: 'montant',
-    sortable: false,
-  }, 
-  {
     title: 'Nom du client',
     key: 'nom_client',
     sortable: false,
@@ -38,6 +23,21 @@ const headers = [
   {
     title: 'Tel du client',
     key: 'tel_client',
+    sortable: false,
+  },
+  {
+    title: 'Statut',
+    key: 'statut',
+    sortable: false,
+  },  
+  {
+    title: 'Montant',
+    key: 'montant',
+    sortable: false,
+  }, 
+  {
+    title: 'adresse',
+    key: 'adresse',
     sortable: false,
   },
   {
@@ -56,7 +56,7 @@ const loadingDelete = ref(false)
 const isDeletingItem = ref(false)
 const deleteObject = ref()
 
-const isPrintColis = ref(false)
+const isPrintRamassage = ref(false)
 const printObject = ref()
 
 // Data table options
@@ -71,7 +71,7 @@ const updateOptions = options => {
 }
 
 const dialogPrint = object =>{
-  isPrintColis.value=true
+  isPrintRamassage.value=true
   printObject.value = object
 }
 
@@ -82,7 +82,7 @@ const dialogDelete = object =>{
 
 const deleteItem = async () => {
 
-  let url = "/api/colis/"+deleteObject.value.id
+  let url = "/api/ramassage/"+deleteObject.value.id
 
   loadingDelete.value = true
   $api({
@@ -104,7 +104,7 @@ const deleteItem = async () => {
 const {
   data: itemsData, error, statusCode, isFetching,
   execute: fetchItems,
-} = await useApi(createUrl('/api/colis', {
+} = await useApi(createUrl('/api/ramassage', {
   query: {
     code: searchCode,
     statut: searchStatut,
@@ -184,9 +184,9 @@ const totalItems = computed(() => itemsData.value.total)
             v-if="can('create','user')"
             color="primary"
             prepend-icon="tabler-plus"
-            @click="router.push({name: 'colis-add'})"
+            @click="router.push({name: 'ramassage-add'})"
           >
-            Ajouter Colis
+            Ajouter Ramassage
           </VBtn>
         </div>
       </div>
@@ -209,7 +209,7 @@ const totalItems = computed(() => itemsData.value.total)
         <template #item.actions="{ item }">
           <IconBtn
             v-if="can('update','user')"
-            @click="router.push('/colis/'+item.id)"
+            @click="router.push('/ramassage/'+item.id)"
           >
             <VIcon icon="tabler-edit" />
           </IconBtn>
@@ -254,7 +254,7 @@ const totalItems = computed(() => itemsData.value.total)
         <!-- Dialog close btn -->
         <DialogCloseBtn @click="isDeletingItem = !isDeletingItem" />
         <!-- Dialog Content -->
-        <VCard :title="'Êtes-vous sûr de vouloir supprimer le colis '+deleteObject.code+' ?'">
+        <VCard :title="'Êtes-vous sûr de vouloir supprimer le ramassage '+deleteObject.code+' ?'">
           <VCardText class="d-flex justify-end gap-3 flex-wrap">
             <VBtn
               color="secondary"
@@ -273,8 +273,8 @@ const totalItems = computed(() => itemsData.value.total)
         </VCard>
       </VDialog>
 
-      <PrintColis
-        v-model:is-print-colis="isPrintColis"
+      <PrintRamassage
+        v-model:is-print-ramassage="isPrintRamassage"
         :item="printObject"
       />
     </VCard>
