@@ -181,7 +181,7 @@ const totalItems = computed(() => itemsData.value.total)
           />
 
           <VBtn
-            v-if="can('create','user')"
+            v-if="can('create','ramassage')"
             color="primary"
             prepend-icon="tabler-plus"
             @click="router.push({name: 'ramassage-add'})"
@@ -208,7 +208,7 @@ const totalItems = computed(() => itemsData.value.total)
         <!-- Actions -->
         <template #item.actions="{ item }">
           <IconBtn
-            v-if="can('update','user')"
+            v-if="can('update','ramassage')"
             @click="router.push('/ramassage/'+item.id)"
           >
             <VIcon icon="tabler-edit" />

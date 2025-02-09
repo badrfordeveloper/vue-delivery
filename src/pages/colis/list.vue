@@ -181,7 +181,7 @@ const totalItems = computed(() => itemsData.value.total)
           />
 
           <VBtn
-            v-if="can('create','user')"
+            v-if="can('create','colis')"
             color="primary"
             prepend-icon="tabler-plus"
             @click="router.push({name: 'colis-add'})"
@@ -208,7 +208,7 @@ const totalItems = computed(() => itemsData.value.total)
         <!-- Actions -->
         <template #item.actions="{ item }">
           <IconBtn
-            v-if="can('update','user')"
+            v-if="can('update','colis')"
             @click="router.push('/colis/'+item.id)"
           >
             <VIcon icon="tabler-edit" />
@@ -225,7 +225,8 @@ const totalItems = computed(() => itemsData.value.total)
                   Print
                 </VListItem>
 
-                <VListItem
+                <VListItem 
+                  v-if="can('delete','colis')"
                   value="delete"
                   prepend-icon="tabler-trash"
                   @click="dialogDelete(item)"

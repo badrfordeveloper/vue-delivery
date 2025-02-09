@@ -88,7 +88,6 @@ console.log(statusCode.value) */
 
 const roles = computed(() => rolesData.value.items)
 const totalRoles = computed(() => rolesData.value.total)
-
 </script>
 
 <template>
@@ -105,11 +104,11 @@ const totalRoles = computed(() => rolesData.value.total)
             cols="12"
             sm="4"
           >
-          <AppTextField
-            v-model="searchName"
-            placeholder="Recherche role"
-            style="inline-size: 15.625rem;"
-          />
+            <AppTextField
+              v-model="searchName"
+              placeholder="Recherche role"
+              style="inline-size: 15.625rem;"
+            />
           </VCol>
         </VRow>
       </VCardText>
@@ -125,7 +124,7 @@ const totalRoles = computed(() => rolesData.value.total)
           />
 
           <VBtn
-          v-if="can('create','role')"
+            v-if="can('create','role')"
             color="primary"
             prepend-icon="tabler-plus"
             @click="isAddRoleDialogVisible = true"
@@ -149,11 +148,12 @@ const totalRoles = computed(() => rolesData.value.total)
         class="text-no-wrap"
         @update:options="updateOptions"
       >
-
-
         <!-- Actions -->
         <template #item.actions="{ item }">
-          <IconBtn  v-if="can('update','role')"  @click="editPermission(item)">
+          <IconBtn
+            v-if="can('update','role')"
+            @click="editPermission(item)"
+          >
             <VIcon icon="tabler-edit" />
           </IconBtn>
         </template>
