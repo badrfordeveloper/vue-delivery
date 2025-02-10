@@ -54,7 +54,7 @@ watch(() => itemData.value.tarif_id, newId => {
 
   const selectedTarif = tarifs.value.find(t => t.id === newId)
 
-  itemData.value.frais_livraison = selectedTarif ? selectedTarif.tarif : ''
+  itemData.value.frais_livraison = selectedTarif ? selectedTarif.tarif +"DH à "+ selectedTarif.delai_livraison : ''
 })
 
 const onSubmit = async () => {

@@ -12,6 +12,9 @@ definePage({
   },
 })
 
+useCookie('userData').value = {};
+useCookie('accessToken').value = '';
+
 const authThemeMask = useGenerateImageVariant(miscMaskLight, miscMaskDark)
 </script>
 

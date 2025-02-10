@@ -2,8 +2,8 @@
 definePage({
   meta: {
     action: 'list',
-    subject: 'role',
-  },
+    subject: 'colis',
+  }
 })
 </script>
 

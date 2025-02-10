@@ -128,7 +128,7 @@ const totalItems = computed(() => itemsData.value.total)
     <!-- 👉 items -->
     <VCard
       title="Filtres"
-      class="mb-6"
+      class="mb-6 d-print-none"
     >
       <VCardText>
         <VRow>
@@ -201,7 +201,7 @@ const totalItems = computed(() => itemsData.value.total)
         :headers="headers"
         :items="items"
         :items-length="totalItems"
-        class="text-no-wrap"
+        class="text-no-wrap "
         locale="fr"
         @update:options="updateOptions"
       >
