@@ -274,10 +274,11 @@ const totalItems = computed(() => itemsData.value.total)
         </VCard>
       </VDialog>
 
-      <PrintColis
+  
+    </VCard>
+    <PrintColis v-if="isPrintColis"
         v-model:is-print-colis="isPrintColis"
         :item="printObject"
       />
-    </VCard>
   </div>
 </template>

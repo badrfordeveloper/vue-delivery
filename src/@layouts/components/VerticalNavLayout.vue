@@ -78,7 +78,7 @@ const verticalNavAttrs = computed(() => {
     </component>
     <div class="layout-content-wrapper">
       <header
-        class="layout-navbar"
+        class="layout-navbar d-print-none"
         :class="[{ 'navbar-blur': configStore.isNavbarBlurEnabled }]"
       >
         <div class="navbar-content-container">
@@ -93,7 +93,7 @@ const verticalNavAttrs = computed(() => {
           <slot />
         </div>
       </main>
-      <footer class="layout-footer">
+      <footer class="layout-footer d-print-none">
         <div class="footer-content-container">
           <slot name="footer" />
         </div>
