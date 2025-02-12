@@ -1,8 +1,8 @@
-<script setup>
-import { VNodeRenderer } from '@layouts/components/VNodeRenderer'
-import { themeConfig } from '@themeConfig'
-import QrcodeVue from 'qrcode.vue'
 
+<script setup>
+import { VNodeRenderer } from '@layouts/components/VNodeRenderer';
+import { themeConfig } from '@themeConfig';
+import QrcodeVue from 'qrcode.vue';
 const props = defineProps({
   item: {
     type: Object,
@@ -13,61 +13,38 @@ const props = defineProps({
     required: true,
   },
 })
-
+definePage({
+  meta: {
+    layout: 'blank',
+    public: true,
+  },
+})
 const emit = defineEmits([
-  'update:isPrintColis',
-  'update:rolePermissions',
-  'fetchItems',
+  'update:isPrintColis'
 ])
+/* nextTick(() => {
+    window.print();
+  }); */
 
+  setTimeout(() => {
+    window.print();
+  }, 500);
 
+  window.onafterprint = function () {
+    emit('update:isPrintColis', false)
+  };
 
-
-
-
-
-const onPrint =  () => {
-  window.print()
-}
-
-const onReset = () => {
-  emit('update:isPrintColis', false)
-}
 </script>
-
 <template>
-  <VDialog
-    :width="$vuetify.display.smAndDown ? 'auto' : 400"
-    :model-value="props.isPrintColis"
+  <div v-if="props.isPrintColis">
+  <!--   <button onclick="window.print()"  class="d-print-none">Print</button> -->
 
-    @update:model-value="onReset"
-  >
-    <!-- 👉 Dialog close btn -->
-    <DialogCloseBtn
-      class="d-print-none"
-      @click="onReset"
-    />
-    <VRow>
-      <VCol
-        class="d-print-none"
-        cols="12"
-        md="12"
-      >
-        <VBtn
-          color="primary"
-          class="flex-grow-1"
-          @click="onPrint"
-        >
-          Print
-        </VBtn>
-      </VCol>
-      <VCol
-        cols="12"
-        md="12"
-        class="ticket"
-      >
-        <VCard class="props.item-preview-wrapper">
+<div id="print-area" >
+    <!-- Page 1 -->
+    <div class="print-content">
+      <VCard class="props.item-preview-wrapper">
           <!-- SECTION Header -->
+           <div></div>
           <div class="props.item-header-preview d-flex flex-wrap justify-space-between flex-column flex-sm-row print-row bg-var-theme-background gap-6 rounded ">
             <!-- 👉 Left Content -->
             <div>
@@ -83,7 +60,7 @@ const onReset = () => {
             </div>
 
             <!-- 👉 Right Content -->
-            <div class="d-flex align-center ">
+            <div class="d-flex align-center destination">
               <!--  Code : {{  }} -->
               {{ props.item.destination }}
             </div>
@@ -92,8 +69,8 @@ const onReset = () => {
 
           <VDivider class=" border-solid" />
           <!-- 👉 Payment Details -->
-          <VRow class="print-row mb-1">
-            <VCol class="text-no-wrap">
+          <VRow class="print-row little-margin ">
+            <VCol class="text">
               <div class="d-flex flex-wrap justify-space-between flex-column flex-sm-row gap-6">
                 <div>
                   <p class="mb-0">
@@ -121,31 +98,20 @@ const onReset = () => {
           </VRow>
           <VDivider class=" border-solid" />
           <!-- 👉 props.item Table -->
-          <VTable class="props.item-preview-table border text-high-emphasis overflow-hidden mb-1">
-            <thead>
-              <tr>
-                <th scope="col">
-                  Produits
-                </th>
-                <th scope="col">
-                  Montant
-                </th>
-              </tr>
-            </thead>
 
-            <tbody class="text-base">
-              <tr>
-                <td class="text-no-wrap">
-                  {{ props.item.produit }}
-                </td>
-                <td class="text-no-wrap">
-                  {{ props.item.montant }}
-                </td>
-              </tr>
-            </tbody>
-          </VTable>
+
+          <VRow class="align-right little-margin">
+            <VCol cols="12">
+              <p class="mb-0">
+                Produits :  {{ props.item.produit }}
+              </p>
+              <p class="mb-0">
+                Montant :  {{ props.item.montant }}</p>
+            </Vcol>
+          </VRow>
+
           <VDivider class=" border-solid" />
-          <VRow class="align-right">
+          <VRow class="align-right little-margin">
             <VCol cols="12">
               <p class="mb-0">
                 essayage :  {{ props.item.essayage ? 'OUI' : 'NON' }} | ouvrir :  {{ props.item.ouvrir ? 'OUI' : 'NON' }} | echange :    {{ props.item.echange ? 'OUI' : 'NON' }}
@@ -157,118 +123,85 @@ const onReset = () => {
           <VDivider class=" border-solid" />
 
           <p class="mb-0">
-            <span class="text-high-emphasis font-weight-medium me-1">
+            <span >
               Remarque:
             </span>
             <span>Entrepirse de livraison n'est pas responsable sur vos achat</span>
           </p>
+        
         </VCard>
-      </VCol>
-    </VRow>
-  </VDialog>
+    </div>
+</div>
+
+  </div>
+
 </template>
-
 <style lang="scss" scoped>
-.props.item-preview-table {
-  --v-table-header-color: var(--v-theme-surface);
+ .print-content {
+  display: none;
+ }
+.v-table{
 
-  &.v-table .v-table__wrapper table thead tr th {
-    border-block-end: 1px solid rgba(var(--v-border-color), var(--v-border-opacity)) !important;
-  }
-}
-
-/* Set the ticket width to 10cm and remove margins */
-.ticket {
-  box-sizing: border-box; /* Include padding and border in the width */
-  padding: 10px !important;
-  border: 1px solid #000; /* Optional: Add a border for visual clarity */
-  margin: 0 !important; /* Remove margin */
-  inline-size: 10cm !important; /* Force full width */
 }
 
 @media print {
+.little-margin{
+  margin: 0px;
+}
   th,
   td {
     height: 0 !important;
   }
+            @page {
+                size: 100mm 100mm; /* Each page is exactly 100mm */
+                margin: 0;
+            }
 
-  .v-divider {
+            .v-divider {
     border: 1px solid black !important;
     opacity: 1;
   }
-
   p {
     color: #000;
     font-size: 14px;
   }
+            .v-card{
+              width: 100%;
+              height: 100%;
+              padding: 10px;
+            }
+            h6{
+              color: #000;
+            }
 
-  @page {
-    margin: 0;
-    size: 100mm 100mm;
-  }
+            .destination{
+              color: #000;
+              font-weight: bold;
+              font-size : 16px;
+              text-transform: uppercase;
+            }
+            /* Ensure print content fits exactly into a page */
+            .print-content {
+              display: block;
+                width: 100mm;
+                height: 100mm; /* Fixes size */
+                overflow: hidden;
+                page-break-before: always; /* Ensures each section starts on a new page */
+            }
 
-  body,
-  html {
-    padding: 0 !important;
-    margin: 0 !important;
-  }
+            /* Hide everything except the print content */
+            body * {
+                visibility: hidden;
+            }
 
-  /* Set the ticket width to 10cm and remove margins */
-  .ticket {
-    box-sizing: border-box; /* Include padding and border in the width */
-    padding: 10px !important; /* Remove padding */
-    border: 1px solid #000; /* Optional: Add a border for visual clarity */
-    margin: 0 !important; /* Remove margin */
-    inline-size: 10cm !important; /* Force full width */
-    page-break-inside: avoid;
-  }
+            #print-area, #print-area * {
+                visibility: visible;
+            }
 
-  .v-theme--dark {
-    --v-theme-surface: 255, 255, 255;
-    --v-theme-on-surface: 47, 43, 61;
-    --v-theme-on-background: 47, 43, 61;
-  }
-
-  body {
-    background: none !important;
-  }
-
-  .props.item-header-preview,
-  .props.item-preview-wrapper {
-    padding: 0 !important;
-  }
-
-  .product-buy-now {
-    display: none;
-  }
-
-  .v-navigation-drawer,
-  .layout-vertical-nav,
-  .app-customizer-toggler,
-  .layout-footer,
-  .layout-navbar,
-  .layout-navbar-and-nav-container {
-    display: none;
-  }
-
-  .v-card {
-    box-shadow: none !important;
-
-    .print-row {
-      flex-direction: row !important;
-    }
-  }
-
-  .layout-content-wrapper {
-    padding-inline-start: 0 !important;
-  }
-
-  .v-table__wrapper {
-    overflow: hidden !important;
-  }
-
-  .vue-devtools__anchor {
-    display: none;
-  }
-}
+            #print-area {
+                position: absolute;
+                left: 0;
+                top: 0;
+            }
+        }
 </style>

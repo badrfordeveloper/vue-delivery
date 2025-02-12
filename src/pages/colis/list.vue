@@ -118,6 +118,13 @@ const {
 }),  
 )
 
+const resolveStatus = statusMsg => {
+  if (statusMsg === "EN_ATTENTE")
+    return {
+      text: 'En attente',
+      color: 'warning',
+    }
+}
 const router = useRouter()
 const items = computed(() => itemsData.value.items)
 const totalItems = computed(() => itemsData.value.total)
@@ -206,6 +213,14 @@ const totalItems = computed(() => itemsData.value.total)
         @update:options="updateOptions"
       >
         <!-- Actions -->
+        <template #item.statut="{ item }">
+          <VChip
+            v-bind="resolveStatus(item.statut)"
+            density="default"
+            label
+            size="small"
+          />
+        </template>
         <template #item.actions="{ item }">
           <IconBtn
             v-if="can('update','colis')"

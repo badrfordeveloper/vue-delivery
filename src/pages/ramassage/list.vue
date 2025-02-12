@@ -16,28 +16,18 @@ const headers = [
     sortable: false,
   },
   {
-    title: 'Nom du client',
-    key: 'nom_client',
-    sortable: false,
-  },
-  {
-    title: 'Tel du client',
-    key: 'tel_client',
-    sortable: false,
-  },
-  {
     title: 'Statut',
     key: 'statut',
     sortable: false,
-  },  
+  },
   {
-    title: 'Montant',
-    key: 'montant',
+    title: 'destination',
+    key: 'destination',
     sortable: false,
-  }, 
+  },
   {
-    title: 'adresse',
-    key: 'adresse',
+    title: 'Nombre de colis',
+    key: 'nombre_colis',
     sortable: false,
   },
   {
@@ -49,8 +39,6 @@ const headers = [
 
 const searchCode = ref()
 const searchStatut = ref()
-const searchNameClient = ref()
-const searchTelClient = ref()
 
 const loadingDelete = ref(false)
 const isDeletingItem = ref(false)
@@ -58,6 +46,10 @@ const deleteObject = ref()
 
 const isPrintRamassage = ref(false)
 const printObject = ref()
+const dialogPrint = object =>{
+  isPrintRamassage.value=true
+  printObject.value = object
+}
 
 // Data table options
 const itemsPerPage = ref(5)
@@ -65,15 +57,10 @@ const page = ref(1)
 const sortBy = ref()
 const orderBy = ref()
 
-const updateOptions = options => {
-  sortBy.value = options.sortBy[0]?.key
-  orderBy.value = options.sortBy[0]?.order
-}
 
-const dialogPrint = object =>{
-  isPrintRamassage.value=true
-  printObject.value = object
-}
+
+
+
 
 const dialogDelete = object =>{
   isDeletingItem.value=true
@@ -82,7 +69,7 @@ const dialogDelete = object =>{
 
 const deleteItem = async () => {
 
-  let url = "/api/colis/"+deleteObject.value.id
+  let url = "/api/ramassage/"+deleteObject.value.id
 
   loadingDelete.value = true
   $api({
@@ -101,15 +88,17 @@ const deleteItem = async () => {
     })
 }
 
+const updateOptions = options => {
+  sortBy.value = options.sortBy[0]?.key
+  orderBy.value = options.sortBy[0]?.order
+}
 const {
   data: itemsData, error, statusCode, isFetching,
   execute: fetchItems,
-} = await useApi(createUrl('/api/colis', {
+} = await useApi(createUrl('/api/ramassage', {
   query: {
     code: searchCode,
     statut: searchStatut,
-    nom_client: searchNameClient,
-    tel_client: searchTelClient,
     page,
     itemsPerPage,
     sortBy,
@@ -121,6 +110,14 @@ const {
 const router = useRouter()
 const items = computed(() => itemsData.value.items)
 const totalItems = computed(() => itemsData.value.total)
+
+const resolveStatus = statusMsg => {
+  if (statusMsg === "EN_ATTENTE")
+    return {
+      text: 'En attente',
+      color: 'warning',
+    }
+}
 </script>
 
 <template>
@@ -128,7 +125,7 @@ const totalItems = computed(() => itemsData.value.total)
     <!-- 👉 items -->
     <VCard
       title="Filtres"
-      class="mb-6"
+      class="mb-6 d-print-none"
     >
       <VCardText>
         <VRow>
@@ -147,24 +144,6 @@ const totalItems = computed(() => itemsData.value.total)
             <AppTextField
               v-model="searchCode"
               placeholder="Code"
-            />
-          </VCol>
-          <VCol
-            cols="12"
-            sm="2"
-          >
-            <AppTextField
-              v-model="searchNameClient"
-              placeholder="Nom du client"
-            />
-          </VCol>
-          <VCol
-            cols="12"
-            sm="2"
-          >
-            <AppTextField
-              v-model="searchTelClient"
-              placeholder="Telephone du client"
             />
           </VCol>
         </VRow>
@@ -201,10 +180,19 @@ const totalItems = computed(() => itemsData.value.total)
         :headers="headers"
         :items="items"
         :items-length="totalItems"
-        class="text-no-wrap"
+        class="text-no-wrap "
         locale="fr"
         @update:options="updateOptions"
       >
+
+      <template #item.statut="{ item }">
+          <VChip
+            v-bind="resolveStatus(item.statut)"
+            density="default"
+            label
+            size="small"
+          />
+        </template>
         <!-- Actions -->
         <template #item.actions="{ item }">
           <IconBtn
@@ -225,7 +213,8 @@ const totalItems = computed(() => itemsData.value.total)
                   Print
                 </VListItem>
 
-                <VListItem
+                <VListItem 
+                  v-if="can('delete','ramassage')"
                   value="delete"
                   prepend-icon="tabler-trash"
                   @click="dialogDelete(item)"
@@ -236,6 +225,8 @@ const totalItems = computed(() => itemsData.value.total)
             </VMenu>
           </IconBtn>
         </template>
+
+
         <!-- pagination -->
         <template #bottom>
           <TablePagination
@@ -273,10 +264,11 @@ const totalItems = computed(() => itemsData.value.total)
         </VCard>
       </VDialog>
 
-      <PrintRamassage
+  
+    </VCard>
+    <PrintRamassage v-if="isPrintRamassage"
         v-model:is-print-ramassage="isPrintRamassage"
         :item="printObject"
       />
-    </VCard>
   </div>
 </template>

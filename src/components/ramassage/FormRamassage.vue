@@ -25,17 +25,13 @@ const loadingSubmit = ref(false)
 tarifs.value = await $api('/api/tarifs').then(response => response.data.items)
 
 let defaultItem = {
-  nom_client: '',
-  tel_client: '',
+  id: '',
+  nom_vendeur: '',
+  tel_vendeur: '',
   tarif_id: '',
-  frais_livraison: '',
   adresse: '',
-  produit: "",
-  montant: '',
-  commentaire_vendeur: '',
-  essayage: 0,
-  ouvrir: 0,
-  echange: 0,
+  adresse: '',
+  colis: [],
 }
 
 
@@ -50,21 +46,14 @@ watch(
   }, { immediate: true }, // Trigger the watcher immediately
 )
 
-watch(() => itemData.value.tarif_id, newId => {
-
-  const selectedTarif = tarifs.value.find(t => t.id === newId)
-
-  itemData.value.frais_livraison = selectedTarif ? selectedTarif.tarif : ''
-})
-
 const onSubmit = async () => {
 
   const { valid } = await refForm.value.validate()
   if (valid) {
-    let url = "/api/colis"
+    let url = "/api/ramassage"
 
     if (props.method == "PUT") {
-      url = "/api/colis/" + props.identity
+      url = "/api/ramassage/" + props.identity
     }
     loadingSubmit.value = true
     $api({
@@ -75,15 +64,12 @@ const onSubmit = async () => {
       .then(async response => {
         if (response.status === 200) {
           toast.success(response.data)
-
           if (props.method == "POST") {
             refForm.value?.reset()
             itemData.value = structuredClone(toRaw(defaultItem))
-
           }else{
-            router.push({ name: 'colis-list' })
+            router.push({ name: 'ramassage-list' })
           }
-         
         }
         loadingSubmit.value = false
       }).catch(error => {
@@ -104,13 +90,76 @@ const onSubmit = async () => {
 
   }
 }
+
+
+const headers = [
+  {
+    title: 'code',
+    key: 'code',
+    sortable: false,
+  },
+  {
+    title: 'Statut',
+    key: 'statut',
+    sortable: false,
+  },
+  {
+    title: 'destination',
+    key: 'destination',
+    sortable: false,
+  },
+  {
+    title: 'Nom du client',
+    key: 'nom_client',
+    sortable: false,
+  },
+  {
+    title: 'Tel du client',
+    key: 'tel_client',
+    sortable: false,
+  },
+]
+const updateOptions = options => {
+  sortBy.value = options.sortBy[0]?.key
+  orderBy.value = options.sortBy[0]?.order
+}
+
+const itemsPerPage = ref(5)
+const page = ref(1)
+const sortBy = ref()
+const orderBy = ref()
+const {
+  data: itemsData, error, statusCode, isFetching,
+  execute: fetchItems,
+} = await useApi(createUrl('/api/colisForRamassage', {
+  query: {
+    statut: "EN_ATTENTE",
+    ramassage_id: itemData.value.id,
+    page,
+    itemsPerPage,
+    sortBy,
+    orderBy,
+  },
+}),  
+)
+const items = computed(() => itemsData.value.items)
+const totalItems = computed(() => itemsData.value.total)
+
+const resolveStatus = statusMsg => {
+  if (statusMsg === "EN_ATTENTE")
+    return {
+      text: 'En attente',
+      color: 'warning',
+    }
+}
+
 </script>
 
 <template>
   <div class="d-flex flex-wrap justify-start justify-sm-space-between gap-y-4 gap-x-6 mb-6">
     <div class="d-flex flex-column justify-center">
       <h4 class="text-h4 font-weight-medium">
-        {{ props.method == "POST" ? "Ajouter Colis":"Modifier Colis" }} 
+        {{ props.method == "POST" ? "Ajouter Ramassage":"Modifier Ramassage" }} 
       </h4>
     </div>
   </div>
@@ -119,10 +168,7 @@ const onSubmit = async () => {
     class="mt-3"
   >
     <VRow>
-      <VCol
-        cols="12"
-        md="6"
-      >
+
         <VCol
           cols="12"
           class="pa-0"
@@ -136,7 +182,7 @@ const onSubmit = async () => {
                   cols="12"
                 >
                   <AppTextField
-                    v-model="itemData.nom_client"
+                    v-model="itemData.nom_vendeur"
                     :rules="[requiredValidator]"
                     placeholder="Nom"
                     label="Nom"
@@ -147,7 +193,7 @@ const onSubmit = async () => {
                   md="6"
                 >
                   <AppTextField
-                    v-model="itemData.tel_client"
+                    v-model="itemData.tel_vendeur"
                     :rules="[requiredValidator,PhoneValidator]"
                     label="Telephone"
                     size="10"
@@ -181,20 +227,10 @@ const onSubmit = async () => {
                     placeholder="Select State"
                   />
                 </VCol>
-              
-                <VCol
-                  cols="12"
-                  md="6"
-                >
-                  <AppTextField
-                    v-model="itemData.frais_livraison"
-                    disabled
-                    label="Frais de livraison"
-                    placeholder=""
-                  />
-                </VCol>
             
-                <VCol cols="12">
+                <VCol    
+                 md="6"
+                cols="12">
                   <AppTextField
                     v-model="itemData.adresse"
                     prepend-inner-icon="tabler-map-pin"
@@ -207,125 +243,53 @@ const onSubmit = async () => {
             </VCardText>
           </VCard>
         </VCol>
-      </VCol>
 
-      <VCol
-        cols="12"
-        md="6"
+    </VRow>
+    <VRow>
+
+      <VCol>
+
+        <div class="d-flex flex-wrap gap-4 ma-6">
+        <VSpacer />
+        <div class="d-flex gap-4 flex-wrap align-center">
+          <AppSelect
+            v-model="itemsPerPage"
+            :items="[5, 10, 20, 25, 50]"
+          />
+        </div>
+      </div>
+        <VDataTableServer
+        show-select
+        v-model:model-value="itemData.colis"
+        :item-value="item => item.id"
+        v-model:items-per-page="itemsPerPage"
+        v-model:page="page"
+        :loading="isFetching"
+        :headers="headers"
+        :items="items"
+        :items-length="totalItems"
+        class="text-no-wrap "
+        locale="fr"
+        @update:options="updateOptions"
       >
-        <!-- 👉 Delete Account -->
-        <VCard title="Informations des produits">
-          <VCardText>
-            <VRow>
-              <VCol cols="12">
-                <AppTextField
-                  v-model="itemData.produit"
-                  :rules="[requiredValidator]"
-                  label="Produits"
-                  placeholder="Produits"
-                />
-              </VCol>     
-              <VCol
-                cols="12"
-                md="6"
-              >
-                <AppTextField
-                  v-model="itemData.montant"
-                  :rules="[requiredValidator]"
-                  type="number"
-                  label="Montant Total"
-                  placeholder="Montant Total"
-                />
-              </VCol>    
-             
-              <VCol
-                cols="12"
-                md="6"
-                class="app-text-field"
-              >
-                <VLabel
-                  text="Essayage"
-                  class="mb-1 text-body-2 text-wrap "
-                />
-                <VRadioGroup
-                  v-model="itemData.essayage"
-                  :rules="[requiredValidator]"
-                  inline
-                >
-                  <VRadio
-                    label="Non"
-                    :value="0"
-                    density="compact"
-                  />
-                  <VRadio
-                    label="Oui"
-                    :value="1"
-                    density="compact"
-                  />
-                </VRadioGroup>
-              </VCol>
-              <VCol
-                cols="12"
-                md="6"
-                class="app-text-field"
-              >
-                <VLabel
-                  text="Ouvrir"
-                  class="mb-1 text-body-2 text-wrap "
-                />
-                <VRadioGroup
-                  v-model="itemData.ouvrir"
-                  :rules="[requiredValidator]"
-                  inline
-                >
-                  <VRadio
-                    label="Non"
-                    :value="0"
-                    density="compact"
-                  />
-                  <VRadio
-                    label="Oui"
-                    :value="1"
-                    density="compact"
-                  />
-                </VRadioGroup>
-              </VCol>
-              <VCol
-                cols="12"
-                md="6"
-                class="app-text-field"
-              >
-                <VLabel
-                  text="Echange"
-                  class="mb-1 text-body-2 text-wrap "
-                />
-                <VRadioGroup
-                  v-model="itemData.echange"
-                  :rules="[requiredValidator]"
-                  inline
-                >
-                  <VRadio
-                    label="Non"
-                    :value="0"
-                    density="compact"
-                  />
-                  <VRadio
-                    label="Oui"
-                    :value="1"
-                    density="compact"
-                  />
-                </VRadioGroup>
-              </VCol>
-              <VCol cols="12">
-                <AppTextField
-                  v-model="itemData.commentaire_vendeur"
-                  label="commentaire"
-                  placeholder="commentaire"
-                />
-              </VCol>      
-            </VRow>
-          </VCardText>
-        </VCard>
+      <template #item.statut="{ item }">
+          <VChip
+            v-bind="resolveStatus(item.statut)"
+            density="default"
+            label
+            size="small"
+          />
+        </template>
+
+        <!-- pagination -->
+        <template #bottom>
+          <TablePagination
+            v-model:page="page"
+            :items-per-page="itemsPerPage"
+            :total-items="totalItems"
+          />
+        </template>
+      </VDataTableServer>
       </VCol>
     </VRow>
 

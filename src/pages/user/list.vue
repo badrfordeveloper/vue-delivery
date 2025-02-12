@@ -111,7 +111,6 @@ const products = computed(() => productsData.value.items)
 const totalProduct = computed(() => productsData.value.total)
 
 const resolveStatus = statusMsg => {
-  console.log(statusMsg)
   if (statusMsg === 1)
     return {
       text: 'active',
@@ -122,7 +121,6 @@ const resolveStatus = statusMsg => {
       text: 'inactive',
       color: 'warning',
     }
-
 }
 </script>
 
