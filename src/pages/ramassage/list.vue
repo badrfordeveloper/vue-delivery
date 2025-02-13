@@ -1,5 +1,6 @@
 <script setup>
 import PrintRamassage from '@/components/ramassage/printRamassage.vue'
+import showDialog from '@/components/ramassage/showDialog.vue'
 import { can } from '@layouts/plugins/casl'
 
 definePage({
@@ -112,12 +113,54 @@ const items = computed(() => itemsData.value.items)
 const totalItems = computed(() => itemsData.value.total)
 
 const resolveStatus = statusMsg => {
-  if (statusMsg === "EN_ATTENTE")
+  if (statusMsg === "EN_ATTENTE"){
     return {
       text: 'En attente',
       color: 'warning',
     }
+  } else if (statusMsg === "EN_COURS_RAMASSAGE"){
+    return {
+      text: 'En cours ramassage',
+      color: 'info',
+    }
+  }
+  else if (statusMsg === "REPORTE"){
+    return {
+      text: 'Reporté',
+      color: 'error',
+    }
+  }
+  else if (statusMsg === "ANNULE"){
+    return {
+      text: 'Annule',
+      color: 'error',
+    }
+  }
+  else if (statusMsg === "RAMASSE"){
+    return {
+      text: 'Ramassé',
+      color: 'info',
+    }
+  }
+  else if (statusMsg === "ENTREPOT"){
+    return {
+      text: 'Entrepot',
+      color: 'info',
+    }
+  }
 }
+
+
+
+const isShowItem = ref(false)
+const dialogKey = ref(0);
+const showObject = ref()
+const showItemDialog = object =>{
+  showObject.value = object
+  dialogKey.value++
+  isShowItem.value=true
+}
+
 </script>
 
 <template>
@@ -184,7 +227,12 @@ const resolveStatus = statusMsg => {
         locale="fr"
         @update:options="updateOptions"
       >
-
+      <template #item.code="{ item }">
+          <VBtn variant="text" @click="showItemDialog(item)">
+            
+            {{ item.code }}
+          </VBtn> 
+        </template>
       <template #item.statut="{ item }">
           <VChip
             v-bind="resolveStatus(item.statut)"
@@ -269,6 +317,13 @@ const resolveStatus = statusMsg => {
     <PrintRamassage v-if="isPrintRamassage"
         v-model:is-print-ramassage="isPrintRamassage"
         :item="printObject"
+      />
+
+      <showDialog
+        v-model:is-show-item="isShowItem"
+        @fetch-items="fetchItems"
+        :item="showObject"
+        :key="dialogKey"
       />
   </div>
 </template>

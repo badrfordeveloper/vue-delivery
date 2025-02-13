@@ -7,6 +7,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    Actions: typeof import('./src/components/ramassage/actions.vue')['default']
     AddAuthenticatorAppDialog: typeof import('./src/components/dialogs/AddAuthenticatorAppDialog.vue')['default']
     AddEditAddressDialog: typeof import('./src/components/dialogs/AddEditAddressDialog.vue')['default']
     AddEditPermissionDialog: typeof import('./src/components/dialogs/AddEditPermissionDialog.vue')['default']
@@ -49,6 +50,7 @@ declare module 'vue' {
     FormRamassage: typeof import('./src/components/ramassage/FormRamassage.vue')['default']
     FormTarif: typeof import('./src/components/tarif/FormTarif.vue')['default']
     FormUser: typeof import('./src/components/user/FormUser.vue')['default']
+    Histories: typeof import('./src/components/global/Histories.vue')['default']
     I18n: typeof import('./src/@core/components/I18n.vue')['default']
     MoreBtn: typeof import('./src/@core/components/MoreBtn.vue')['default']
     Notifications: typeof import('./src/@core/components/Notifications.vue')['default']
@@ -63,6 +65,8 @@ declare module 'vue' {
     ScrollToTop: typeof import('./src/@core/components/ScrollToTop.vue')['default']
     ShareProjectDialog: typeof import('./src/components/dialogs/ShareProjectDialog.vue')['default']
     Shortcuts: typeof import('./src/@core/components/Shortcuts.vue')['default']
+    ShowDialog: typeof import('./src/components/ramassage/showDialog.vue')['default']
+    ShowItemDialog: typeof import('./src/components/ramassage/showItemDialog.vue')['default']
     TablePagination: typeof import('./src/@core/components/TablePagination.vue')['default']
     TheCustomizer: typeof import('./src/@core/components/TheCustomizer.vue')['default']
     ThemeSwitcher: typeof import('./src/@core/components/ThemeSwitcher.vue')['default']

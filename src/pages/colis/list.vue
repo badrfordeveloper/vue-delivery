@@ -119,11 +119,42 @@ const {
 )
 
 const resolveStatus = statusMsg => {
-  if (statusMsg === "EN_ATTENTE")
+  if (statusMsg === "EN_ATTENTE"){
     return {
       text: 'En attente',
       color: 'warning',
     }
+  } else if (statusMsg === "EN_COURS_RAMASSAGE"){
+    return {
+      text: 'En cours ramassage',
+      color: 'info',
+    }
+  }
+  else if (statusMsg === "REPORTE"){
+    return {
+      text: 'Reporté',
+      color: 'error',
+    }
+  }
+  else if (statusMsg === "ANNULE"){
+    return {
+      text: 'Annule',
+      color: 'error',
+    }
+  }
+  else if (statusMsg === "RAMASSE"){
+    return {
+      text: 'Ramassé',
+      color: 'info',
+    }
+  }
+  else if (statusMsg === "ENTREPOT"){
+    return {
+      text: 'Entrepot',
+      color: 'info',
+    }
+  }
+    
 }
 const router = useRouter()
 const items = computed(() => itemsData.value.items)
