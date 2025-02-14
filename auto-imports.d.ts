@@ -8,6 +8,7 @@ export {}
 declare global {
   const $api: typeof import('./src/utils/api.js')['$api']
   const COOKIE_MAX_AGE_1_YEAR: typeof import('./src/utils/constants.js')['COOKIE_MAX_AGE_1_YEAR']
+  const ContentWidth: typeof import('./src/composables/statusName.js')['ContentWidth']
   const EffectScope: typeof import('vue')['EffectScope']
   const PhoneValidator: typeof import('./src/@core/utils/validators.js')['PhoneValidator']
   const acceptHMRUpdate: typeof import('pinia')['acceptHMRUpdate']
@@ -135,6 +136,8 @@ declare global {
   const shallowReactive: typeof import('vue')['shallowReactive']
   const shallowReadonly: typeof import('vue')['shallowReadonly']
   const shallowRef: typeof import('vue')['shallowRef']
+  const statusName: typeof import('./src/composables/statusName.js')['statusName']
+  const statutInfos: typeof import('./src/composables/statutInfos.js')['statutInfos']
   const storeToRefs: typeof import('pinia')['storeToRefs']
   const syncRef: typeof import('@vueuse/core')['syncRef']
   const syncRefs: typeof import('@vueuse/core')['syncRefs']
@@ -498,6 +501,7 @@ declare module 'vue' {
     readonly shallowReactive: UnwrapRef<typeof import('vue')['shallowReactive']>
     readonly shallowReadonly: UnwrapRef<typeof import('vue')['shallowReadonly']>
     readonly shallowRef: UnwrapRef<typeof import('vue')['shallowRef']>
+    readonly statutInfos: UnwrapRef<typeof import('./src/composables/statutInfos.js')['statutInfos']>
     readonly storeToRefs: UnwrapRef<typeof import('pinia')['storeToRefs']>
     readonly syncRef: UnwrapRef<typeof import('@vueuse/core')['syncRef']>
     readonly syncRefs: UnwrapRef<typeof import('@vueuse/core')['syncRefs']>

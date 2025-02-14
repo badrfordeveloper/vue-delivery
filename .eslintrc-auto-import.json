@@ -363,6 +363,9 @@
     "useAbility": true,
     "useToast": true,
     "toast": true,
-    "PhoneValidator": true
+    "PhoneValidator": true,
+    "ContentWidth": true,
+    "statusName": true,
+    "statutInfos": true
   }
 }

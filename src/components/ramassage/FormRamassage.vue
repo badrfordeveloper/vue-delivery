@@ -119,6 +119,7 @@ const headers = [
     sortable: false,
   },
 ]
+
 const updateOptions = options => {
   sortBy.value = options.sortBy[0]?.key
   orderBy.value = options.sortBy[0]?.order
@@ -128,6 +129,7 @@ const itemsPerPage = ref(5)
 const page = ref(1)
 const sortBy = ref()
 const orderBy = ref()
+
 const {
   data: itemsData, error, statusCode, isFetching,
   execute: fetchItems,
@@ -142,6 +144,7 @@ const {
   },
 }),  
 )
+
 const items = computed(() => itemsData.value.items)
 const totalItems = computed(() => itemsData.value.total)
 
@@ -153,6 +156,16 @@ const resolveStatus = statusMsg => {
     }
 }
 
+/* const handleRowClick = (event, { item }) => {
+  const index = itemData.value.colis.findIndex((selectedItem, index) => selectedItem === item.id)
+  if (index === -1) {
+    // If the item is not selected, add it to the selected array
+    itemData.value.colis.push(item.id)
+  } else {
+    // If the item is already selected, remove it from the selected array
+    itemData.value.colis.splice(index, 1)
+  }
+} */
 </script>
 
 <template>
@@ -168,128 +181,126 @@ const resolveStatus = statusMsg => {
     class="mt-3"
   >
     <VRow>
+      <VCol
+        cols="12"
+        class="pa-0"
+      >
+        <VCard title="Informations du client">
+          <VCardText>
+            <!-- 👉 Form -->
+            <VRow>
+              <VCol
+                md="6"
+                cols="12"
+              >
+                <AppTextField
+                  v-model="itemData.nom_vendeur"
+                  :rules="[requiredValidator]"
+                  placeholder="Nom"
+                  label="Nom"
+                />
+              </VCol>
+              <VCol
+                cols="12"
+                md="6"
+              >
+                <AppTextField
+                  v-model="itemData.tel_vendeur"
+                  :rules="[requiredValidator,PhoneValidator]"
+                  label="Telephone"
+                  size="10"
+                  placeholder="0655554747"
+                />
+              </VCol>
+            </VRow>
+          </VCardText>
+        </VCard>
+      </VCol>
 
-        <VCol
-          cols="12"
-          class="pa-0"
-        >
-          <VCard title="Informations du client">
-            <VCardText>
-              <!-- 👉 Form -->
-              <VRow>
-                <VCol
-                  md="6"
-                  cols="12"
-                >
-                  <AppTextField
-                    v-model="itemData.nom_vendeur"
-                    :rules="[requiredValidator]"
-                    placeholder="Nom"
-                    label="Nom"
-                  />
-                </VCol>
-                <VCol
-                  cols="12"
-                  md="6"
-                >
-                  <AppTextField
-                    v-model="itemData.tel_vendeur"
-                    :rules="[requiredValidator,PhoneValidator]"
-                    label="Telephone"
-                    size="10"
-                    placeholder="0655554747"
-                  />
-                </VCol>
-              </VRow>
-            </VCardText>
-          </VCard>
-        </VCol>
-
-        <VCol
-          cols="12"
-          class="px-0"
-        >
-          <!-- 👉 Delete Account -->
-          <VCard title="Informations d'adresse">
-            <VCardText>
-              <VRow>
-                <VCol
-                  md="6"
-                  cols="12"
-                >
-                  <AppAutocomplete
-                    v-model="itemData.tarif_id"
-                    :rules="[requiredValidator]"
-                    label="Destination"
-                    :items="tarifs"
-                    item-title="destination"
-                    item-value="id"
-                    placeholder="Select State"
-                  />
-                </VCol>
+      <VCol
+        cols="12"
+        class="px-0"
+      >
+        <!-- 👉 Delete Account -->
+        <VCard title="Informations d'adresse">
+          <VCardText>
+            <VRow>
+              <VCol
+                md="6"
+                cols="12"
+              >
+                <AppAutocomplete
+                  v-model="itemData.tarif_id"
+                  :rules="[requiredValidator]"
+                  label="Destination"
+                  :items="tarifs"
+                  item-title="destination"
+                  item-value="id"
+                  placeholder="Select State"
+                />
+              </VCol>
             
-                <VCol    
-                 md="6"
-                cols="12">
-                  <AppTextField
-                    v-model="itemData.adresse"
-                    prepend-inner-icon="tabler-map-pin"
-                    :rules="[requiredValidator]"
-                    label="Adresse"
-                    placeholder="Adresse"
-                  />
-                </VCol>
-              </VRow>
-            </VCardText>
-          </VCard>
-        </VCol>
-
+              <VCol    
+                md="6"
+                cols="12"
+              >
+                <AppTextField
+                  v-model="itemData.adresse"
+                  prepend-inner-icon="tabler-map-pin"
+                  :rules="[requiredValidator]"
+                  label="Adresse"
+                  placeholder="Adresse"
+                />
+              </VCol>
+            </VRow>
+          </VCardText>
+        </VCard>
+      </VCol>
     </VRow>
     <VRow>
-
       <VCol>
-
         <div class="d-flex flex-wrap gap-4 ma-6">
-        <VSpacer />
-        <div class="d-flex gap-4 flex-wrap align-center">
-          <AppSelect
-            v-model="itemsPerPage"
-            :items="[5, 10, 20, 25, 50]"
-          />
+          <VSpacer />
+          <div class="d-flex gap-4 flex-wrap align-center">
+            <AppSelect
+              v-model="itemsPerPage"
+              :items="[5, 10, 20, 25, 50]"
+            />
+          </div>
         </div>
-      </div>
         <VDataTableServer
-        show-select
-        v-model:model-value="itemData.colis"
-        :item-value="item => item.id"
-        v-model:items-per-page="itemsPerPage"
-        v-model:page="page"
-        :loading="isFetching"
-        :headers="headers"
-        :items="items"
-        :items-length="totalItems"
-        class="text-no-wrap "
-        locale="fr"
-        @update:options="updateOptions"
-      >
-      <template #item.statut="{ item }">
-          <VChip
-            v-bind="resolveStatus(item.statut)"
-            density="default"
-            label
-            size="small"
-          />
-        </template>
+          v-model:model-value="itemData.colis"
+          v-model:items-per-page="itemsPerPage"
+          v-model:page="page"
+          show-select
+          :item-value="item => item.id"
+          :loading="isFetching"
+          :headers="headers"
+          :items="items"
+          :items-length="totalItems"
+          class="text-no-wrap "
+          locale="fr"
+          @update:options="updateOptions"
+        >
+          <!--  @click:row="handleRowClick" -->
+          <template #item.statut="{ item }">
+            <VChip
+              v-bind="resolveStatus(item.statut)"
+              density="default"
+              label
+              size="small"
+            />
+          </template>
 
-        <!-- pagination -->
-        <template #bottom>
-          <TablePagination
-            v-model:page="page"
-            :items-per-page="itemsPerPage"
-            :total-items="totalItems"
-          />
-        </template>
-      </VDataTableServer>
+          <!-- pagination -->
+          <template #bottom>
+            <TablePagination
+              v-model:page="page"
+              :items-per-page="itemsPerPage"
+              :total-items="totalItems"
+            />
+          </template>
+        </VDataTableServer>
       </VCol>
     </VRow>
 

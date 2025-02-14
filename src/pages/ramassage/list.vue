@@ -1,6 +1,5 @@
 <script setup>
 import PrintRamassage from '@/components/ramassage/printRamassage.vue'
-import showDialog from '@/components/ramassage/showDialog.vue'
 import { can } from '@layouts/plugins/casl'
 
 definePage({
@@ -47,6 +46,7 @@ const deleteObject = ref()
 
 const isPrintRamassage = ref(false)
 const printObject = ref()
+
 const dialogPrint = object =>{
   isPrintRamassage.value=true
   printObject.value = object
@@ -93,6 +93,7 @@ const updateOptions = options => {
   sortBy.value = options.sortBy[0]?.key
   orderBy.value = options.sortBy[0]?.order
 }
+
 const {
   data: itemsData, error, statusCode, isFetching,
   execute: fetchItems,
@@ -112,55 +113,18 @@ const router = useRouter()
 const items = computed(() => itemsData.value.items)
 const totalItems = computed(() => itemsData.value.total)
 
-const resolveStatus = statusMsg => {
-  if (statusMsg === "EN_ATTENTE"){
-    return {
-      text: 'En attente',
-      color: 'warning',
-    }
-  } else if (statusMsg === "EN_COURS_RAMASSAGE"){
-    return {
-      text: 'En cours ramassage',
-      color: 'info',
-    }
-  }
-  else if (statusMsg === "REPORTE"){
-    return {
-      text: 'Reporté',
-      color: 'error',
-    }
-  }
-  else if (statusMsg === "ANNULE"){
-    return {
-      text: 'Annule',
-      color: 'error',
-    }
-  }
-  else if (statusMsg === "RAMASSE"){
-    return {
-      text: 'Ramassé',
-      color: 'info',
-    }
-  }
-  else if (statusMsg === "ENTREPOT"){
-    return {
-      text: 'Entrepot',
-      color: 'info',
-    }
-  }
-}
 
 
 
 const isShowItem = ref(false)
-const dialogKey = ref(0);
+const dialogKey = ref(0)
 const showObject = ref()
+
 const showItemDialog = object =>{
   showObject.value = object
   dialogKey.value++
   isShowItem.value=true
 }
-
 </script>
 
 <template>
@@ -227,15 +191,17 @@ const showItemDialog = object =>{
         locale="fr"
         @update:options="updateOptions"
       >
-      <template #item.code="{ item }">
-          <VBtn variant="text" @click="showItemDialog(item)">
-            
+        <template #item.code="{ item }">
+          <VBtn
+            variant="text"
+            @click="showItemDialog(item)"
+          >
             {{ item.code }}
           </VBtn> 
         </template>
-      <template #item.statut="{ item }">
+        <template #item.statut="{ item }">
           <VChip
-            v-bind="resolveStatus(item.statut)"
+            v-bind="statutInfos(item.statut)"
             density="default"
             label
             size="small"
@@ -244,23 +210,15 @@ const showItemDialog = object =>{
         <!-- Actions -->
         <template #item.actions="{ item }">
           <IconBtn
-            v-if="can('update','ramassage')"
+            v-if="item.statut == 'EN_ATTENTE' && can('update','ramassage')"
             @click="router.push('/ramassage/'+item.id)"
           >
             <VIcon icon="tabler-edit" />
           </IconBtn>
-          <IconBtn>
+          <IconBtn v-if=" item.statut == 'EN_ATTENTE' ">
             <VIcon icon="tabler-dots-vertical" />
             <VMenu activator="parent">
               <VList>
-                <VListItem
-                  value="print"
-                  prepend-icon="tabler-text-scan-2"
-                  @click="dialogPrint(item)"
-                >
-                  Print
-                </VListItem>
-
                 <VListItem 
                   v-if="can('delete','ramassage')"
                   value="delete"
@@ -311,19 +269,18 @@ const showItemDialog = object =>{
           </VCardText>
         </VCard>
       </VDialog>
-
-  
     </VCard>
-    <PrintRamassage v-if="isPrintRamassage"
-        v-model:is-print-ramassage="isPrintRamassage"
-        :item="printObject"
-      />
+    <PrintRamassage
+      v-if="isPrintRamassage"
+      v-model:is-print-ramassage="isPrintRamassage"
+      :item="printObject"
+    />
 
-      <showDialog
-        v-model:is-show-item="isShowItem"
-        @fetch-items="fetchItems"
-        :item="showObject"
-        :key="dialogKey"
-      />
+    <ShowDialog
+      :key="dialogKey"
+      v-model:is-show-item="isShowItem"
+      :item="showObject"
+      @fetch-items="fetchItems"
+    />
   </div>
 </template>
