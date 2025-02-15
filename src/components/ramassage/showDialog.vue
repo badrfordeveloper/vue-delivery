@@ -1,5 +1,6 @@
 <script setup>
 import Histories from '@/components/global/histories.vue'
+import { can } from '@layouts/plugins/casl'
 
 const props = defineProps({
   item: {
@@ -26,12 +27,15 @@ let defaultItem = {
   tarif_id: '',
   adresse: '',
   ramasseur: '',
+  ramasseur_id: '',
+  statut: '',
   vendeur: '',
   nombre_colis: '',
   colis: [],
   histories: [],
 }
 
+const ramasseurs = await $api('/api/ramasseurs').then(response => response.data)
 
 const itemData = ref(structuredClone(toRaw(defaultItem)))
 
@@ -48,6 +52,37 @@ const onReset = () => {
   emit('fetchItems')
   itemData.value = structuredClone(toRaw(defaultItem))
 }
+
+const loadingRamasseur = ref(false)
+const isActionGestionnaire = can('gestionnaire', 'action')
+
+const updateRamasseur = async  => {
+  loadingRamasseur.value = true
+  $api({
+    method: "POST",
+    url: "/api/updateRamasseur",
+    data: {
+      id: itemData.value.id,
+      ramasseur_id: itemData.value.ramasseur_id,
+    },
+  })
+    .then(async response => {
+      if (response.status === 200) {
+        toast.success(response.data)
+      }
+      loadingRamasseur.value = false
+    })
+    .catch(error => {
+      loadingRamasseur.value = false
+      if (error.response && error.response.status === 422) {
+        toast.error(error.response.data.message)
+      }else{
+        toast.error("something wrong")
+      }
+    })
+}
+
+
 
 
 const currentTab = ref('Actions')
@@ -96,8 +131,44 @@ const tabsData = [
                   </h6>
                 </td>
                 <td>
-                  <p class="text-body-1 mb-2">
-                    {{ itemData.ramasseur }}
+                  <p
+                    v-if="isActionGestionnaire && ['EN_ATTENTE','EN_COURS_RAMASSAGE','REPORTE'].includes(itemData.statut)"
+                    class="text-body-1 mb-2"
+                  >
+                    <VRow class="ma-0">
+                      <VCol
+                        class="pa-0"
+                        cols="9"
+                        md="7"
+                      >
+                        <AppSelect
+                          v-model="itemData.ramasseur_id"
+                          placeholder="Ramasseurs"
+                          :items="ramasseurs"
+                          clearable
+                          clear-icon="tabler-x"
+                        />
+                      </VCol>
+                      <VCol
+                        class="pa-0 "
+                        cols="3"
+                      >
+                        <VBtn
+                          :loading="loadingRamasseur"
+                          class="ms-1"
+                          rounded
+                          icon="tabler-send-2"
+                          color="secondary"
+                          @click="updateRamasseur"
+                        />
+                      </VCol>
+                    </VRow>
+                  </p>
+                  <p
+                    v-else
+                    class="text-body-1 mb-2"
+                  >
+                    {{ itemData.ramasseur }} 
                   </p>
                 </td>
               </tr>
@@ -162,41 +233,26 @@ const tabsData = [
                   </p>
                 </td>
               </tr>
-              <tr>
-                <td>
-                  <h6 class="text-h6 text-no-wrap mb-2">
-                    Facturation:
-                  </h6>
-                </td>
-                <td>
-                  <p class="text-body-1 mb-2">
-                    xxx
-                  </p>
-                </td>
-              </tr>
             </VTable>
           </VCol>
         </VRow>
-      </VCardText>
-    </VCard>
 
-    <VCard>
-      <VTabs
-        v-model="currentTab"
-        grow
-        class="disable-tab-transition"
-      >
-        <VTab
-          v-for="(tab, index) in tabsData"
-          :key="index"
+        <VTabs
+          v-model="currentTab"
+          grow
+          class="disable-tab-transition"
         >
-          {{ tab }}
-        </VTab>
-      </VTabs>
-
-
-      <VCardText>
-        <VWindow v-model="currentTab">
+          <VTab
+            v-for="(tab, index) in tabsData"
+            :key="index"
+          >
+            {{ tab }}
+          </VTab>
+        </VTabs>
+        <VWindow
+          v-model="currentTab"
+          class="mt-3"
+        >
           <VWindowItem>
             <Actions
               :id="itemData.id"

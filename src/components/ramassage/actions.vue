@@ -20,6 +20,7 @@ const actionObject = ref({
   id: null,
   statut: "",
   nombre_colis_ramasseur: "",
+  commentaire: "",
   date: "",
   file: "",
 })
@@ -57,7 +58,10 @@ const updateAction = async action => {
     .then(async response => {
       if (response.status === 200) {
         toast.success(response.data)
-        statut.value = action
+        if(action != 'COMMENTAIRE'){
+          statut.value = action
+        }
+        
         formActions.value = false
       }
       loadingAction.value = ""
@@ -77,7 +81,12 @@ const isActionGestionnaire = can('gestionnaire', 'action')
 
 const actions = computed(() => {
   let result = []
-
+  result.push({
+    text: "Commentaire",
+    color: "secondary",
+    statut: "COMMENTAIRE",
+    requiredAction: true,
+  })
   if(statut.value == "EN_ATTENTE"){
     if(isActionLivreur){
       result.push({
@@ -175,7 +184,20 @@ const actions = computed(() => {
           </VCol>
         </VRow>
       </div>
-
+      <div v-if=" actionObject.statut== 'COMMENTAIRE'">
+        <VRow class="d-flex align-center justify-center">
+          <VCol
+            md="6"
+            cols="12"
+          >
+            <AppTextField
+              v-model="actionObject.commentaire"
+              label="Commentaire"
+              placeholder="Commentaire"
+            />
+          </VCol>
+        </VRow>
+      </div>
       <VRow>
         <!-- 👉 Form Actions -->
         <VCol

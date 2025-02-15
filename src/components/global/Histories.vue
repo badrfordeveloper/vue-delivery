@@ -10,7 +10,7 @@ const props = defineProps({
 
 
 const resolveIcon = statusMsg => {
-  if (statusMsg === "EN_ATTENTE"){
+  if (statusMsg === "EN_ATTENTE" || statusMsg === "COMMENTAIRE" ){
     return {
       "icon": "tabler-circle-check",
       "icon-color": "secondary",
@@ -80,6 +80,12 @@ const resolveDate= oldDate => {
       >
         {{ hisotry.statut }}
       </div>
+      <p
+        v-if="hisotry.commentaire"
+        class="mb-0"
+      >
+        {{ hisotry.commentaire }}
+      </p>
       <p
         v-if="hisotry.nombre_colis_ramasseur"
         class="mb-0"
