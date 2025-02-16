@@ -137,7 +137,7 @@ const actions = computed(() => {
       :color="action.color"
       class="ma-1"
       :loading="loadingAction==action.statut"
-      @click="action.requiredAction == true ? showFormAction(action.statut) : updateAction(action.statut)"
+      @click="showFormAction(action.statut)"
     >
       {{ action.text }}
     </VBtn>
@@ -151,6 +151,9 @@ const actions = computed(() => {
       ref="refForm"
       class="mt-3"
     >
+      <p class="text-center">
+        Statut à envoyer : {{ statutInfos(actionObject.statut).text }}
+      </p>
       <div v-if=" actionObject.statut== 'RAMASSE'">
         <VRow class="d-flex align-center justify-center">
           <VCol
@@ -184,7 +187,7 @@ const actions = computed(() => {
           </VCol>
         </VRow>
       </div>
-      <div v-if=" actionObject.statut== 'COMMENTAIRE'">
+      <div>
         <VRow class="d-flex align-center justify-center">
           <VCol
             md="6"
@@ -193,6 +196,7 @@ const actions = computed(() => {
             <AppTextField
               v-model="actionObject.commentaire"
               label="Commentaire"
+              :rules="['COMMENTAIRE','REPORTE','ANNULE'].includes(actionObject.statut) ? [requiredValidator] : []"
               placeholder="Commentaire"
             />
           </VCol>

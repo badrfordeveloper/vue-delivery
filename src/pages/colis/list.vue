@@ -1,5 +1,6 @@
 <script setup>
 import PrintColis from '@/components/colis/printColis.vue'
+import ShowColis from '@/components/colis/showColis.vue'
 import { can } from '@layouts/plugins/casl'
 
 definePage({
@@ -38,6 +39,11 @@ const headers = [
   {
     title: 'Tel du client',
     key: 'tel_client',
+    sortable: false,
+  },
+  {
+    title: 'Vendeur',
+    key: 'vendeur',
     sortable: false,
   },
   {
@@ -122,6 +128,16 @@ const {
 const router = useRouter()
 const items = computed(() => itemsData.value.items)
 const totalItems = computed(() => itemsData.value.total)
+
+const isShowItem = ref(false)
+const dialogKey = ref(0)
+const showId = ref(0)
+
+const showItemDialog = object =>{
+  showId.value = object.id
+  dialogKey.value++
+  isShowItem.value=true
+}
 </script>
 
 <template>
@@ -206,7 +222,16 @@ const totalItems = computed(() => itemsData.value.total)
         locale="fr"
         @update:options="updateOptions"
       >
-        <!-- Actions -->
+        <template #item.code="{ item }">
+          <VBtn
+            v-if="can('show','colis')"
+            variant="text"
+            @click="showItemDialog(item)"
+          >
+            {{ item.code }}
+          </VBtn> 
+          <span v-else>{{ item.code }}</span>
+        </template>
         <template #item.statut="{ item }">
           <VChip
             v-bind="statutInfos(item.statut)"
@@ -216,35 +241,37 @@ const totalItems = computed(() => itemsData.value.total)
           />
         </template>
         <template #item.actions="{ item }">
-          <IconBtn
-            v-if="can('update','colis')"
-            @click="router.push('/colis/'+item.id)"
-          >
-            <VIcon icon="tabler-edit" />
-          </IconBtn>
-          <IconBtn>
-            <VIcon icon="tabler-dots-vertical" />
-            <VMenu activator="parent">
-              <VList>
-                <VListItem
-                  value="print"
-                  prepend-icon="tabler-text-scan-2"
-                  @click="dialogPrint(item)"
-                >
-                  Print
-                </VListItem>
+          <div v-if=" item.statut == 'EN_ATTENTE' ">
+            <IconBtn
+              v-if="can('update','colis')"
+              @click="router.push('/colis/'+item.id)"
+            >
+              <VIcon icon="tabler-edit" />
+            </IconBtn>
+            <IconBtn>
+              <VIcon icon="tabler-dots-vertical" />
+              <VMenu activator="parent">
+                <VList>
+                  <VListItem
+                    value="print"
+                    prepend-icon="tabler-text-scan-2"
+                    @click="dialogPrint(item)"
+                  >
+                    Print
+                  </VListItem>
 
-                <VListItem 
-                  v-if="can('delete','colis')"
-                  value="delete"
-                  prepend-icon="tabler-trash"
-                  @click="dialogDelete(item)"
-                >
-                  Delete
-                </VListItem>
-              </VList>
-            </VMenu>
-          </IconBtn>
+                  <VListItem 
+                    v-if="can('delete','colis')"
+                    value="delete"
+                    prepend-icon="tabler-trash"
+                    @click="dialogDelete(item)"
+                  >
+                    Delete
+                  </VListItem>
+                </VList>
+              </VMenu>
+            </IconBtn>
+          </div>
         </template>
         <!-- pagination -->
         <template #bottom>
@@ -287,6 +314,14 @@ const totalItems = computed(() => itemsData.value.total)
       v-if="isPrintColis"
       v-model:is-print-colis="isPrintColis"
       :item="printObject"
+    />
+
+    <ShowColis
+      v-if="isShowItem"
+      :id="showId"
+      :key="dialogKey"
+      v-model:is-show-item="isShowItem"
+      @fetch-items="fetchItems"
     />
   </div>
 </template>

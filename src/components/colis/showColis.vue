@@ -1,9 +1,8 @@
 <script setup>
-import Histories from '@/components/global/histories.vue'
 import { can } from '@layouts/plugins/casl'
 
 const props = defineProps({
-  item: {
+  id: {
     type: Object,
     required: false,
 
@@ -24,29 +23,55 @@ let defaultItem = {
   id: '',
   nom_vendeur: '',
   tel_vendeur: '',
-  tel_ramasseur: '',
+  
   tarif_id: '',
   adresse: '',
-  ramasseur: '',
-  ramasseur_id: '',
+  livreur: '',
+  livreur_id: '',
+  tel_livreur: '',
   statut: '',
   vendeur: '',
   nombre_colis: '',
   colis: [],
-  histories: [],
+  colisHistories: [],
 }
 
-const ramasseurs = await $api('/api/ramasseurs').then(response => response.data)
+const livreurs = await $api('/api/ramasseurs').then(response => response.data)
 
 const itemData = ref(structuredClone(toRaw(defaultItem)))
 
-watch(
-  () => props.item, 
-  newVal => {
+const loadingItem = ref(false)
 
-    itemData.value = { ...newVal } 
+const getItemData = async id => {
+  loadingItem.value = true
+  await $api("/api/colis/"+id)
+    .then(async response => {
+      if (response.status === 200) {
+        itemData.value = response.data
+      }
+
+      loadingItem.value = false
+    })
+    .catch(error => {
+      loadingItem.value = false
+      if (error.response && error.response.status === 422) {
+        toast.error(error.response.data.message)
+      }else{
+        toast.error("something wrong")
+      }
+    })
+}
+
+watch(
+  () => props.id, 
+  newVal => {
+    getItemData(newVal)
   }, { immediate: true }, // Trigger the watcher immediately
 )
+
+
+
+
 
 const onReset = () => {
   emit('update:isShowItem', false)
@@ -57,9 +82,9 @@ const onReset = () => {
 const loadingRamasseur = ref(false)
 const isActionGestionnaire = can('gestionnaire', 'action')
 
-const updateRamasseur = async  => {
+const updateRamasseur = async ()  => {
   loadingRamasseur.value = true
-  $api({
+  await $api({
     method: "POST",
     url: "/api/updateRamasseur",
     data: {
@@ -96,6 +121,7 @@ const tabsData = [
 
 <template>
   <VDialog
+    
     :width="$vuetify.display.smAndDown ? 'auto' : 900"
     :model-value="props.isShowItem"
     @update:model-value="onReset"
@@ -105,7 +131,10 @@ const tabsData = [
 
 
     <!-- 👉 Billing Address -->
-    <VCard title="Details Ramassage">
+    <AppCardActions
+      title="Details Ramassage"
+      :loading="loadingItem"
+    >
       <VCardText>
         <VRow>
           <VCol
@@ -128,7 +157,7 @@ const tabsData = [
               <tr>
                 <td>
                   <h6 class="text-h6 text-no-wrap mb-2">
-                    Ramasseur :
+                    Livreur :
                   </h6>
                 </td>
                 <td>
@@ -143,9 +172,9 @@ const tabsData = [
                         md="7"
                       >
                         <AppSelect
-                          v-model="itemData.ramasseur_id"
-                          placeholder="Ramasseurs"
-                          :items="ramasseurs"
+                          v-model="itemData.livreur_id"
+                          placeholder="Livreurs"
+                          :items="livreurs"
                           clearable
                           clear-icon="tabler-x"
                         />
@@ -169,19 +198,19 @@ const tabsData = [
                     v-else
                     class="text-body-1 mb-2"
                   >
-                    {{ itemData.ramasseur }} 
+                    {{ itemData.livreur }} 
                   </p>
                 </td>
               </tr>
               <tr>
                 <td>
                   <h6 class="text-h6 text-no-wrap mb-2">
-                    Tel Ramasseur:
+                    Tel Livreur:
                   </h6>
                 </td>
                 <td>
                   <p class="text-body-1 mb-2">
-                    {{ itemData.tel_ramasseur }}
+                    {{ itemData.tel_livreur }}
                   </p>
                 </td>
               </tr>
@@ -246,18 +275,6 @@ const tabsData = [
                   </p>
                 </td>
               </tr>
-              <tr>
-                <td>
-                  <h6 class="text-h6 text-no-wrap mb-2">
-                    Colis:
-                  </h6>
-                </td>
-                <td>
-                  <p class="text-body-1 mb-2">
-                    {{ itemData.nombre_colis }}
-                  </p>
-                </td>
-              </tr>
             </VTable>
           </VCol>
         </VRow>
@@ -286,11 +303,11 @@ const tabsData = [
           </VWindowItem>
 
           <VWindowItem>
-            <Histories :histories="itemData.histories" />
+            <Histories :histories="itemData.colisHistories" />
           </VWindowItem>
         </VWindow>
       </VCardText>
-    </VCard>
+    </appcardactions>
   </VDialog>
 </template>
 

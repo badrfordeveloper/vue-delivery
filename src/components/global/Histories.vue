@@ -78,7 +78,7 @@ const resolveDate= oldDate => {
         class="text-body-2 text-uppercase "
         v-bind="resolveClass(hisotry.statut)"
       >
-        {{ hisotry.statut }}
+        {{ hisotry.statut }}  <span class="creator-name text-secondary"> par {{ hisotry.creator_name }} </span>
       </div>
       <p
         v-if="hisotry.commentaire"
@@ -105,4 +105,9 @@ const resolveDate= oldDate => {
   </VTimeline>
 </template>
 
+<style scoped>
+.creator-name {
+  text-transform: lowercase;
+}
+</style>
 

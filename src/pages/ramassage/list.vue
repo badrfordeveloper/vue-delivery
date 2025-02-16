@@ -31,6 +31,11 @@ const headers = [
     sortable: false,
   },
   {
+    title: 'Vendeur',
+    key: 'vendeur',
+    sortable: false,
+  },
+  {
     title: 'actions',
     key: 'actions',
     sortable: false,
@@ -193,11 +198,13 @@ const showItemDialog = object =>{
       >
         <template #item.code="{ item }">
           <VBtn
+            v-if="can('show','ramassage')"
             variant="text"
             @click="showItemDialog(item)"
           >
             {{ item.code }}
           </VBtn> 
+          <span v-else>{{ item.code }}</span>
         </template>
         <template #item.statut="{ item }">
           <VChip
@@ -277,6 +284,7 @@ const showItemDialog = object =>{
     />
 
     <ShowDialog
+      v-if="isShowItem"
       :key="dialogKey"
       v-model:is-show-item="isShowItem"
       :item="showObject"
