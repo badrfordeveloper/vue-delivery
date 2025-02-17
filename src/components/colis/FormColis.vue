@@ -55,7 +55,7 @@ watch(() => itemData.value.tarif_id, newId => {
   const selectedTarif = tarifs.value.find(t => t.id === newId)
 
   itemData.value.frais_livraison = selectedTarif ? selectedTarif.tarif +"DH à "+ selectedTarif.delai_livraison : ''
-},{ immediate: true })
+}, { immediate: true })
 
 const onSubmit = async () => {
 
@@ -319,8 +319,10 @@ const onSubmit = async () => {
               <VCol cols="12">
                 <AppTextField
                   v-model="itemData.commentaire_vendeur"
-                  label="commentaire"
-                  placeholder="commentaire"
+                  label="Commentaire"
+                  placeholder="Commentaire"
+                  rows="2"
+                  row-height="20"
                 />
               </VCol>      
             </VRow>

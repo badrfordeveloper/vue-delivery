@@ -193,8 +193,10 @@ const actions = computed(() => {
             md="6"
             cols="12"
           >
-            <AppTextField
+            <AppTextarea
               v-model="actionObject.commentaire"
+              rows="2"
+              row-height="20"
               label="Commentaire"
               :rules="['COMMENTAIRE','REPORTE','ANNULE'].includes(actionObject.statut) ? [requiredValidator] : []"
               placeholder="Commentaire"
