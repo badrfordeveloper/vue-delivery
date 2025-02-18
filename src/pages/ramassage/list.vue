@@ -123,10 +123,11 @@ const totalItems = computed(() => itemsData.value.total)
 
 const isShowItem = ref(false)
 const dialogKey = ref(0)
-const showObject = ref()
+const showId = ref(0)
+
 
 const showItemDialog = object =>{
-  showObject.value = object
+  showId.value = object.id
   dialogKey.value++
   isShowItem.value=true
 }
@@ -283,11 +284,11 @@ const showItemDialog = object =>{
       :item="printObject"
     />
 
-    <ShowDialog
+    <ShowRamassage
       v-if="isShowItem"
+      :id="showId"
       :key="dialogKey"
       v-model:is-show-item="isShowItem"
-      :item="showObject"
       @fetch-items="fetchItems"
     />
   </div>

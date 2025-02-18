@@ -66,6 +66,8 @@ declare module 'vue' {
     Shortcuts: typeof import('./src/@core/components/Shortcuts.vue')['default']
     ShowColis: typeof import('./src/components/colis/showColis.vue')['default']
     ShowDialog: typeof import('./src/components/ramassage/showDialog.vue')['default']
+    ShowRamassage: typeof import('./src/components/ramassage/ShowRamassage.vue')['default']
+    ShowRamassege: typeof import('./src/components/ramassage/ShowRamassege.vue')['default']
     TablePagination: typeof import('./src/@core/components/TablePagination.vue')['default']
     TheCustomizer: typeof import('./src/@core/components/TheCustomizer.vue')['default']
     ThemeSwitcher: typeof import('./src/@core/components/ThemeSwitcher.vue')['default']

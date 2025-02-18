@@ -43,8 +43,10 @@
   </div>
   <script type="module" src="/src/main.js"></script>
   <script>
+    /*  const loaderColor = localStorage.getItem('vuexy-initial-loader-bg') || '#FFFFFF'
+     const primaryColor = localStorage.getItem('vuexy-initial-loader-color') || '#0d70c3' */
     const loaderColor = localStorage.getItem('vuexy-initial-loader-bg') || '#FFFFFF'
-    const primaryColor = localStorage.getItem('vuexy-initial-loader-color') || '#0d70c3'
+    const primaryColor = '#0d70c3'
 
     if (loaderColor)
       document.documentElement.style.setProperty('--initial-loader-bg', loaderColor)

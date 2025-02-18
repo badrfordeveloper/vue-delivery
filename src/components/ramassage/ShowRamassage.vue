@@ -1,12 +1,10 @@
 <script setup>
-import Histories from '@/components/global/histories.vue'
 import { can } from '@layouts/plugins/casl'
 
 const props = defineProps({
-  item: {
+  id: {
     type: Object,
     required: false,
-
   },
   isShowItem: {
     type: Boolean,
@@ -24,6 +22,7 @@ let defaultItem = {
   id: '',
   nom_vendeur: '',
   tel_vendeur: '',
+  frais_ramasseur: '',
   tel_ramasseur: '',
   tarif_id: '',
   adresse: '',
@@ -40,11 +39,33 @@ const ramasseurs = await $api('/api/ramasseurs').then(response => response.data)
 
 const itemData = ref(structuredClone(toRaw(defaultItem)))
 
+const loadingItem = ref(false)
+
+const getItemData = async id => {
+  loadingItem.value = true
+  await $api("/api/ramassage/"+id)
+    .then(async response => {
+      if (response.status === 200) {
+        itemData.value = response.data
+      }
+
+      loadingItem.value = false
+    })
+    .catch(error => {
+      loadingItem.value = false
+      if (error.response && error.response.status === 422) {
+        toast.error(error.response.data.message)
+      }else{
+        toast.error("something wrong")
+      }
+    })
+}
+
 watch(
-  () => props.item, 
+  () => props.id, 
   newVal => {
 
-    itemData.value = { ...newVal } 
+    getItemData(newVal)
   }, { immediate: true }, // Trigger the watcher immediately
 )
 
@@ -54,27 +75,29 @@ const onReset = () => {
   itemData.value = structuredClone(toRaw(defaultItem))
 }
 
-const loadingRamasseur = ref(false)
+const loadingUpdate = ref(false)
 const isActionGestionnaire = can('gestionnaire', 'action')
+const isActionLivreur = can('livreur', 'action')
 
-const updateRamasseur = async  => {
-  loadingRamasseur.value = true
+const parametrerRamassage = async  => {
+  loadingUpdate.value = true
   $api({
     method: "POST",
-    url: "/api/updateRamasseur",
+    url: "/api/parametrerRamassage",
     data: {
       id: itemData.value.id,
       ramasseur_id: itemData.value.ramasseur_id,
+      frais_ramasseur: itemData.value.frais_ramasseur,
     },
   })
     .then(async response => {
       if (response.status === 200) {
         toast.success(response.data)
       }
-      loadingRamasseur.value = false
+      loadingUpdate.value = false
     })
     .catch(error => {
-      loadingRamasseur.value = false
+      loadingUpdate.value = false
       if (error.response && error.response.status === 422) {
         toast.error(error.response.data.message)
       }else{
@@ -89,9 +112,13 @@ const updateRamasseur = async  => {
 const currentTab = ref('Actions')
 
 const tabsData = [
-  'Actions',
-  'Historique',
+/*   'Actions',
+  'Historique', */
+  "tabler-adjustments-share",
+  "tabler-logs",
 ]
+
+const showParams = ref(false)
 </script>
 
 <template>
@@ -105,8 +132,24 @@ const tabsData = [
 
 
     <!-- 👉 Billing Address -->
-    <VCard title="Details Ramassage">
-      <VCardText>
+    <AppCardActions title="Details Ramassage"  :loading="loadingItem"  no-actions>
+     
+     
+      <VCardText v-show="!showParams">
+
+        <div class="text-end position-absolute right-0"  v-if="isActionGestionnaire">
+          <VBtn
+            icon
+            class="rounded-0"
+            @click="showParams = true"
+          >
+            <VIcon
+              size="22"
+              icon="tabler-settings"
+            />
+          </VBtn>
+        </div>
+
         <VRow>
           <VCol
             cols="12"
@@ -132,41 +175,8 @@ const tabsData = [
                   </h6>
                 </td>
                 <td>
+                  
                   <p
-                    v-if="isActionGestionnaire && ['EN_ATTENTE','EN_COURS_RAMASSAGE','REPORTE'].includes(itemData.statut)"
-                    class="text-body-1 mb-2"
-                  >
-                    <VRow class="ma-0">
-                      <VCol
-                        class="pa-0"
-                        cols="9"
-                        md="7"
-                      >
-                        <AppSelect
-                          v-model="itemData.ramasseur_id"
-                          placeholder="Ramasseurs"
-                          :items="ramasseurs"
-                          clearable
-                          clear-icon="tabler-x"
-                        />
-                      </VCol>
-                      <VCol
-                        class="pa-0 "
-                        cols="3"
-                      >
-                        <VBtn
-                          :loading="loadingRamasseur"
-                          class="ms-1"
-                          rounded
-                          icon="tabler-send-2"
-                          color="secondary"
-                          @click="updateRamasseur"
-                        />
-                      </VCol>
-                    </VRow>
-                  </p>
-                  <p
-                    v-else
                     class="text-body-1 mb-2"
                   >
                     {{ itemData.ramasseur }} 
@@ -182,6 +192,18 @@ const tabsData = [
                 <td>
                   <p class="text-body-1 mb-2">
                     {{ itemData.tel_ramasseur }}
+                  </p>
+                </td>
+              </tr>
+              <tr v-if="isActionLivreur">
+                <td>
+                  <h6 class="text-h6 text-no-wrap mb-2">
+                    Frais de ramassage:
+                  </h6>
+                </td>
+                <td>
+                  <p class="text-body-1 mb-2">
+                    {{ itemData.frais_ramasseur }}
                   </p>
                 </td>
               </tr>
@@ -266,12 +288,16 @@ const tabsData = [
           v-model="currentTab"
           grow
           class="disable-tab-transition"
+          stacked
         >
           <VTab
             v-for="(tab, index) in tabsData"
             :key="index"
           >
-            {{ tab }}
+          <VIcon
+            size="40"
+            :icon="tab"
+          />
           </VTab>
         </VTabs>
         <VWindow
@@ -290,7 +316,63 @@ const tabsData = [
           </VWindowItem>
         </VWindow>
       </VCardText>
-    </VCard>
+      <VCardText v-show="showParams" v-if="isActionGestionnaire">
+
+        <VRow>  
+          <VCol
+            md="6"
+            cols="12"
+          >
+
+          
+          <AppSelect
+            v-model="itemData.ramasseur_id"
+            placeholder="Ramasseurs"
+            label="Ramasseurs"
+            :items="ramasseurs"
+            clearable
+            clear-icon="tabler-x"
+          />
+          </VCol>
+          <VCol
+            cols="12"
+            md="6"
+          >
+            <AppTextField
+              v-model="itemData.frais_ramasseur"
+              :rules="[requiredValidator]"
+              label="Frais de ramassage"
+              type="number"
+              placeholder="Frais de ramassage"
+            />
+          </VCol>
+        </VRow>
+
+        <VRow>
+          <!-- 👉 Form Actions -->
+          <VCol
+            cols="12"
+            class="d-flex flex-wrap justify-center gap-4"
+          >
+            <VBtn
+              color="secondary"
+              @click="showParams = false"
+            >
+              retour 
+            </VBtn>
+            <VBtn
+              :loading="loadingUpdate"
+              @click="parametrerRamassage"
+            >
+              Envoyer 
+            </VBtn>
+          </VCol>
+        </VRow>
+
+      </VCardText>
+
+
+    </AppCardActions>
   </VDialog>
 </template>
 

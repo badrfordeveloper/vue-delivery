@@ -23,7 +23,6 @@ let defaultItem = {
   id: '',
   nom_vendeur: '',
   tel_vendeur: '',
-  
   tarif_id: '',
   adresse: '',
   livreur: '',
@@ -121,7 +120,6 @@ const tabsData = [
 
 <template>
   <VDialog
-    
     :width="$vuetify.display.smAndDown ? 'auto' : 900"
     :model-value="props.isShowItem"
     @update:model-value="onReset"
@@ -136,6 +134,7 @@ const tabsData = [
       :loading="loadingItem"
     >
       <VCardText>
+    
         <VRow>
           <VCol
             cols="12"
