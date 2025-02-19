@@ -36,7 +36,7 @@ export const statutInfos = statut => {
   else if (statut === "ENTREPOT"){
     return {
       text: 'Entrepot',
-      color: 'info',
+      color: 'primary',
     }
   }
   

@@ -44,6 +44,7 @@ declare module 'vue' {
     DialogCloseBtn: typeof import('./src/@core/components/DialogCloseBtn.vue')['default']
     DropZone: typeof import('./src/@core/components/DropZone.vue')['default']
     EnableOneTimePasswordDialog: typeof import('./src/components/dialogs/EnableOneTimePasswordDialog.vue')['default']
+    Entrepot: typeof import('./src/components/ramassage/Entrepot.vue')['default']
     ErrorHeader: typeof import('./src/components/ErrorHeader.vue')['default']
     FormColis: typeof import('./src/components/colis/FormColis.vue')['default']
     FormRamassage: typeof import('./src/components/ramassage/FormRamassage.vue')['default']

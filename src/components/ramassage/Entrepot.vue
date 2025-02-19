@@ -128,28 +128,7 @@ const actions = computed(() => {
 </script>
 
 <template>
-  <div
-    v-if="!formActions"
-    class="text-center"
-  >
-    <VBtn 
-      v-for="action,index in actions"
-      :key="index"
-      :color="action.color"
-      class="ma-1"
-      :loading="loadingAction==action.statut"
-      @click="showFormAction(action.statut)"
-    >
-      {{ action.text }}
-    </VBtn>
-    <div v-if="actions.length == 0">
-      Aucune action requise
-    </div>
-  </div>
-
-  <div v-else>
-    <Entrepot v-if=" actionObject.statut== 'ENTREPOT'" />
-    <VForm v-else
+    <VForm
       ref="refForm"
       class="mt-3"
     >
@@ -227,7 +206,6 @@ const actions = computed(() => {
         </VCol>
       </VRow>
     </VForm>
-  </div>
 </template>
 
 
