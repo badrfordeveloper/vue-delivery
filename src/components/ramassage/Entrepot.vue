@@ -1,73 +1,66 @@
 <script setup>
-import { can } from '@layouts/plugins/casl'
 
 const props = defineProps({
-  currentStatut: {
-    type: String,
-    required: true,
-  },
-  id: {
-    type: Number,
+  item: {
+    type: Object,
     required: true,
   },
 })
 
-const statut = ref("")
-const formActions = ref(false)
-const refForm = ref()
-
-const actionObject = ref({
-  id: null,
-  statut: "",
-  nombre_colis_ramasseur: "",
-  commentaire: "",
-  date: "",
-  file: "",
-})
-
+const itemData = ref({})
+const scanString = ref("")
 
 watch(
-  () => props.currentStatut, 
-  newVal => {  statut.value =newVal }, { immediate: true }, // Trigger the watcher immediately
+  () => props.item, 
+  newVal => {  itemData.value = newVal }, { immediate: true }, // Trigger the watcher immediately
 )
 
-const loadingAction = ref("")
 
-const showFormAction = action =>{
-  formActions.value = true
-  actionObject.value.statut = action
-}
+const refForm = ref()
 
-const validateSendAction = async () => {
+
+const loadingEntrepot = ref(false)
+const alertSuccess = ref([])
+const alertError = ref([])
+const isAlertErrorsVisible = ref(false)
+const isAlertSuccessVisible = ref(false)
+
+const validateSendEntrepot= async () => {
   const { valid } = await refForm.value.validate()
   if (valid) {
-    await updateAction(actionObject.value.statut)
+    await updateEntrepot()
   }
 }
 
-const updateAction = async action => {
-  actionObject.value.statut = action
-  actionObject.value.id = props.id
-
-  loadingAction.value = action
+const updateEntrepot = async  => {
+  loadingEntrepot.value = true
+  isAlertErrorsVisible.value = false
+  isAlertErrorsVisible.value = false
   $api({
     method: "POST",
-    url: "/api/updateStatutRamassage",
-    data: actionObject.value,
+    url: "/api/scannerEntrepot",
+    data: {
+      ramassage_id : itemData.value.id,
+      commonColis : commonColis.value,
+      duplicatedColis : duplicatedColis.value,
+      externeColis : externeColis.value,
+      missingColis : missingColis.value,
+    },
   })
     .then(async response => {
       if (response.status === 200) {
+        let data = response.data;
+        console.log(data)
+        alertSuccess.value = data.success
+        alertError.value = data.errors
+        isAlertErrorsVisible.value = true
+        isAlertErrorsVisible.value = true
         toast.success(response.data)
-        if(action != 'COMMENTAIRE'){
-          statut.value = action
-        }
-        
-        formActions.value = false
       }
-      loadingAction.value = ""
+      loadingEntrepot.value = false
     })
     .catch(error => {
-      loadingAction.value = ""
+      loadingEntrepot.value = false
       if (error.response && error.response.status === 422) {
         toast.error(error.response.data.message)
       }else{
@@ -76,115 +69,102 @@ const updateAction = async action => {
     })
 }
 
-const isActionLivreur = can('livreur', 'action')
-const isActionGestionnaire = can('gestionnaire', 'action')
-
-const actions = computed(() => {
-  let result = []
-  result.push({
-    text: "Commentaire",
-    color: "secondary",
-    statut: "COMMENTAIRE",
-  })
-  if(isActionGestionnaire){
-    result.push({
-      ...statutInfos("ENTREPOT"),
-      statut: "ENTREPOT",
-  })
-  }
-  if(statut.value == "EN_ATTENTE"){
-    if(isActionLivreur){
-      result.push({
-        ...statutInfos("EN_COURS_RAMASSAGE"),
-        statut: "EN_COURS_RAMASSAGE",
-      })
-    }
-      
-  }
-  else if( statut.value == "EN_COURS_RAMASSAGE" || statut.value == "REPORTE"){
-    
-    if(isActionLivreur){
-      result.push({
-        statut: "RAMASSE",
-        ...statutInfos("RAMASSE"),
-      })
-      result.push({
-        statut: "REPORTE",
-        ...statutInfos("REPORTE"),
-      })
-    }
-
-    if(isActionGestionnaire){
-      result.push({
-        statut: "ANNULE",
-        ...statutInfos("ANNULE"),
-      })
-    }
-
-  }
-  
-  return result
+const colis = computed(() => {
+  return itemData.value.colis.map(item => item.code);
 })
+
+const scannedColis = computed(() => {
+  if (!scanString.value) return [];
+  return scanString.value.split('\n').map(line => line.trim()).filter(line => line.length > 0);;
+});
+
+const duplicatedColis = computed(() => {
+  // array is scannedColis
+  return scannedColis.value.filter((myColis, index, array) => array.indexOf(myColis) !== index);
+});
+
+const externeColis = computed(() => {
+  const colisSet = new Set(colis.value);
+  return scannedColis.value.filter(item => !colisSet.has(item));
+});
+const missingColis = computed(() => {
+  const scannedColisSet = new Set(scannedColis.value);
+  return colis.value.filter(item => !scannedColisSet.has(item));
+});
+const commonColis = computed(() => {
+  // new Set is removing duplicated items
+  const colisSet = new Set(colis.value);
+  const scannedSet = new Set(scannedColis.value);
+  return [...colisSet].filter(item => scannedSet.has(item));
+});
 </script>
 
 <template>
+
+    <VAlert v-model="isAlertSuccessVisible" color="success" class="ma-1" v-for="alert,index in alertSuccess" :key="index" >
+     {{alert}}
+    </VAlert>
+
+    <VAlert  v-model="isAlertErrorsVisible" color="error" class="ma-1" v-for="alert,index in alertError" :key="index" >
+     {{alert}}
+    </VAlert>
+
     <VForm
       ref="refForm"
       class="mt-3"
     >
-      <p class="text-center">
-        Statut à envoyer : {{ statutInfos(actionObject.statut).text }}
-      </p>
-      <div v-if=" actionObject.statut== 'RAMASSE'">
+      <div>
         <VRow class="d-flex align-center justify-center">
           <VCol
-            md="6"
             cols="12"
           >
-            <AppTextField
-              v-model="actionObject.nombre_colis_ramasseur"
+            <AppTextarea
+              v-model="scanString"
+              rows="5"
+              row-height="20"
+              label="Scanner"
               :rules="[requiredValidator]"
-              placeholder="Nombre de colis"
-              label="Nombre de colis"
-              type="number"
+              placeholder="Select pour scanner"
             />
           </VCol>
         </VRow>
       </div>
 
-      <div v-if=" actionObject.statut== 'REPORTE'">
-        <VRow class="d-flex align-center justify-center">
+      <VRow>
           <VCol
-            md="6"
-            cols="12"
+            cols="12" md="3"
           >
-            <AppDateTimePicker
-              v-model="actionObject.date"
-              :rules="[requiredValidator]"
-              label="Date & TIme"
-              placeholder="Select date and time"
-              :config="{ enableTime: true, dateFormat: 'Y-m-d H:i' }"
-            />
+            Colis de ramassage
+            <VList :items="colis" />
+            ccc
+            <VList :items="commonColis" />
           </VCol>
-        </VRow>
-      </div>
-      <div>
-        <VRow class="d-flex align-center justify-center">
+          <!-- <VCol
+            cols="12" md="3"
+          >
+            Scanned colis
+            <VList :items="scannedColis" />
+          </VCol> -->
           <VCol
-            md="6"
-            cols="12"
+            cols="12" md="3"
           >
-            <AppTextarea
-              v-model="actionObject.commentaire"
-              rows="2"
-              row-height="20"
-              label="Commentaire"
-              :rules="['COMMENTAIRE','REPORTE','ANNULE'].includes(actionObject.statut) ? [requiredValidator] : []"
-              placeholder="Commentaire"
-            />
+            Colis dupliqués
+            <VList :items="duplicatedColis" />
           </VCol>
-        </VRow>
-      </div>
+          <VCol
+            cols="12" md="3"
+          >
+            Colis externe
+            <VList :items="externeColis" height="200px" />
+          </VCol>
+          <VCol
+            cols="12" md="3"
+          >
+            Colis manquant
+            <VList :items="missingColis" />
+          </VCol>
+      </VRow>
+
       <VRow>
         <!-- 👉 Form Actions -->
         <VCol
@@ -198,8 +178,8 @@ const actions = computed(() => {
             retour 
           </VBtn>
           <VBtn
-            :loading="loadingAction==actionObject.statut"
-            @click="validateSendAction"
+            :loading="loadingEntrepot"
+            @click="validateSendEntrepot"
           >
             Envoyer 
           </VBtn>

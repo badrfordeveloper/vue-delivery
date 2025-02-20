@@ -6,12 +6,17 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  item: {
+    type: Object,
+    required: true,
+  },
   id: {
     type: Number,
     required: true,
   },
 })
 
+const itemData= ref({})
 const statut = ref("")
 const formActions = ref(false)
 const refForm = ref()
@@ -29,6 +34,11 @@ const actionObject = ref({
 watch(
   () => props.currentStatut, 
   newVal => {  statut.value =newVal }, { immediate: true }, // Trigger the watcher immediately
+)
+
+watch(
+  () => props.item, 
+  newVal => {  itemData.value = newVal }, { immediate: true }, // Trigger the watcher immediately
 )
 
 const loadingAction = ref("")
@@ -87,10 +97,12 @@ const actions = computed(() => {
     statut: "COMMENTAIRE",
   })
   if(isActionGestionnaire){
-    result.push({
-      ...statutInfos("ENTREPOT"),
-      statut: "ENTREPOT",
-  })
+    if(statut.value == "RAMASSE"){
+        result.push({
+          ...statutInfos("ENTREPOT"),
+          statut: "ENTREPOT",
+      })
+    }
   }
   if(statut.value == "EN_ATTENTE"){
     if(isActionLivreur){
@@ -148,7 +160,9 @@ const actions = computed(() => {
   </div>
 
   <div v-else>
-    <Entrepot v-if=" actionObject.statut== 'ENTREPOT'" />
+    <!-- Entrepot --> 
+    <Entrepot v-if="actionObject.statut== 'ENTREPOT'" :item = "itemData"/>
+
     <VForm v-else
       ref="refForm"
       class="mt-3"

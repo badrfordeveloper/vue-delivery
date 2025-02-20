@@ -223,8 +223,14 @@ const showItemDialog = object =>{
         @update:options="updateOptions"
       >
         <template #item.code="{ item }">
-          <VBtn
+    
+          <!-- <VBtn
             v-if="can('show','colis')"
+            variant="text"
+            @click="showItemDialog(item)"
+          > -->
+          <VBtn
+            v-if="false"
             variant="text"
             @click="showItemDialog(item)"
           >

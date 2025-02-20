@@ -41,6 +41,7 @@ const itemData = ref(structuredClone(toRaw(defaultItem)))
 
 const loadingItem = ref(false)
 
+
 const getItemData = async id => {
   loadingItem.value = true
   await $api("/api/ramassage/"+id)
@@ -119,6 +120,12 @@ const tabsData = [
 ]
 
 const showParams = ref(false)
+
+
+const colisHeaders = [
+  { title: 'code', key: 'code' },
+  { title: 'destination', key: 'destination' }
+]
 </script>
 
 <template>
@@ -126,15 +133,16 @@ const showParams = ref(false)
     :width="$vuetify.display.smAndDown ? 'auto' : 900"
     :model-value="props.isShowItem"
     @update:model-value="onReset"
+    scrollable
   >
     <!-- 👉 Dialog close btn -->
     <DialogCloseBtn @click="onReset" />
 
 
     <!-- 👉 Billing Address -->
-    <AppCardActions title="Details Ramassage"  :loading="loadingItem"  no-actions>
+    <AppCardActions title="Details Ramassage"   :loading="loadingItem"  no-actions>
      
-     
+     <VCard >
       <VCardText v-show="!showParams">
 
         <div class="text-end position-absolute right-0"  v-if="isActionGestionnaire">
@@ -308,6 +316,7 @@ const showParams = ref(false)
             <Actions
               :id="itemData.id"
               :current-statut="itemData.statut"
+              :item="itemData"
             />
           </VWindowItem>
 
@@ -315,6 +324,17 @@ const showParams = ref(false)
             <Histories :histories="itemData.histories" />
           </VWindowItem>
         </VWindow>
+
+
+        <VDivider  color="white" thickness="1" opacity="0.2" class="my-6"/>
+
+        <VDataTable
+          :headers="colisHeaders"
+          :items="itemData.colis"
+          :items-per-page="5"
+        />
+
+
       </VCardText>
       <VCardText v-show="showParams" v-if="isActionGestionnaire">
 
@@ -372,8 +392,16 @@ const showParams = ref(false)
       </VCardText>
 
 
+    </VCard>
     </AppCardActions>
   </VDialog>
 </template>
+<style lang="scss" scoped>
+
+.v-card{
+  overflow-y: auto;
+  max-height: 80vh;
+}
+</style>
 
 
