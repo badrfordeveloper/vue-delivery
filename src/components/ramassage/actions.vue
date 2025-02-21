@@ -30,6 +30,10 @@ const actionObject = ref({
   file: "",
 })
 
+const hideEntrepot=  () => {
+  formActions.value = false
+  isShowEntrepot.value = false
+}
 
 watch(
   () => props.currentStatut, 
@@ -42,10 +46,14 @@ watch(
 )
 
 const loadingAction = ref("")
+const isShowEntrepot = ref(false)
 
 const showFormAction = action =>{
   formActions.value = true
   actionObject.value.statut = action
+  if(action == 'ENTREPOT'){
+    isShowEntrepot.value = true
+  }
 }
 
 const validateSendAction = async () => {
@@ -98,9 +106,9 @@ const actions = computed(() => {
   })
   if(isActionGestionnaire){
     if(statut.value == "RAMASSE"){
-        result.push({
-          ...statutInfos("ENTREPOT"),
-          statut: "ENTREPOT",
+      result.push({
+        ...statutInfos("ENTREPOT"),
+        statut: "ENTREPOT",
       })
     }
   }
@@ -161,9 +169,16 @@ const actions = computed(() => {
 
   <div v-else>
     <!-- Entrepot --> 
-    <Entrepot v-if="actionObject.statut== 'ENTREPOT'" :item = "itemData"/>
+    <Entrepot
+      v-if="actionObject.statut == 'ENTREPOT' && isShowEntrepot"
+      v-model:is-show-entrepot="isShowEntrepot"
+      hide-entrepot
+      :item="itemData"
+      @hide-entrepot="hideEntrepot"
+    />
 
-    <VForm v-else
+    <VForm
+      v-else
       ref="refForm"
       class="mt-3"
     >

@@ -317,7 +317,7 @@ const onSubmit = async () => {
                 </VRadioGroup>
               </VCol>
               <VCol cols="12">
-                <AppTextField
+                <AppTextarea
                   v-model="itemData.commentaire_vendeur"
                   label="Commentaire"
                   placeholder="Commentaire"
