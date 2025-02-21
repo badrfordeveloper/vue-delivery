@@ -68,10 +68,8 @@ const updateEntrepot = async  => {
         alertSuccess.value = data.success
         alertError.value = data.errors
         colisErrone.value = data.colisError
-        console.log(data)
-
-        isAlertSuccessVisible.value = true
         isAlertErrorsVisible.value = true
+        isAlertSuccessVisible.value = alertError.value.length == 0
 
         //toast.success(response.data)
       }
@@ -105,8 +103,9 @@ const duplicatedColis = computed(() => {
 const externeColis = computed(() => {
   const colisSet = new Set(colis.value)
   let result = scannedColis.value.filter(item => !colisSet.has(item))
+  result = new Set(result)
   
-  return new Set(result)
+  return [...result]
 })
 
 const missingColis = computed(() => {
@@ -170,13 +169,33 @@ const commonColis = computed(() => {
         cols="12"
         md="3"
       >
-        Colis erroné
-        <VList :items="colisErrone" />
+        <p class="text-error">
+          Colis erroné
+        </p>
+        <VList
+          :items="colisErrone"
+          class="border border-error border-opacity-75"
+        />
         <!--
           -----
           <VList :items="commonColis" /> 
         -->
       </VCol>
+
+      <VCol
+        v-if="duplicatedColis.length > 0"
+        cols="12"
+        md="3"
+      >
+        <p class="text-error">
+          Colis dupliqués
+        </p>
+        <VList
+          :items="duplicatedColis"
+          class="border border-error border-opacity-75"
+        />
+      </VCol>
+
       <VCol
         cols="12"
         md="3"
@@ -194,13 +213,7 @@ const commonColis = computed(() => {
         <VList :items="scannedColis" />
         </VCol> 
       -->
-      <VCol
-        cols="12"
-        md="3"
-      >
-        Colis dupliqués
-        <VList :items="duplicatedColis" />
-      </VCol>
+     
       <VCol
         cols="12"
         md="3"
