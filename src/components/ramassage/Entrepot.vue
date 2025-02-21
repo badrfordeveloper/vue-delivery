@@ -104,8 +104,9 @@ const duplicatedColis = computed(() => {
 
 const externeColis = computed(() => {
   const colisSet = new Set(colis.value)
+  let result = scannedColis.value.filter(item => !colisSet.has(item))
   
-  return scannedColis.value.filter(item => !colisSet.has(item))
+  return new Set(result)
 })
 
 const missingColis = computed(() => {
