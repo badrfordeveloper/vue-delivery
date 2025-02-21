@@ -104,14 +104,7 @@ const actions = computed(() => {
     color: "secondary",
     statut: "COMMENTAIRE",
   })
-  if(isActionGestionnaire){
-    if(statut.value == "RAMASSE"){
-      result.push({
-        ...statutInfos("ENTREPOT"),
-        statut: "ENTREPOT",
-      })
-    }
-  }
+ 
   if(statut.value == "EN_ATTENTE"){
     if(isActionLivreur){
       result.push({
@@ -141,6 +134,12 @@ const actions = computed(() => {
       })
     }
 
+  }
+  else if(statut.value == "RAMASSE" && isActionGestionnaire ){
+    result.push({
+      ...statutInfos("ENTREPOT"),
+      statut: "ENTREPOT",
+    })
   }
   
   return result
