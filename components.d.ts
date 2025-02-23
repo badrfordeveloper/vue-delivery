@@ -7,7 +7,6 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
-    Actions: typeof import('./src/components/ramassage/actions.vue')['default']
     ActionsColis: typeof import('./src/components/colis/actionsColis.vue')['default']
     ActionsRamassage: typeof import('./src/components/ramassage/actionsRamassage.vue')['default']
     AddAuthenticatorAppDialog: typeof import('./src/components/dialogs/AddAuthenticatorAppDialog.vue')['default']
