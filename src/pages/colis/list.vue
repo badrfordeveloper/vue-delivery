@@ -223,14 +223,8 @@ const showItemDialog = object =>{
         @update:options="updateOptions"
       >
         <template #item.code="{ item }">
-    
-          <!-- <VBtn
-            v-if="can('show','colis')"
-            variant="text"
-            @click="showItemDialog(item)"
-          > -->
           <VBtn
-            v-if="false"
+            v-if="can('show','colis')"
             variant="text"
             @click="showItemDialog(item)"
           >
@@ -247,9 +241,9 @@ const showItemDialog = object =>{
           />
         </template>
         <template #item.actions="{ item }">
-          <div v-if=" item.statut == 'EN_ATTENTE' ">
+          <div>
             <IconBtn
-              v-if="can('update','colis')"
+              v-if="can('update','colis') && item.statut == 'EN_ATTENTE'"
               @click="router.push('/colis/'+item.id)"
             >
               <VIcon icon="tabler-edit" />
@@ -267,7 +261,7 @@ const showItemDialog = object =>{
                   </VListItem>
 
                   <VListItem 
-                    v-if="can('delete','colis')"
+                    v-if="can('delete','colis') && item.statut == 'EN_ATTENTE'"
                     value="delete"
                     prepend-icon="tabler-trash"
                     @click="dialogDelete(item)"

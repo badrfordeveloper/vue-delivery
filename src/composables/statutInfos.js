@@ -39,6 +39,36 @@ export const statutInfos = statut => {
       color: 'primary',
     }
   }
+  else if (statut === "EN_COURS_LIVRAISON"){
+    return {
+      text: 'En cours de livraison',
+      color: 'info',
+    }
+  } 
+  else if (statut === "LIVRE_PARTIELLEMENT"){
+    return {
+      text: 'livré partiellement',
+      color: 'info',
+    }
+  }  
+  else if (statut === "LIVRE"){
+    return {
+      text: 'Livré',
+      color: 'info',
+    }
+  } 
+  else if (statut === "PAS_REPONSE"){
+    return {
+      text: 'Pas de reponse',
+      color: 'error',
+    }
+  }  
+  else if (statut === "REFUSE"){
+    return {
+      text: 'Refuser',
+      color: 'error',
+    }
+  }
   
   return object
 }

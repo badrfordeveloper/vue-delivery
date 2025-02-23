@@ -24,16 +24,11 @@ const refForm = ref()
 const actionObject = ref({
   id: null,
   statut: "",
-  nombre_colis_ramasseur: "",
   commentaire: "",
   date: "",
   file: "",
 })
 
-const hideEntrepot=  () => {
-  formActions.value = false
-  isShowEntrepot.value = false
-}
 
 watch(
   () => props.currentStatut, 
@@ -46,14 +41,10 @@ watch(
 )
 
 const loadingAction = ref("")
-const isShowEntrepot = ref(false)
 
 const showFormAction = action =>{
   formActions.value = true
   actionObject.value.statut = action
-  if(action == 'ENTREPOT'){
-    isShowEntrepot.value = true
-  }
 }
 
 const validateSendAction = async () => {
@@ -68,10 +59,23 @@ const updateAction = async action => {
   actionObject.value.id = props.id
 
   loadingAction.value = action
+
+
+  const formData = new FormData()
+
+  formData.append('file', actionObject.value.file)
+  formData.append('id', actionObject.value.id)
+  formData.append('statut', actionObject.value.statut)
+  formData.append('commentaire', actionObject.value.commentaire)
+  formData.append('date', actionObject.value.date)
+
   $api({
     method: "POST",
-    url: "/api/updateStatutRamassage",
-    data: actionObject.value,
+    url: "/api/updateStatutColis",
+    data: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
   })
     .then(async response => {
       if (response.status === 200) {
@@ -104,44 +108,45 @@ const actions = computed(() => {
     color: "secondary",
     statut: "COMMENTAIRE",
   })
- 
-  if(statut.value == "EN_ATTENTE"){
-    if(isActionLivreur){
-      result.push({
-        ...statutInfos("EN_COURS_RAMASSAGE"),
-        statut: "EN_COURS_RAMASSAGE",
-      })
-    }
-      
-  }
-  else if( statut.value == "EN_COURS_RAMASSAGE" || statut.value == "REPORTE"){
-    
-    if(isActionLivreur){
-      result.push({
-        statut: "RAMASSE",
-        ...statutInfos("RAMASSE"),
-      })
-      result.push({
-        statut: "REPORTE",
-        ...statutInfos("REPORTE"),
-      })
-    }
 
-    if(isActionGestionnaire){
-      result.push({
-        statut: "ANNULE",
-        ...statutInfos("ANNULE"),
-      })
-    }
-
-  }
-  else if(statut.value == "RAMASSE" && isActionGestionnaire ){
+  if(["ENTREPOT", "REPORTE"].includes(statut.value) && isActionLivreur){
     result.push({
-      ...statutInfos("ENTREPOT"),
-      statut: "ENTREPOT",
+      ...statutInfos("EN_COURS_LIVRAISON"),
+      statut: "EN_COURS_LIVRAISON",
     })
   }
+
+  if(["EN_COURS_LIVRAISON", "LIVRE_PARTIELLEMENT"].includes(statut.value) && isActionLivreur){
+    result.push({
+      ...statutInfos("LIVRE"),
+      statut: "LIVRE",
+    })
+    result.push({
+      ...statutInfos("LIVRE_PARTIELLEMENT"),
+      statut: "LIVRE_PARTIELLEMENT",
+    })
+    result.push({
+      ...statutInfos("PAS_REPONSE"),
+      statut: "PAS_REPONSE",
+    })
+    result.push({
+      ...statutInfos("REPORTE"),
+      statut: "REPORTE",
+    })
+    result.push({
+      ...statutInfos("ANNULE"),
+      statut: "ANNULE",
+    })
+    result.push({
+      ...statutInfos("REFUSE"),
+      statut: "REFUSE",
+    })
+  }
+
   
+ 
+ 
+
   return result
 })
 </script>
@@ -167,35 +172,26 @@ const actions = computed(() => {
   </div>
 
   <div v-else>
-    <!-- Entrepot --> 
-    <Entrepot
-      v-if="actionObject.statut == 'ENTREPOT' && isShowEntrepot"
-      v-model:is-show-entrepot="isShowEntrepot"
-      hide-entrepot
-      :item="itemData"
-      @hide-entrepot="hideEntrepot"
-    />
-
     <VForm
-      v-else
+
       ref="refForm"
       class="mt-3"
     >
       <p class="text-center">
         Statut à envoyer : {{ statutInfos(actionObject.statut).text }}
       </p>
-      <div v-if=" actionObject.statut== 'RAMASSE'">
+
+      <div v-if=" ['LIVRE_PARTIELLEMENT','PAS_REPONSE','REPORTE','REFUSE','ANNULE'].includes(actionObject.statut) ">
         <VRow class="d-flex align-center justify-center">
           <VCol
             md="6"
             cols="12"
           >
-            <AppTextField
-              v-model="actionObject.nombre_colis_ramasseur"
+            <VFileInput
+              v-model="actionObject.file"
               :rules="[requiredValidator]"
-              placeholder="Nombre de colis"
-              label="Nombre de colis"
-              type="number"
+              accept="image/*"
+              label="File input"
             />
           </VCol>
         </VRow>
@@ -216,7 +212,8 @@ const actions = computed(() => {
             />
           </VCol>
         </VRow>
-      </div>
+      </div> 
+      
       <div>
         <VRow class="d-flex align-center justify-center">
           <VCol
@@ -228,7 +225,7 @@ const actions = computed(() => {
               rows="2"
               row-height="20"
               label="Commentaire"
-              :rules="['COMMENTAIRE','REPORTE','ANNULE'].includes(actionObject.statut) ? [requiredValidator] : []"
+              :rules="['COMMENTAIRE'].includes(actionObject.statut) ? [requiredValidator] : []"
               placeholder="Commentaire"
             />
           </VCol>

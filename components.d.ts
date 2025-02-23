@@ -8,6 +8,8 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     Actions: typeof import('./src/components/ramassage/actions.vue')['default']
+    ActionsColis: typeof import('./src/components/colis/actionsColis.vue')['default']
+    ActionsRamassage: typeof import('./src/components/ramassage/actionsRamassage.vue')['default']
     AddAuthenticatorAppDialog: typeof import('./src/components/dialogs/AddAuthenticatorAppDialog.vue')['default']
     AddEditAddressDialog: typeof import('./src/components/dialogs/AddEditAddressDialog.vue')['default']
     AddEditPermissionDialog: typeof import('./src/components/dialogs/AddEditPermissionDialog.vue')['default']
