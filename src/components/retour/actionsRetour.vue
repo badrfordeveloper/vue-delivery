@@ -26,11 +26,16 @@ const refForm = ref()
 const actionObject = ref({
   id: null,
   statut: "",
+  nombre_colis_ramasseur: "",
   commentaire: "",
   date: "",
   file: "",
 })
 
+const hideEntrepot=  () => {
+  formActions.value = false
+  isShowPreparer.value = false
+}
 
 watch(
   () => props.currentStatut, 
@@ -43,10 +48,14 @@ watch(
 )
 
 const loadingAction = ref("")
+const isShowPreparer = ref(false)
 
 const showFormAction = action =>{
   formActions.value = true
   actionObject.value.statut = action
+  if(action == 'PREPARER'){
+    isShowPreparer.value = true
+  }
 }
 
 const validateSendAction = async () => {
@@ -61,33 +70,18 @@ const updateAction = async action => {
   actionObject.value.id = props.id
 
   loadingAction.value = action
-
-
-  const formData = new FormData()
-
-  formData.append('file', actionObject.value.file)
-  formData.append('id', actionObject.value.id)
-  formData.append('statut', actionObject.value.statut)
-  formData.append('commentaire', actionObject.value.commentaire)
-  formData.append('date', actionObject.value.date)
-
   $api({
     method: "POST",
-    url: "/api/updateStatutColis",
-    data: formData,
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
+    url: "/api/updateStatutRamassage",
+    data: actionObject.value,
   })
     .then(async response => {
       if (response.status === 200) {
         toast.success(response.data)
-        
         if(action != 'COMMENTAIRE'){
           statut.value = action
         }
         formActions.value = false
-
         emit('getItemData')
       }
       loadingAction.value = ""
@@ -113,44 +107,57 @@ const actions = computed(() => {
     statut: "COMMENTAIRE",
   })
 
-  if(["ENTREPOT", "REPORTE","PAS_REPONSE"].includes(statut.value) && isActionLivreur){
+  if(statut.value == "REPORTE" && (isActionLivreur || isActionGestionnaire)  ){
     result.push({
-      ...statutInfos("EN_COURS_LIVRAISON"),
-      statut: "EN_COURS_LIVRAISON",
+      ...statutInfos("EN_COURS_RETOUR"),
+      statut: "EN_COURS_RETOUR",
     })
   }
-
-  if(["EN_COURS_LIVRAISON", "LIVRE_PARTIELLEMENT"].includes(statut.value) && isActionLivreur){
-    result.push({
-      ...statutInfos("LIVRE"),
-      statut: "LIVRE",
-    })
-    result.push({
-      ...statutInfos("LIVRE_PARTIELLEMENT"),
-      statut: "LIVRE_PARTIELLEMENT",
-    })
-    result.push({
-      ...statutInfos("PAS_REPONSE"),
-      statut: "PAS_REPONSE",
-    })
-    result.push({
-      ...statutInfos("REPORTE"),
-      statut: "REPORTE",
-    })
-    result.push({
-      ...statutInfos("ANNULE"),
-      statut: "ANNULE",
-    })
-    result.push({
-      ...statutInfos("REFUSE"),
-      statut: "REFUSE",
-    })
+ 
+  if(statut.value == "EN_ATTENTE"){
+    if(isActionLivreur){
+      result.push({
+        ...statutInfos("PREPARER"),
+        statut: "PREPARER",
+      })
+    }
+      
   }
+  else if( statut.value == "PREPARER" || statut.value == "REPORTE"){
+    
+    if(isActionLivreur){
+      result.push({
+        statut: "RAMASSE",
+        ...statutInfos("RAMASSE"),
+      })
+      result.push({
+        statut: "REPORTE",
+        ...statutInfos("REPORTE"),
+      })
+    }
 
+    if(isActionGestionnaire){
+      result.push({
+        statut: "ANNULE",
+        ...statutInfos("ANNULE"),
+      })
+    }
+
+  }
+  else if(statut.value == "RAMASSE" && isActionGestionnaire ){
+    result.push({
+      ...statutInfos("ENTREPOT"),
+      statut: "ENTREPOT",
+    })
+    if(itemData.value.colis.length  == 0){
+      result.push({
+        statut: "ANNULE",
+        ...statutInfos("ANNULE"),
+      })
+    }
+   
+  }
   
- 
- 
-
   return result
 })
 </script>
@@ -176,26 +183,36 @@ const actions = computed(() => {
   </div>
 
   <div v-else>
-    <VForm
+    <!-- Entrepot --> 
+    <Preparer
+      v-if="actionObject.statut == 'PREPARER' && isShowPreparer"
+      v-model:is-show-entrepot="isShowPreparer"
+      hide-entrepot
+      :item="itemData"
+      @hide-entrepot="hideEntrepot"
+      @get-item-data="emit('getItemData')"
+    />
 
+    <VForm
+      v-else
       ref="refForm"
       class="mt-3"
     >
       <p class="text-center">
         Statut à envoyer : {{ statutInfos(actionObject.statut).text }}
       </p>
-
-      <div v-if=" ['LIVRE_PARTIELLEMENT','PAS_REPONSE','REPORTE','REFUSE','ANNULE'].includes(actionObject.statut) ">
+      <div v-if=" actionObject.statut== 'RAMASSE'">
         <VRow class="d-flex align-center justify-center">
           <VCol
             md="6"
             cols="12"
           >
-            <VFileInput
-              v-model="actionObject.file"
+            <AppTextField
+              v-model="actionObject.nombre_colis_ramasseur"
               :rules="[requiredValidator]"
-              accept="image/*"
-              label="File input"
+              placeholder="Nombre de colis"
+              label="Nombre de colis"
+              type="number"
             />
           </VCol>
         </VRow>
@@ -216,8 +233,7 @@ const actions = computed(() => {
             />
           </VCol>
         </VRow>
-      </div> 
-      
+      </div>
       <div>
         <VRow class="d-flex align-center justify-center">
           <VCol
@@ -229,7 +245,7 @@ const actions = computed(() => {
               rows="2"
               row-height="20"
               label="Commentaire"
-              :rules="['COMMENTAIRE'].includes(actionObject.statut) ? [requiredValidator] : []"
+              :rules="['COMMENTAIRE','REPORTE','ANNULE'].includes(actionObject.statut) ? [requiredValidator] : []"
               placeholder="Commentaire"
             />
           </VCol>

@@ -20,37 +20,18 @@ const resolveIcon = statusMsg => {
   else if ( ["EN_COURS_RAMASSAGE", "RAMASSE", "ENTREPOT", "EN_COURS_LIVRAISON", "LIVRE", "LIVRE_PARTIELLEMENT" ].includes(statusMsg) ){
     return {
       "icon": "tabler-circle-check",
-      "icon-color": "info",
+      
     }
   }
-  else if ( ["REPORTE", "ANNULE" ].includes(statusMsg) ){
+  else if ( ["REPORTE", "ANNULE","PAS_REPONSE",  "REFUSE"].includes(statusMsg) ){
     return {
       "icon": "tabler-circle-check",
-      "icon-color": "error",
     }
   }
 
 }
 
-const resolveClass= statusMsg => {
-  if (statusMsg === "EN_ATTENTE"){
-    return {
-      "class": "text-secondary",
-    }
-  }
-  else if ( ["EN_COURS_RAMASSAGE", "RAMASSE", "ENTREPOT", "EN_COURS_LIVRAISON", "LIVRE_PARTIELLEMENT"].includes(statusMsg) ){
-    return {
-      "class": "text-info",
-    }
-  }
-  else if ( ["REPORTE", "ANNULE", "REFUSE", "PAS_REPONSE" ].includes(statusMsg) ){
-    return {
-      "class": "text-error",
-    }
-  }
 
-    
-}
 
 const resolveDate= oldDate => {
   const newDate = parseISO(oldDate) // Parse the ISO string
@@ -77,26 +58,27 @@ const showImage = src => {
     class="v-timeline--variant-outlined"
   >
     <VTimelineItem
-      v-for="hisotry in props.histories"
-      :key="hisotry.id" 
-      v-bind="resolveIcon(hisotry.statut)"
+      v-for="history in props.histories"
+      :key="history.id" 
+      v-bind="resolveIcon(history.statut)"
+      :icon-color="statutInfos(history.statut).color"
+      icon = "tabler-circle-check"
       dot-color="rgba(var(--v-theme-surface))"
       size="20"
     >
       <div
-        class="text-body-2 text-uppercase "
-        v-bind="resolveClass(hisotry.statut)"
+        :class="'text-body-2 text-uppercase' + ' text-'+statutInfos(history.statut).color"
       >
-        {{ statutInfos(hisotry.statut).text }}  <span class="creator-name text-secondary"> par {{ hisotry.creator_name }} </span>
+        {{ statutInfos(history.statut).text }}  <span class="creator-name text-secondary"> par {{ history.creator_name }} </span>
       </div>
       <p
-        v-if="hisotry.commentaire"
+        v-if="history.commentaire"
         class="mb-0"
       >
-        {{ hisotry.commentaire }}
+        {{ history.commentaire }}
       </p>
       <p
-        v-if="hisotry.file_path"
+        v-if="history.file_path"
         class="mb-0"
       >
         <VBtn
@@ -104,7 +86,7 @@ const showImage = src => {
           color="secondary"
           size="small"
           variant="tonal"
-          @click="showImage(hisotry.file_path)"
+          @click="showImage(history.file_path)"
         >
           <VIcon
             start
@@ -114,19 +96,19 @@ const showImage = src => {
         </VBtn>
       </p>
       <p
-        v-if="hisotry.nombre_colis_ramasseur"
+        v-if="history.nombre_colis_ramasseur"
         class="mb-0"
       >
-        Colis : {{ hisotry.nombre_colis_ramasseur }}
+        Colis : {{ history.nombre_colis_ramasseur }}
       </p>
       <p
-        v-if="hisotry.date"
+        v-if="history.date"
         class="mb-0"
       >
-        Reporté : {{ resolveDate(hisotry.date ) }}
+        Reporté : {{ resolveDate(history.date ) }}
       </p>
       <div class="app-timeline-title">
-        {{ resolveDate(hisotry.created_at) }}
+        {{ resolveDate(history.created_at) }}
       </div>
     </VTimelineItem>
   </VTimeline>

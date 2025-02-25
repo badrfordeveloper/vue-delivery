@@ -69,6 +69,42 @@ export const statutInfos = statut => {
       color: 'error',
     }
   }
+  else if (statut === "EN_ATTENTE_RETOUR"){
+    return {
+      text: 'En attente de retour',
+      color: 'error',
+    }
+  }
+  else if (statut === "RETOURNE_ENTREPOT"){
+    return {
+      text: 'Retournée à l\'entrepot',
+      color: 'info',
+    }
+  }
+  else if (statut === "RETOURNE_AU_VENDEUR"){
+    return {
+      text: 'Retourner au vendeur',
+      color: 'info',
+    }
+  }
+  else if (statut === "PREPARER"){
+    return {
+      text: 'Préparer',
+      color: 'info',
+    }
+  }
+  else if (statut === "EN_COURS_RETOUR"){
+    return {
+      text: 'En cours de livraison',
+      color: 'info',
+    }
+  }
+  else if (statut === "RETOURNER"){
+    return {
+      text: 'Retourner',
+      color: 'info',
+    }
+  }
   
   return object
 }

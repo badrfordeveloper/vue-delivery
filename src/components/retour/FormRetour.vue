@@ -30,7 +30,6 @@ let defaultItem = {
   tel_vendeur: '',
   tarif_id: '',
   adresse: '',
-  adresse: '',
   colis: [],
 }
 
@@ -50,10 +49,10 @@ const onSubmit = async () => {
 
   const { valid } = await refForm.value.validate()
   if (valid) {
-    let url = "/api/ramassage"
+    let url = "/api/retour"
 
     if (props.method == "PUT") {
-      url = "/api/ramassage/" + props.identity
+      url = "/api/retour/" + props.identity
     }
     loadingSubmit.value = true
     $api({
@@ -68,7 +67,7 @@ const onSubmit = async () => {
             refForm.value?.reset()
             itemData.value = structuredClone(toRaw(defaultItem))
           }else{
-            router.push({ name: 'ramassage-list' })
+            router.push({ name: 'retour-list' })
           }
         }
         loadingSubmit.value = false
@@ -133,10 +132,10 @@ const orderBy = ref()
 const {
   data: itemsData, error, statusCode, isFetching,
   execute: fetchItems,
-} = await useApi(createUrl('/api/colisForRamassage', {
+} = await useApi(createUrl('/api/colisCanRetour', {
   query: {
-    statut: "EN_ATTENTE",
-    ramassage_id: itemData.value.id,
+    statut_retour: "RETOURNE_ENTREPOT",
+    retour_id: itemData.value.id,
     page,
     itemsPerPage,
     sortBy,
@@ -147,14 +146,6 @@ const {
 
 const items = computed(() => itemsData.value.items)
 const totalItems = computed(() => itemsData.value.total)
-
-const resolveStatus = statusMsg => {
-  if (statusMsg === "EN_ATTENTE")
-    return {
-      text: 'En attente',
-      color: 'warning',
-    }
-}
 
 /* const handleRowClick = (event, { item }) => {
   const index = itemData.value.colis.findIndex((selectedItem, index) => selectedItem === item.id)
@@ -172,7 +163,7 @@ const resolveStatus = statusMsg => {
   <div class="d-flex flex-wrap justify-start justify-sm-space-between gap-y-4 gap-x-6 mb-6">
     <div class="d-flex flex-column justify-center">
       <h4 class="text-h4 font-weight-medium">
-        {{ props.method == "POST" ? "Ajouter Ramassage":"Modifier Ramassage" }} 
+        {{ props.method == "POST" ? "Ajouter Retour":"Modifier Retour" }} 
       </h4>
     </div>
   </div>
@@ -285,11 +276,19 @@ const resolveStatus = statusMsg => {
           <!--  @click:row="handleRowClick" -->
           <template #item.statut="{ item }">
             <VChip
-              v-bind="resolveStatus(item.statut)"
+            v-bind="statutInfos(item.statut)"
+            density="default"
+            label
+            size="small"
+          />
+          <span v-if="item.statut_retour"> -
+            <VChip
+              v-bind="statutInfos(item.statut_retour)"
               density="default"
               label
               size="small"
             />
+          </span>
           </template>
 
           <!-- pagination -->

@@ -44,7 +44,7 @@ const loadingItem = ref(false)
 
 const getItemData = async id => {
   loadingItem.value = true
-  await $api("/api/ramassage/"+id)
+  await $api("/api/retour/"+id)
     .then(async response => {
       if (response.status === 200) {
         itemData.value = response.data
@@ -80,11 +80,11 @@ const loadingUpdate = ref(false)
 const isActionGestionnaire = can('gestionnaire', 'action')
 const isActionLivreur = can('livreur', 'action')
 
-const parametrerRamassage = async  => {
+const parametrerRetour = async  => {
   loadingUpdate.value = true
   $api({
     method: "POST",
-    url: "/api/parametrerRamassage",
+    url: "/api/parametrerRetour",
     data: {
       id: itemData.value.id,
       ramasseur_id: itemData.value.ramasseur_id,
@@ -143,7 +143,7 @@ const colisHeaders = [
 
     <!-- 👉 Billing Address -->
     <AppCardActions
-      title="Details Ramassage"
+      title="Details Retour"
       :loading="loadingItem"
       no-actions
     >
@@ -210,7 +210,7 @@ const colisHeaders = [
                 <tr v-if="isActionLivreur">
                   <td>
                     <h6 class="text-h6 text-no-wrap mb-2">
-                      Frais de ramassage:
+                      Frais de retour:
                     </h6>
                   </td>
                   <td>
@@ -317,7 +317,7 @@ const colisHeaders = [
             class="mt-3"
           >
             <VWindowItem>
-              <ActionsRamassage
+              <ActionsRetour
                 :id="itemData.id"
                 :current-statut="itemData.statut"
                 :item="itemData"
@@ -369,9 +369,9 @@ const colisHeaders = [
               <AppTextField
                 v-model="itemData.frais_ramasseur"
                 :rules="[requiredValidator]"
-                label="Frais de ramassage"
+                label="Frais de retour"
                 type="number"
-                placeholder="Frais de ramassage"
+                placeholder="Frais de retour"
               />
             </VCol>
           </VRow>
@@ -390,7 +390,7 @@ const colisHeaders = [
               </VBtn>
               <VBtn
                 :loading="loadingUpdate"
-                @click="parametrerRamassage"
+                @click="parametrerRetour"
               >
                 Envoyer 
               </VBtn>

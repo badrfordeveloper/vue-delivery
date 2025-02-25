@@ -1,12 +1,10 @@
 <script setup>
-import PrintColis from '@/components/colis/printColis.vue'
-import ShowColis from '@/components/colis/showColis.vue'
 import { can } from '@layouts/plugins/casl'
 
 definePage({
   meta: {
     action: 'list',
-    subject: 'colis',
+    subject: 'retour',
   },
 })
 
@@ -27,18 +25,8 @@ const headers = [
     sortable: false,
   },
   {
-    title: 'Montant',
-    key: 'montant',
-    sortable: false,
-  }, 
-  {
-    title: 'Nom du client',
-    key: 'nom_client',
-    sortable: false,
-  },
-  {
-    title: 'Tel du client',
-    key: 'tel_client',
+    title: 'Nombre de colis',
+    key: 'nombre_colis',
     sortable: false,
   },
   {
@@ -55,15 +43,12 @@ const headers = [
 
 const searchCode = ref()
 const searchStatut = ref()
-const searchNameClient = ref()
-const searchTelClient = ref()
 
 const loadingDelete = ref(false)
 const isDeletingItem = ref(false)
 const deleteObject = ref()
 
-const isPrintColis = ref(false)
-const printObject = ref()
+
 
 // Data table options
 const itemsPerPage = ref(5)
@@ -71,15 +56,10 @@ const page = ref(1)
 const sortBy = ref()
 const orderBy = ref()
 
-const updateOptions = options => {
-  sortBy.value = options.sortBy[0]?.key
-  orderBy.value = options.sortBy[0]?.order
-}
 
-const dialogPrint = object =>{
-  isPrintColis.value=true
-  printObject.value = object
-}
+
+
+
 
 const dialogDelete = object =>{
   isDeletingItem.value=true
@@ -88,7 +68,7 @@ const dialogDelete = object =>{
 
 const deleteItem = async () => {
 
-  let url = "/api/colis/"+deleteObject.value.id
+  let url = "/api/retour/"+deleteObject.value.id
 
   loadingDelete.value = true
   $api({
@@ -107,15 +87,18 @@ const deleteItem = async () => {
     })
 }
 
+const updateOptions = options => {
+  sortBy.value = options.sortBy[0]?.key
+  orderBy.value = options.sortBy[0]?.order
+}
+
 const {
   data: itemsData, error, statusCode, isFetching,
   execute: fetchItems,
-} = await useApi(createUrl('/api/colis', {
+} = await useApi(createUrl('/api/retour', {
   query: {
     code: searchCode,
     statut: searchStatut,
-    nom_client: searchNameClient,
-    tel_client: searchTelClient,
     page,
     itemsPerPage,
     sortBy,
@@ -124,14 +107,17 @@ const {
 }),  
 )
 
-
 const router = useRouter()
 const items = computed(() => itemsData.value.items)
 const totalItems = computed(() => itemsData.value.total)
 
+
+
+
 const isShowItem = ref(false)
 const dialogKey = ref(0)
 const showId = ref(0)
+
 
 const showItemDialog = object =>{
   showId.value = object.id
@@ -166,24 +152,6 @@ const showItemDialog = object =>{
               placeholder="Code"
             />
           </VCol>
-          <VCol
-            cols="12"
-            sm="2"
-          >
-            <AppTextField
-              v-model="searchNameClient"
-              placeholder="Nom du client"
-            />
-          </VCol>
-          <VCol
-            cols="12"
-            sm="2"
-          >
-            <AppTextField
-              v-model="searchTelClient"
-              placeholder="Telephone du client"
-            />
-          </VCol>
         </VRow>
       </VCardText>
 
@@ -198,12 +166,12 @@ const showItemDialog = object =>{
           />
 
           <VBtn
-            v-if="can('create','colis')"
+            v-if="can('create','retour')"
             color="primary"
             prepend-icon="tabler-plus"
-            @click="router.push({name: 'colis-add'})"
+            @click="router.push({name: 'retour-add'})"
           >
-            Ajouter Colis
+            Ajouter Retour
           </VBtn>
         </div>
       </div>
@@ -224,7 +192,7 @@ const showItemDialog = object =>{
       >
         <template #item.code="{ item }">
           <VBtn
-            v-if="can('show','colis')"
+            v-if="can('show','retour')"
             variant="text"
             @click="showItemDialog(item)"
           >
@@ -239,49 +207,33 @@ const showItemDialog = object =>{
             label
             size="small"
           />
-          <span v-if="item.statut_retour"> -
-            <VChip
-              v-bind="statutInfos(item.statut_retour)"
-              density="default"
-              label
-              size="small"
-            />
-          </span>
-          
         </template>
+        <!-- Actions -->
         <template #item.actions="{ item }">
-          <div>
-            <IconBtn
-              v-if="can('update','colis') && item.statut == 'EN_ATTENTE'"
-              @click="router.push('/colis/'+item.id)"
-            >
-              <VIcon icon="tabler-edit" />
-            </IconBtn>
-            <IconBtn>
-              <VIcon icon="tabler-dots-vertical" />
-              <VMenu activator="parent">
-                <VList>
-                  <VListItem
-                    value="print"
-                    prepend-icon="tabler-text-scan-2"
-                    @click="dialogPrint(item)"
-                  >
-                    Print
-                  </VListItem>
-
-                  <VListItem 
-                    v-if="can('delete','colis') && item.statut == 'EN_ATTENTE'"
-                    value="delete"
-                    prepend-icon="tabler-trash"
-                    @click="dialogDelete(item)"
-                  >
-                    Delete
-                  </VListItem>
-                </VList>
-              </VMenu>
-            </IconBtn>
-          </div>
+          <IconBtn
+            v-if="item.statut == 'EN_ATTENTE' && can('update','retour')"
+            @click="router.push('/retour/'+item.id)"
+          >
+            <VIcon icon="tabler-edit" />
+          </IconBtn>
+          <IconBtn v-if=" item.statut == 'EN_ATTENTE' ">
+            <VIcon icon="tabler-dots-vertical" />
+            <VMenu activator="parent">
+              <VList>
+                <VListItem 
+                  v-if="can('delete','retour')"
+                  value="delete"
+                  prepend-icon="tabler-trash"
+                  @click="dialogDelete(item)"
+                >
+                  Delete
+                </VListItem>
+              </VList>
+            </VMenu>
+          </IconBtn>
         </template>
+
+
         <!-- pagination -->
         <template #bottom>
           <TablePagination
@@ -300,7 +252,7 @@ const showItemDialog = object =>{
         <!-- Dialog close btn -->
         <DialogCloseBtn @click="isDeletingItem = !isDeletingItem" />
         <!-- Dialog Content -->
-        <VCard :title="'Êtes-vous sûr de vouloir supprimer le colis '+deleteObject.code+' ?'">
+        <VCard :title="'Êtes-vous sûr de vouloir supprimer le retour '+deleteObject.code+' ?'">
           <VCardText class="d-flex justify-end gap-3 flex-wrap">
             <VBtn
               color="secondary"
@@ -319,13 +271,9 @@ const showItemDialog = object =>{
         </VCard>
       </VDialog>
     </VCard>
-    <PrintColis
-      v-if="isPrintColis"
-      v-model:is-print-colis="isPrintColis"
-      :item="printObject"
-    />
 
-    <ShowColis
+
+    <ShowRetour
       v-if="isShowItem"
       :id="showId"
       :key="dialogKey"

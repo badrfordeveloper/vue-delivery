@@ -53,9 +53,10 @@ const updateEntrepot = async  => {
   isAlertErrorsVisible.value = false
   $api({
     method: "POST",
-    url: "/api/scannerEntrepot",
+    url: "/api/scannerPreparer",
     data: {
-      ramassage_id: itemData.value.id,
+      retour_id: itemData.value.id,
+      scannedColis: scannedColis.value,
       commonColis: commonColis.value,
       duplicatedColis: duplicatedColis.value,
       externeColis: externeColis.value,
@@ -221,9 +222,16 @@ const commonColis = computed(() => {
       <VCol
         cols="12"
         md="3"
+         v-if="externeColis.length > 0"
       >
+
+      <p class="text-error">
         Colis externe
-        <VList :items="externeColis" />
+        </p>
+        <VList
+          :items="externeColis"
+          class="border border-error border-opacity-75"
+        />
       </VCol>
     </VRow>
 

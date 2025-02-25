@@ -1,30 +1,19 @@
 <script setup>
-const props = defineProps({
-  item: {
-    type: Object,
-    required: true,
-  },
-  isShowEntrepot: {
-    type: Boolean,
-    required: true,
-  },
+
+
+const itemData = ref({
+  colis:[]
 })
-
-
-
-const emit = defineEmits([
-  'hideEntrepot',
-  'getItemData',
-])
-
-const itemData = ref({})
 const scanString = ref("")
 
-watch(
-  () => props.item, 
-  newVal => {  itemData.value = newVal }, { immediate: true }, // Trigger the watcher immediately
-)
 
+
+definePage({
+  meta: {
+    action: 'scan',
+    subject: 'retour',
+  },
+})
 
 const refForm = ref()
 
@@ -43,9 +32,6 @@ const validateSendEntrepot= async () => {
   }
 }
 
-const hideEntrepot=  () => {
-  emit('hideEntrepot')
-}
 
 const updateEntrepot = async  => {
   loadingEntrepot.value = true
@@ -53,13 +39,9 @@ const updateEntrepot = async  => {
   isAlertErrorsVisible.value = false
   $api({
     method: "POST",
-    url: "/api/scannerEntrepot",
+    url: "/api/scannerRetourEntrepot",
     data: {
-      ramassage_id: itemData.value.id,
-      commonColis: commonColis.value,
-      duplicatedColis: duplicatedColis.value,
-      externeColis: externeColis.value,
-      missingColis: missingColis.value,
+      scannedColis: scannedColis.value,
     },
   })
     .then(async response => {
@@ -71,11 +53,6 @@ const updateEntrepot = async  => {
         colisErrone.value = data.colisError
         isAlertErrorsVisible.value = true
         isAlertSuccessVisible.value = alertError.value.length == 0
-        if(alertError.value.length == 0){
-          emit('getItemData')
-        }
-
-        //toast.success(response.data)
       }
       loadingEntrepot.value = false
     })
@@ -104,27 +81,8 @@ const duplicatedColis = computed(() => {
   return scannedColis.value.filter((myColis, index, array) => array.indexOf(myColis) !== index)
 })
 
-const externeColis = computed(() => {
-  const colisSet = new Set(colis.value)
-  let result = scannedColis.value.filter(item => !colisSet.has(item))
-  result = new Set(result)
-  
-  return [...result]
-})
 
-const missingColis = computed(() => {
-  const scannedColisSet = new Set(scannedColis.value)
-  
-  return colis.value.filter(item => !scannedColisSet.has(item))
-})
 
-const commonColis = computed(() => {
-  // new Set is removing duplicated items
-  const colisSet = new Set(colis.value)
-  const scannedSet = new Set(scannedColis.value)
-  
-  return [...colisSet].filter(item => scannedSet.has(item))
-})
 </script>
 
 <template>
@@ -200,31 +158,7 @@ const commonColis = computed(() => {
         />
       </VCol>
 
-      <VCol
-        cols="12"
-        md="3"
-      >
-        Colis manquant
-        <VList :items="missingColis" />
-      </VCol>
 
-      
-      <!--
-        <VCol
-        cols="12" md="3"
-        >
-        Scanned colis
-        <VList :items="scannedColis" />
-        </VCol> 
-      -->
-     
-      <VCol
-        cols="12"
-        md="3"
-      >
-        Colis externe
-        <VList :items="externeColis" />
-      </VCol>
     </VRow>
 
     <VRow>
@@ -233,12 +167,6 @@ const commonColis = computed(() => {
         cols="12"
         class="d-flex flex-wrap justify-center gap-4"
       >
-        <VBtn
-          color="secondary"
-          @click="hideEntrepot"
-        >
-          retour 
-        </VBtn>
         <VBtn
           :loading="loadingEntrepot"
           @click="validateSendEntrepot"

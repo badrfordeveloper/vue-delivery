@@ -110,6 +110,7 @@ const parametrerColis = async () => {
     .then(async response => {
       if (response.status === 200) {
         toast.success(response.data)
+        getItemData(itemData.value.id)
       }
       loadingUpdate.value = false
     })
@@ -214,7 +215,23 @@ const parametrerColis = async () => {
                         </p>
                       </td>
                     </tr>
-
+                    <tr>
+                  <td>
+                    <h6 class="text-h6 text-no-wrap mb-2">
+                      Statut:
+                    </h6>
+                  </td>
+                  <td>
+                    <p class="text-body-1 mb-2">
+                      <VChip
+                        v-bind="statutInfos(itemData.statut)"
+                        density="default"
+                        label
+                        size="small"
+                      />
+                    </p>
+                  </td>
+                </tr>
                     <tr>
                       <td>
                         <h6 class="text-h6 text-no-wrap mb-2">
@@ -378,6 +395,7 @@ const parametrerColis = async () => {
               <ActionsColis
                 :id="itemData.id"
                 :current-statut="itemData.statut"
+                @get-item-data="getItemData(itemData.id)"
               />
             </VWindowItem>
 

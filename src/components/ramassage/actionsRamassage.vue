@@ -15,7 +15,9 @@ const props = defineProps({
     required: true,
   },
 })
-
+const emit = defineEmits([
+  'getItemData',
+])
 const itemData= ref({})
 const statut = ref("")
 const formActions = ref(false)
@@ -79,8 +81,8 @@ const updateAction = async action => {
         if(action != 'COMMENTAIRE'){
           statut.value = action
         }
-        
         formActions.value = false
+        emit('getItemData')
       }
       loadingAction.value = ""
     })
@@ -188,6 +190,7 @@ const actions = computed(() => {
       hide-entrepot
       :item="itemData"
       @hide-entrepot="hideEntrepot"
+      @get-item-data="emit('getItemData')"
     />
 
     <VForm
