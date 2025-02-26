@@ -95,7 +95,7 @@ export const statutInfos = statut => {
   }
   else if (statut === "EN_COURS_RETOUR"){
     return {
-      text: 'En cours de livraison',
+      text: 'En cours de livraison ',
       color: 'info',
     }
   }

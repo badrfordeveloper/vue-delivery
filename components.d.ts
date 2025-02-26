@@ -72,7 +72,6 @@ declare module 'vue' {
     ShowColis: typeof import('./src/components/colis/showColis.vue')['default']
     ShowRamassage: typeof import('./src/components/ramassage/ShowRamassage.vue')['default']
     ShowRetour: typeof import('./src/components/retour/ShowRetour.vue')['default']
-    'ShowRetour$': typeof import('./src/components/retour/ShowRetour$.vue')['default']
     TablePagination: typeof import('./src/@core/components/TablePagination.vue')['default']
     TheCustomizer: typeof import('./src/@core/components/TheCustomizer.vue')['default']
     ThemeSwitcher: typeof import('./src/@core/components/ThemeSwitcher.vue')['default']

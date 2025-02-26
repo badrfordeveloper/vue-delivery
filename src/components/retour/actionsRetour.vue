@@ -15,9 +15,11 @@ const props = defineProps({
     required: true,
   },
 })
+
 const emit = defineEmits([
   'getItemData',
 ])
+
 const itemData= ref({})
 const statut = ref("")
 const formActions = ref(false)
@@ -72,7 +74,7 @@ const updateAction = async action => {
   loadingAction.value = action
   $api({
     method: "POST",
-    url: "/api/updateStatutRamassage",
+    url: "/api/updateStatutRetour",
     data: actionObject.value,
   })
     .then(async response => {
@@ -107,12 +109,7 @@ const actions = computed(() => {
     statut: "COMMENTAIRE",
   })
 
-  if(statut.value == "REPORTE" && (isActionLivreur || isActionGestionnaire)  ){
-    result.push({
-      ...statutInfos("EN_COURS_RETOUR"),
-      statut: "EN_COURS_RETOUR",
-    })
-  }
+
  
   if(statut.value == "EN_ATTENTE"){
     if(isActionLivreur){
@@ -123,39 +120,21 @@ const actions = computed(() => {
     }
       
   }
-  else if( statut.value == "PREPARER" || statut.value == "REPORTE"){
-    
-    if(isActionLivreur){
-      result.push({
-        statut: "RAMASSE",
-        ...statutInfos("RAMASSE"),
-      })
-      result.push({
-        statut: "REPORTE",
-        ...statutInfos("REPORTE"),
-      })
-    }
-
-    if(isActionGestionnaire){
-      result.push({
-        statut: "ANNULE",
-        ...statutInfos("ANNULE"),
-      })
-    }
-
-  }
-  else if(statut.value == "RAMASSE" && isActionGestionnaire ){
+  else if( (statut.value == "PREPARER" || statut.value == "REPORTE" ) && (isActionLivreur || isActionGestionnaire)  ){
     result.push({
-      ...statutInfos("ENTREPOT"),
-      statut: "ENTREPOT",
+      statut: "EN_COURS_RETOUR",
+      ...statutInfos("EN_COURS_RETOUR"),
     })
-    if(itemData.value.colis.length  == 0){
-      result.push({
-        statut: "ANNULE",
-        ...statutInfos("ANNULE"),
-      })
-    }
-   
+  }
+  else if(statut.value == "EN_COURS_RETOUR" && isActionLivreur ){
+    result.push({
+      statut: "REPORTE",
+      ...statutInfos("REPORTE"),
+    })
+    result.push({
+      ...statutInfos("RETOURNER"),
+      statut: "RETOURNER",
+    })
   }
   
   return result
@@ -201,7 +180,7 @@ const actions = computed(() => {
       <p class="text-center">
         Statut à envoyer : {{ statutInfos(actionObject.statut).text }}
       </p>
-      <div v-if=" actionObject.statut== 'RAMASSE'">
+      <div v-if=" actionObject.statut== 'RETOURNER'">
         <VRow class="d-flex align-center justify-center">
           <VCol
             md="6"
