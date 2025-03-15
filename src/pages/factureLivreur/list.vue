@@ -26,15 +26,16 @@ const headers = [
     sortable: false,
   },
   {
+    title: 'Montant facturée',
+    key: 'montant_facture',
+    sortable: false,
+  },
+  {
     title: 'Frais Total',
     key: 'frais_total',
     sortable: false,
   },
-  {
-    title: 'actions',
-    key: 'actions',
-    sortable: false,
-  },
+
 ]
 
 const searchCode = ref()
