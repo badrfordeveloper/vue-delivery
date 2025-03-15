@@ -71,7 +71,7 @@ const updateAction = async action => {
   formData.append('id', actionObject.value.id)
   formData.append('statut', actionObject.value.statut)
   formData.append('commentaire', actionObject.value.commentaire)
-  formData.append('date', actionObject.value.date)
+  formData.append('montant', actionObject.value.montant)
 
   $api({
     method: "POST",

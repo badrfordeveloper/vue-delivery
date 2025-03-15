@@ -83,6 +83,7 @@ const isActionGestionnaire = can('gestionnaire', 'action')
 
 
 const currentTab = ref('Actions')
+const currentTabTABLE = ref('COLIS')
 
 const tabsData = [
   "tabler-adjustments-share",
@@ -450,7 +451,7 @@ const headersRetours = [
           <!-- TABLES COLIS RAMMASAGES RETOURS  -->
           <VCardText class="d-print-none">
             <VTabs
-              v-model="currentTab"
+              v-model="currentTabTABLE"
               grow
               class="disable-tab-transition"
               stacked
@@ -466,7 +467,7 @@ const headersRetours = [
               </VTab>
             </VTabs>
             <VWindow
-              v-model="currentTab"
+              v-model="currentTabTABLE"
               class="mt-3"
             >
               <VWindowItem>
