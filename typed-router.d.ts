@@ -23,6 +23,8 @@ declare module 'vue-router/auto-routes' {
     'colis-id': RouteRecordInfo<'colis-id', '/colis/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
     'colis-add': RouteRecordInfo<'colis-add', '/colis/add', Record<never, never>, Record<never, never>>,
     'colis-list': RouteRecordInfo<'colis-list', '/colis/list', Record<never, never>, Record<never, never>>,
+    'facture-livreur-id': RouteRecordInfo<'facture-livreur-id', '/factureLivreur/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
+    'facture-livreur-list': RouteRecordInfo<'facture-livreur-list', '/factureLivreur/list', Record<never, never>, Record<never, never>>,
     'login': RouteRecordInfo<'login', '/login', Record<never, never>, Record<never, never>>,
     'not-authorized': RouteRecordInfo<'not-authorized', '/not-authorized', Record<never, never>, Record<never, never>>,
     'ramassage-id': RouteRecordInfo<'ramassage-id', '/ramassage/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,

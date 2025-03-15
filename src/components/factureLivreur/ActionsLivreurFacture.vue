@@ -29,7 +29,7 @@ const actionObject = ref({
   id: null,
   statut: "",
   commentaire: "",
-  date: "",
+  montant: "",
   file: "",
 })
 
@@ -75,7 +75,7 @@ const updateAction = async action => {
 
   $api({
     method: "POST",
-    url: "/api/updateStatutColis",
+    url: "/api/updateStatutFactureLivreur",
     data: formData,
     headers: {
       'Content-Type': 'multipart/form-data',
@@ -115,43 +115,19 @@ const actions = computed(() => {
     statut: "COMMENTAIRE",
   })
 
-  if(["ENTREPOT", "REPORTE", "PAS_REPONSE"].includes(statut.value) && isActionLivreur){
+  if(["EN_ATTENTE"].includes(statut.value) && isActionGestionnaire){
     result.push({
-      ...statutInfos("EN_COURS_LIVRAISON"),
-      statut: "EN_COURS_LIVRAISON",
+      ...statutInfos("FACTURE"),
+      statut: "FACTURE",
+    })
+  } 
+  if(["FACTURE"].includes(statut.value) && isActionGestionnaire){
+    result.push({
+      ...statutInfos("VALIDE"),
+      statut: "VALIDE",
     })
   }
 
-  if(["EN_COURS_LIVRAISON"].includes(statut.value) && isActionLivreur){
-    result.push({
-      ...statutInfos("LIVRE"),
-      statut: "LIVRE",
-    })
-    result.push({
-      ...statutInfos("LIVRE_PARTIELLEMENT"),
-      statut: "LIVRE_PARTIELLEMENT",
-    })
-    result.push({
-      ...statutInfos("PAS_REPONSE"),
-      statut: "PAS_REPONSE",
-    })
-    result.push({
-      ...statutInfos("REPORTE"),
-      statut: "REPORTE",
-    })
-    result.push({
-      ...statutInfos("ANNULE"),
-      statut: "ANNULE",
-    })
-    result.push({
-      ...statutInfos("REFUSE"),
-      statut: "REFUSE",
-    })
-  }
-
-  
- 
- 
 
   return result
 })
@@ -187,7 +163,7 @@ const actions = computed(() => {
         Statut à envoyer : {{ statutInfos(actionObject.statut).text }}
       </p>
 
-      <div v-if=" ['LIVRE_PARTIELLEMENT','PAS_REPONSE','REPORTE','REFUSE','ANNULE'].includes(actionObject.statut) ">
+      <div v-if=" ['FACTURE'].includes(actionObject.statut) ">
         <VRow class="d-flex align-center justify-center">
           <VCol
             md="6"
@@ -197,29 +173,25 @@ const actions = computed(() => {
               v-model="actionObject.file"
               :rules="[requiredValidator]"
               accept="image/*"
-              label="File input"
+              label="Recu"
             />
           </VCol>
         </VRow>
-      </div>
-
-      <div v-if=" actionObject.statut== 'REPORTE'">
         <VRow class="d-flex align-center justify-center">
           <VCol
             md="6"
             cols="12"
           >
-            <AppDateTimePicker
-              v-model="actionObject.date"
+            <AppTextField
+              v-model="actionObject.montant"
               :rules="[requiredValidator]"
-              label="Date & TIme"
-              placeholder="Select date and time"
-              :config="{ enableTime: true, dateFormat: 'Y-m-d H:i' }"
+              placeholder="Montant"
+              label="Montant"
+              type="number"
             />
           </VCol>
         </VRow>
-      </div> 
-      
+      </div>
       <div>
         <VRow class="d-flex align-center justify-center">
           <VCol

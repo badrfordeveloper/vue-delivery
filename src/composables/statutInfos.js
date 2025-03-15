@@ -104,6 +104,16 @@ export const statutInfos = statut => {
       text: 'Retourner',
       color: 'info',
     }
+  }else if (statut === "FACTURE"){
+    return {
+      text: 'Facturée',
+      color: 'info',
+    }
+  }else if (statut === "VALIDE"){
+    return {
+      text: 'Valide',
+      color: 'info',
+    }
   }
   
   return object

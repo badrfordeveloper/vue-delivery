@@ -1,8 +1,9 @@
 
 <script setup>
-import { VNodeRenderer } from '@layouts/components/VNodeRenderer';
-import { themeConfig } from '@themeConfig';
-import QrcodeVue from 'qrcode.vue';
+import { VNodeRenderer } from '@layouts/components/VNodeRenderer'
+import { themeConfig } from '@themeConfig'
+import QrcodeVue from 'qrcode.vue'
+
 const props = defineProps({
   item: {
     type: Object,
@@ -13,38 +14,41 @@ const props = defineProps({
     required: true,
   },
 })
+
+const emit = defineEmits([
+  'update:isPrintColis',
+])
+
 definePage({
   meta: {
     layout: 'blank',
     public: true,
   },
 })
-const emit = defineEmits([
-  'update:isPrintColis'
-])
+
 /* nextTick(() => {
     window.print();
   }); */
 
-  setTimeout(() => {
-    window.print();
-  }, 500);
+setTimeout(() => {
+  window.print()
+}, 500)
 
-  window.onafterprint = function () {
-    emit('update:isPrintColis', false)
-  };
-
+window.onafterprint = function () {
+  emit('update:isPrintColis', false)
+}
 </script>
+
 <template>
   <div v-if="props.isPrintColis">
-  <!--   <button onclick="window.print()"  class="d-print-none">Print</button> -->
+    <!--   <button onclick="window.print()"  class="d-print-none">Print</button> -->
 
-<div id="print-area" >
-    <!-- Page 1 -->
-    <div class="print-content">
-      <VCard class="props.item-preview-wrapper">
+    <div id="print-area">
+      <!-- Page 1 -->
+      <div class="print-content">
+        <VCard class="props.item-preview-wrapper">
           <!-- SECTION Header -->
-           <div></div>
+          <div />
           <div class="props.item-header-preview d-flex flex-wrap justify-space-between flex-column flex-sm-row print-row bg-var-theme-background gap-6 rounded ">
             <!-- 👉 Left Content -->
             <div>
@@ -106,7 +110,8 @@ const emit = defineEmits([
                 Produits :  {{ props.item.produit }}
               </p>
               <p class="mb-0">
-                Montant :  {{ props.item.montant }}</p>
+                Montant :  {{ props.item.montant }}
+              </p>
             </Vcol>
           </VRow>
 
@@ -123,85 +128,91 @@ const emit = defineEmits([
           <VDivider class=" border-solid" />
 
           <p class="mb-0">
-            <span >
+            <span>
               Remarque:
             </span>
             <span>Entrepirse de livraison n'est pas responsable sur vos achat</span>
           </p>
-        
         </VCard>
+      </div>
     </div>
-</div>
-
   </div>
-
 </template>
+
 <style lang="scss" scoped>
- .print-content {
+.print-content {
   display: none;
- }
+}
+
 .v-table{
 
 }
 
 @media print {
-.little-margin{
-  margin: 0px;
-}
+  .little-margin {
+    margin: 0;
+  }
+
   th,
   td {
     height: 0 !important;
   }
-            @page {
-                size: 100mm 100mm; /* Each page is exactly 100mm */
-                margin: 0;
-            }
 
-            .v-divider {
+  @page {
+    margin: 0;
+    size: 100mm 100mm; /* Each page is exactly 100mm */
+  }
+
+  .v-divider {
     border: 1px solid black !important;
     opacity: 1;
   }
+
   p {
     color: #000;
     font-size: 14px;
   }
-            .v-card{
-              width: 100%;
-              height: 100%;
-              padding: 10px;
-            }
-            h6{
-              color: #000;
-            }
 
-            .destination{
-              color: #000;
-              font-weight: bold;
-              font-size : 16px;
-              text-transform: uppercase;
-            }
-            /* Ensure print content fits exactly into a page */
-            .print-content {
-              display: block;
-                width: 100mm;
-                height: 100mm; /* Fixes size */
-                overflow: hidden;
-                page-break-before: always; /* Ensures each section starts on a new page */
-            }
+  .v-card {
+    width: 100%;
+    height: 100%;
+    padding: 10px;
+  }
 
-            /* Hide everything except the print content */
-            body * {
-                visibility: hidden;
-            }
+  h6 {
+    color: #000;
+  }
 
-            #print-area, #print-area * {
-                visibility: visible;
-            }
+  .destination {
+    color: #000;
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
 
-            #print-area {
-                position: absolute;
-                left: 0;
-                top: 0;
-            }
-        }
+  /* Ensure print content fits exactly into a page */
+  .print-content {
+    display: block;
+    overflow: hidden;
+    width: 100mm;
+    height: 100mm; /* Fixes size */
+    page-break-before: always; /* Ensures each section starts on a new page */
+  }
+
+  /* Hide everything except the print content */
+  body * {
+    visibility: hidden;
+  }
+
+  #print-area,
+ #print-area * {
+    visibility: visible;
+  }
+
+  #print-area {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+}
 </style>

@@ -23,7 +23,7 @@ const resolveIcon = statusMsg => {
       
     }
   }
-  else if ( ["REPORTE", "ANNULE","PAS_REPONSE",  "REFUSE"].includes(statusMsg) ){
+  else if ( ["REPORTE", "ANNULE", "PAS_REPONSE",  "REFUSE"].includes(statusMsg) ){
     return {
       "icon": "tabler-circle-check",
     }
@@ -62,13 +62,11 @@ const showImage = src => {
       :key="history.id" 
       v-bind="resolveIcon(history.statut)"
       :icon-color="statutInfos(history.statut).color"
-      icon = "tabler-circle-check"
+      icon="tabler-circle-check"
       dot-color="rgba(var(--v-theme-surface))"
       size="20"
     >
-      <div
-        :class="'text-body-2 text-uppercase' + ' text-'+statutInfos(history.statut).color"
-      >
+      <div :class="'text-body-2 text-uppercase' + ' text-'+statutInfos(history.statut).color">
         {{ statutInfos(history.statut).text }}  <span class="creator-name text-secondary"> par {{ history.creator_name }} </span>
       </div>
       <p
@@ -100,6 +98,12 @@ const showImage = src => {
         class="mb-0"
       >
         Colis : {{ history.nombre_colis_ramasseur }}
+      </p>
+      <p
+        v-if="history.montant"
+        class="mb-0"
+      >
+        Montant : {{ history.montant }}
       </p>
       <p
         v-if="history.date"

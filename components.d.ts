@@ -8,6 +8,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     ActionsColis: typeof import('./src/components/colis/actionsColis.vue')['default']
+    ActionsLivreurFacture: typeof import('./src/components/factureLivreur/ActionsLivreurFacture.vue')['default']
     ActionsRamassage: typeof import('./src/components/ramassage/actionsRamassage.vue')['default']
     ActionsRetour: typeof import('./src/components/retour/actionsRetour.vue')['default']
     AddAuthenticatorAppDialog: typeof import('./src/components/dialogs/AddAuthenticatorAppDialog.vue')['default']
@@ -70,6 +71,7 @@ declare module 'vue' {
     ShareProjectDialog: typeof import('./src/components/dialogs/ShareProjectDialog.vue')['default']
     Shortcuts: typeof import('./src/@core/components/Shortcuts.vue')['default']
     ShowColis: typeof import('./src/components/colis/showColis.vue')['default']
+    ShowFactureLV: typeof import('./src/components/factureLivreur/showFactureLV.vue')['default']
     ShowRamassage: typeof import('./src/components/ramassage/ShowRamassage.vue')['default']
     ShowRetour: typeof import('./src/components/retour/ShowRetour.vue')['default']
     TablePagination: typeof import('./src/@core/components/TablePagination.vue')['default']
