@@ -71,7 +71,6 @@ declare module 'vue' {
     ShareProjectDialog: typeof import('./src/components/dialogs/ShareProjectDialog.vue')['default']
     Shortcuts: typeof import('./src/@core/components/Shortcuts.vue')['default']
     ShowColis: typeof import('./src/components/colis/showColis.vue')['default']
-    ShowFactureLV: typeof import('./src/components/factureLivreur/showFactureLV.vue')['default']
     ShowRamassage: typeof import('./src/components/ramassage/ShowRamassage.vue')['default']
     ShowRetour: typeof import('./src/components/retour/ShowRetour.vue')['default']
     TablePagination: typeof import('./src/@core/components/TablePagination.vue')['default']

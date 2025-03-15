@@ -1,0 +1,1 @@
+.row-print{width:100%}@media print{.row-print{display:block}.col-print{max-width:100%}.v-col-12{padding:6px}@page{margin:0;size:a4}body *{visibility:hidden}.print-content{display:block;overflow:hidden;width:100mm;height:100mm;page-break-before:always}.print-area *{visibility:visible}.layout-page-content,.v-card-item{padding:0}.v-card-content .v-card-item{padding:24px}}
