@@ -473,7 +473,7 @@ const headersRetours = [
               <VWindowItem>
                 <VDataTable
                   :headers="headersColis"
-                  :items="itemData.colis"
+                  :items="itemData.colis_livreur"
                   :items-per-page="10"
                 >
                   <template #item.statut="{ item }">
@@ -492,13 +492,21 @@ const headersRetours = [
                       />
                     </span>
                   </template>
+                  <template #item.frais_livreur="{ item }">
+                    <span v-if="item.statut == 'REFUSE'">
+                      {{ item.frais_livreur /2 }}
+                    </span>
+                    <span v-else>
+                      {{ item.frais_livreur }}
+                    </span>
+                  </template>
                 </VDataTable>
               </VWindowItem>
 
               <VWindowItem>
                 <VDataTable
                   :headers="headersRamassages"
-                  :items="itemData.ramassages"
+                  :items="itemData.ramassages_livreur"
                   :items-per-page="10"
                 >
                   <template #item.statut="{ item }">
@@ -514,7 +522,7 @@ const headersRetours = [
               <VWindowItem>
                 <VDataTable
                   :headers="headersRetours"
-                  :items="itemData.retours"
+                  :items="itemData.retours_livreur"
                   :items-per-page="10"
                 >
                   <template #item.statut="{ item }">
