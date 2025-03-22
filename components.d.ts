@@ -11,6 +11,7 @@ declare module 'vue' {
     ActionsLivreurFacture: typeof import('./src/components/factureLivreur/ActionsLivreurFacture.vue')['default']
     ActionsRamassage: typeof import('./src/components/ramassage/actionsRamassage.vue')['default']
     ActionsRetour: typeof import('./src/components/retour/actionsRetour.vue')['default']
+    ActionsVendeurFacture: typeof import('./src/components/factureVendeur/ActionsVendeurFacture.vue')['default']
     AddAuthenticatorAppDialog: typeof import('./src/components/dialogs/AddAuthenticatorAppDialog.vue')['default']
     AddEditAddressDialog: typeof import('./src/components/dialogs/AddEditAddressDialog.vue')['default']
     AddEditPermissionDialog: typeof import('./src/components/dialogs/AddEditPermissionDialog.vue')['default']

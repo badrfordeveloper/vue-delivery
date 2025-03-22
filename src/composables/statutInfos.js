@@ -115,6 +115,18 @@ export const statutInfos = statut => {
       color: 'info',
     }
   }
+  else if (statut === "EN_COURS"){
+    return {
+      text: 'En cours',
+      color: 'info',
+    }
+  }
+  else if (statut === "PAYE"){
+    return {
+      text: 'Payée',
+      color: 'info',
+    }
+  }
   
   return object
 }

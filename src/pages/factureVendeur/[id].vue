@@ -19,7 +19,7 @@ const emit = defineEmits([
 definePage({
   meta: {
     action: 'show',
-    subject: 'factureLivreur',
+    subject: 'factureVendeur',
   },
 })
 
@@ -31,18 +31,18 @@ let defaultItem = {
   tarif_id: '',
   commentaire_vendeur: '',
   code_ramassage: '',
-  frais_livreur: '',
+  frais_vendeur: '',
   adresse: '',
-  livreur: '',
-  livreur_id: '',
-  tel_livreur: '',
+  vendeur: '',
+  vendeur_id: '',
+  tel_vendeur: '',
   statut: '',
   vendeur: '',
   created_at: '',
   colisHistories: [],
 }
 
-const livreurs = await $api('/api/ramasseurs').then(response => response.data)
+const vendeurs = await $api('/api/ramasseurs').then(response => response.data)
 
 const itemData = ref(structuredClone(toRaw(defaultItem)))
 
@@ -50,7 +50,7 @@ const loadingItem = ref(false)
 
 const getItemData = async () => {
   loadingItem.value = true
-  await $api("/api/factureLivreur/"+route.params.id)
+  await $api("/api/factureVendeur/"+route.params.id)
     .then(async response => {
       if (response.status === 200) {
         itemData.value = response.data
@@ -104,39 +104,12 @@ const printFacture= () => {
 
 const loadingUpdate = ref(false)
 
-const parametrerColis = async () => {
-  loadingUpdate.value = true
-  await $api({
-    method: "POST",
-    url: "/api/parametrerColis",
-    data: {
-      id: itemData.value.id,
-      livreur_id: itemData.value.livreur_id,
-      frais_livreur: itemData.value.frais_livreur,
-    },
-  })
-    .then(async response => {
-      if (response.status === 200) {
-        toast.success(response.data)
-        getItemData(itemData.value.id)
-      }
-      loadingUpdate.value = false
-    })
-    .catch(error => {
-      loadingUpdate.value = false
-      if (error.response && error.response.status === 422) {
-        toast.error(error.response.data.message)
-      }else{
-        toast.error("something wrong")
-      }
-    })
-}
 
 
 const headersColis = [
   { title: 'Code', key: 'code', sortable: false  },
   { title: 'Statut', key: 'statut', sortable: false },
-  { title: 'frais', key: 'frais_livreur', sortable: false },
+  { title: 'frais', key: 'frais_livraison', sortable: false },
   { title: 'Montant', key: 'montant', sortable: false },
 ]
 
@@ -161,8 +134,7 @@ const headersRetours = [
   >
     <VRow class="row-print">
       <VCol
-        cols="12"
-        lg="10"
+        cols="10"
         class="col-print"
       >
         <VCard>
@@ -187,8 +159,8 @@ const headersRetours = [
                         lg="4"
                       >
                         <h6 class="text-h6 text-no-wrap mb-2">
-                          Livreur : <span class="text-body-1 mb-2">
-                            {{ itemData.livreur }} 
+                          Vendeur : <span class="text-body-1 mb-2">
+                            {{ itemData.vendeur }} 
                           </span>
                         </h6>
                       </VCol>
@@ -197,8 +169,8 @@ const headersRetours = [
                         lg="4"
                       >
                         <h6 class="text-h6 text-no-wrap mb-2">
-                          Tel Livreur  : <span class="text-body-1 mb-2">
-                            {{ itemData.tel_livreur }}
+                          Tel Vendeur  : <span class="text-body-1 mb-2">
+                            {{ itemData.tel_vendeur }}
                           </span>
                         </h6>
                       </VCol> 
@@ -437,7 +409,7 @@ const headersRetours = [
               class="mt-3"
             >
               <VWindowItem>
-                <ActionsLivreurFacture
+                <ActionsVendeurFacture
                   :id="itemData.id"
                   :current-statut="itemData.statut"
                   @get-item-data="getItemData(itemData.id)"
@@ -474,7 +446,7 @@ const headersRetours = [
               <VWindowItem>
                 <VDataTable
                   :headers="headersColis"
-                  :items="itemData.colis_livreur"
+                  :items="itemData.colis_vendeur"
                   :items-per-page="10"
                 >
                   <template #item.statut="{ item }">
@@ -493,12 +465,12 @@ const headersRetours = [
                       />
                     </span>
                   </template>
-                  <template #item.frais_livreur="{ item }">
-                    <span v-if="item.statut == 'REFUSE'">
-                      {{ item.frais_livreur /2 }}
+                  <template #item.frais_livraison="{ item }">
+                    <span v-if="['REFUSE','ANNULE'].includes(item.statut)">
+                      0
                     </span>
                     <span v-else>
-                      {{ item.frais_livreur }}
+                      {{ item.frais_livraison }}
                     </span>
                   </template>
                 </VDataTable>
@@ -507,7 +479,7 @@ const headersRetours = [
               <VWindowItem>
                 <VDataTable
                   :headers="headersRamassages"
-                  :items="itemData.ramassages_livreur"
+                  :items="itemData.ramassages_vendeur"
                   :items-per-page="10"
                 >
                   <template #item.statut="{ item }">
@@ -518,12 +490,15 @@ const headersRetours = [
                       size="small"
                     />
                   </template>
+                  <template #item.frais_ramasseur="">
+                    0
+                  </template>
                 </VDataTable>
               </VWindowItem> 
               <VWindowItem>
                 <VDataTable
                   :headers="headersRetours"
-                  :items="itemData.retours_livreur"
+                  :items="itemData.retours_vendeur"
                   :items-per-page="10"
                 >
                   <template #item.statut="{ item }">
@@ -533,6 +508,9 @@ const headersRetours = [
                       label
                       size="small"
                     />
+                  </template>
+                  <template #item.frais_ramasseur="">
+                    0
                   </template>
                 </VDataTable>
               </VWindowItem>
@@ -541,8 +519,7 @@ const headersRetours = [
         </VCard>
       </VCol>
       <VCol
-        cols="12"
-        lg="2"
+        cols="2"
         class="d-print-none"
       >
         <VCard>

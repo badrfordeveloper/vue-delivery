@@ -61,4 +61,11 @@ export default [
     action: 'list',
     subject: 'factureLivreur',
   },
+  {
+    title: 'Factures par vendeur',
+    to: { name: 'facture-vendeur-list' },
+    icon: { icon: 'tabler-smart-home' },
+    action: 'list',
+    subject: 'factureVendeur',
+  },
 ]
