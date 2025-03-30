@@ -21,6 +21,11 @@ const headers = [
     sortable: false,
   },
   {
+    title: 'Livreur',
+    key: 'livreur',
+    sortable: false,
+  },
+  {
     title: 'Montant encaisse',
     key: 'montant_encaisse',
     sortable: false,

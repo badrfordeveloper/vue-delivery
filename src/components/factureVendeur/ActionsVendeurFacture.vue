@@ -75,7 +75,7 @@ const updateAction = async action => {
 
   $api({
     method: "POST",
-    url: "/api/updateStatutFactureLivreur",
+    url: "/api/updateStatutFactureVendeur",
     data: formData,
     headers: {
       'Content-Type': 'multipart/form-data',
