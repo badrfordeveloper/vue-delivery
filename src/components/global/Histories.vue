@@ -39,6 +39,12 @@ const resolveDate= oldDate => {
   return format(newDate, 'yyyy-MM-d h:mm:ss a') // Format the date
 }
 
+const resolveDateReporte= oldDate => {
+  const newDate = parseISO(oldDate) // Parse the ISO string
+  
+  return format(newDate, 'yyyy-MM-d') // Format the date
+}
+
 const isDialogImgVisible = ref(false)
 const imgSrc = ref("")
 
@@ -109,7 +115,7 @@ const showImage = src => {
         v-if="history.date"
         class="mb-0"
       >
-        Reporté : {{ resolveDate(history.date ) }}
+        Reporté : {{ resolveDateReporte(history.date ) }}
       </p>
       <div class="app-timeline-title">
         {{ resolveDate(history.created_at) }}

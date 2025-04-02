@@ -47,7 +47,7 @@ export const statutInfos = statut => {
   } 
   else if (statut === "LIVRE_PARTIELLEMENT"){
     return {
-      text: 'livré partiellement',
+      text: 'livré partiel',
       color: 'info',
     }
   }  

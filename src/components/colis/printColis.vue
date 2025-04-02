@@ -119,7 +119,7 @@ window.onafterprint = function () {
           <VRow class="align-right little-margin">
             <VCol cols="12">
               <p class="mb-0">
-                essayage :  {{ props.item.essayage ? 'OUI' : 'NON' }} | ouvrir :  {{ props.item.ouvrir ? 'OUI' : 'NON' }} | echange :    {{ props.item.echange ? 'OUI' : 'NON' }}
+                Essayage :  {{ props.item.essayage ? 'OUI' : 'NON' }} | Ouvrir :  {{ props.item.ouvrir ? 'OUI' : 'NON' }} | Echange :    {{ props.item.echange ? 'OUI' : 'NON' }}
               </p>
             </Vcol>
           </VRow>
@@ -205,7 +205,7 @@ window.onafterprint = function () {
   }
 
   #print-area,
- #print-area * {
+  #print-area * {
     visibility: visible;
   }
 

@@ -145,6 +145,7 @@ const colisHeaders = [
     <AppCardActions
       title="Details Retour"
       :loading="loadingItem"
+      style="overflow: scroll;max-height: 90vh;"
       no-actions
     >
       <VCard>
@@ -402,11 +403,6 @@ const colisHeaders = [
   </VDialog>
 </template>
 
-<style lang="scss" scoped>
-.v-card {
-  max-height: 80vh;
-  overflow-y: auto;
-}
-</style>
+
 
 

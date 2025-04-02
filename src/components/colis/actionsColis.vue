@@ -158,24 +158,28 @@ const actions = computed(() => {
 </script>
 
 <template>
-  <div
+  <VRow
     v-if="!formActions"
-    class="text-center"
+    class="text-center v-row m-0"
   >
-    <VBtn 
+    <VCol
       v-for="action,index in actions"
       :key="index"
-      :color="action.color"
-      class="ma-1"
-      :loading="loadingAction==action.statut"
-      @click="showFormAction(action.statut)"
+      cols="6"
     >
-      {{ action.text }}
-    </VBtn>
+      <VBtn 
+        :color="action.color"
+        :loading="loadingAction==action.statut"
+        style="width: inherit;"
+        @click="showFormAction(action.statut)"
+      >
+        {{ action.text }}
+      </VBtn>
+    </VCol>
     <div v-if="actions.length == 0">
       Aucune action requise
     </div>
-  </div>
+  </VRow>
 
   <div v-else>
     <VForm
@@ -214,7 +218,7 @@ const actions = computed(() => {
               :rules="[requiredValidator]"
               label="Date & TIme"
               placeholder="Select date and time"
-              :config="{ enableTime: true, dateFormat: 'Y-m-d H:i' }"
+              :config="{ enableTime: false, dateFormat: 'Y-m-d' }"
             />
           </VCol>
         </VRow>

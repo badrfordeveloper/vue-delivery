@@ -128,6 +128,7 @@ const parametrerColis = async () => {
 <template>
   <VDialog
     :width="$vuetify.display.smAndDown ? 'auto' : 900"
+   
     :model-value="props.isShowItem"
     @update:model-value="onReset"
   >
@@ -138,6 +139,7 @@ const parametrerColis = async () => {
     <!-- 👉 Billing Address -->
     <AppCardActions
       title="Details Colis"
+      style="overflow: scroll;max-height: 90vh;"
       :loading="loadingItem"
       no-actions
     >
@@ -216,22 +218,22 @@ const parametrerColis = async () => {
                       </td>
                     </tr>
                     <tr>
-                  <td>
-                    <h6 class="text-h6 text-no-wrap mb-2">
-                      Statut:
-                    </h6>
-                  </td>
-                  <td>
-                    <p class="text-body-1 mb-2">
-                      <VChip
-                        v-bind="statutInfos(itemData.statut)"
-                        density="default"
-                        label
-                        size="small"
-                      />
-                    </p>
-                  </td>
-                </tr>
+                      <td>
+                        <h6 class="text-h6 text-no-wrap mb-2">
+                          Statut:
+                        </h6>
+                      </td>
+                      <td>
+                        <p class="text-body-1 mb-2">
+                          <VChip
+                            v-bind="statutInfos(itemData.statut)"
+                            density="default"
+                            label
+                            size="small"
+                          />
+                        </p>
+                      </td>
+                    </tr>
                     <tr>
                       <td>
                         <h6 class="text-h6 text-no-wrap mb-2">
@@ -259,7 +261,7 @@ const parametrerColis = async () => {
                     <tr>
                       <td>
                         <h6 class="text-h6 text-no-wrap mb-2">
-                          essayage : 
+                          Essayage : 
                         </h6>
                       </td>
                       <td>
@@ -271,7 +273,7 @@ const parametrerColis = async () => {
                     <tr>
                       <td>
                         <h6 class="text-h6 text-no-wrap mb-2">
-                          ouvrir : 
+                          Ouvrir : 
                         </h6>
                       </td>
                       <td>
@@ -283,7 +285,7 @@ const parametrerColis = async () => {
                     <tr>
                       <td>
                         <h6 class="text-h6 text-no-wrap mb-2">
-                          echange : 
+                          Echange : 
                         </h6>
                       </td>
                       <td>
@@ -465,11 +467,6 @@ const parametrerColis = async () => {
 <style scoped>
 .parms-btn {
   z-index: 2;
-}
-
-.v-card {
-  max-height: 80vh;
-  overflow-y: auto;
 }
 </style>
 

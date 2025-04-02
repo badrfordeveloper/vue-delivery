@@ -134,7 +134,21 @@ const headersRetours = [
   >
     <VRow class="row-print">
       <VCol
-        cols="10"
+        cols="12"
+        lg="2"
+        class="d-print-none text-center"
+      >
+        <VBtn
+          color="info"
+          width="150px"
+          @click="printFacture"
+        >
+          Print
+        </VBtn>
+      </VCol>
+      <VCol
+        cols="12"
+        lg="12"
         class="col-print"
       >
         <VCard>
@@ -441,6 +455,7 @@ const headersRetours = [
             </VTabs>
             <VWindow
               v-model="currentTabTABLE"
+              disabled
               class="mt-3"
             >
               <VWindowItem>
@@ -518,22 +533,6 @@ const headersRetours = [
           </VCardText>
         </VCard>
       </VCol>
-      <VCol
-        cols="2"
-        class="d-print-none"
-      >
-        <VCard>
-          <VCardText>
-            <VBtn
-              color="info"
-              class="w-100"
-              @click="printFacture"
-            >
-              Print
-            </VBtn>
-          </VCardText>
-        </VCard>
-      </VCol>
     </VRow>
   </appcardactions>
 </template>
@@ -541,6 +540,21 @@ const headersRetours = [
 <style>
 .row-print {
   width: 100%;
+}
+
+@media only screen and (max-width: 600px) {
+  .print-area {
+    padding: 0;
+  }
+
+  .col-print {
+    width: 100%;
+    padding: 0;
+  }
+
+  .row-print {
+    width: auto;
+  }
 }
 
 @media print {
