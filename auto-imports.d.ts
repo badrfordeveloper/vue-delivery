@@ -136,7 +136,12 @@ declare global {
   const shallowReactive: typeof import('vue')['shallowReactive']
   const shallowReadonly: typeof import('vue')['shallowReadonly']
   const shallowRef: typeof import('vue')['shallowRef']
+  const statusColis: typeof import('./src/utils/constants.js')['statusColis']
+  const statusFactureLivreur: typeof import('./src/utils/constants.js')['statusFactureLivreur']
+  const statusFactureVendeur: typeof import('./src/utils/constants.js')['statusFactureVendeur']
   const statusName: typeof import('./src/composables/statusName.js')['statusName']
+  const statusRamassage: typeof import('./src/utils/constants.js')['statusRamassage']
+  const statusRetour: typeof import('./src/utils/constants.js')['statusRetour']
   const statutInfos: typeof import('./src/composables/statutInfos.js')['statutInfos']
   const storeToRefs: typeof import('pinia')['storeToRefs']
   const syncRef: typeof import('@vueuse/core')['syncRef']
@@ -501,6 +506,11 @@ declare module 'vue' {
     readonly shallowReactive: UnwrapRef<typeof import('vue')['shallowReactive']>
     readonly shallowReadonly: UnwrapRef<typeof import('vue')['shallowReadonly']>
     readonly shallowRef: UnwrapRef<typeof import('vue')['shallowRef']>
+    readonly statusColis: UnwrapRef<typeof import('./src/utils/constants.js')['statusColis']>
+    readonly statusFactureLivreur: UnwrapRef<typeof import('./src/utils/constants.js')['statusFactureLivreur']>
+    readonly statusFactureVendeur: UnwrapRef<typeof import('./src/utils/constants.js')['statusFactureVendeur']>
+    readonly statusRamassage: UnwrapRef<typeof import('./src/utils/constants.js')['statusRamassage']>
+    readonly statusRetour: UnwrapRef<typeof import('./src/utils/constants.js')['statusRetour']>
     readonly statutInfos: UnwrapRef<typeof import('./src/composables/statutInfos.js')['statutInfos']>
     readonly storeToRefs: UnwrapRef<typeof import('pinia')['storeToRefs']>
     readonly syncRef: UnwrapRef<typeof import('@vueuse/core')['syncRef']>

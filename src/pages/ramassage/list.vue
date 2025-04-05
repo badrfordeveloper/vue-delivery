@@ -1,5 +1,6 @@
 <script setup>
 import PrintRamassage from '@/components/ramassage/printRamassage.vue'
+import { statusRamassage } from '@/utils/constants'
 import { can } from '@layouts/plugins/casl'
 
 definePage({
@@ -144,12 +145,25 @@ const showItemDialog = object =>{
         <VRow>
           <VCol
             cols="12"
-            sm="2"
+            sm="3"
           >
-            <AppTextField
+            <AppSelect
               v-model="searchStatut"
               placeholder="Statut"
-            />
+              :items="statusRamassage"
+              clearable
+              clear-icon="tabler-x"
+            >
+              <template #item="{ item, props }">
+                <VListItem
+                  v-bind="props"
+                  :title="statutInfos(item.value).text"
+                />
+              </template>
+              <template #selection="{ item }">
+                {{ statutInfos(item.value).text }}
+              </template>
+            </AppSelect>
           </VCol><VCol
             cols="12"
             sm="2"

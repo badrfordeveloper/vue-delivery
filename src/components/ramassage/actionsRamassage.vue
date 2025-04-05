@@ -157,7 +157,6 @@ const actions = computed(() => {
         ...statutInfos("ANNULE"),
       })
     }
-   
   }
   
   return result

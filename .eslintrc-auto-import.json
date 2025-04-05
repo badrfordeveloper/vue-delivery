@@ -366,6 +366,11 @@
     "PhoneValidator": true,
     "ContentWidth": true,
     "statusName": true,
-    "statutInfos": true
+    "statutInfos": true,
+    "statusColis": true,
+    "statusRamassage": true,
+    "statusRetour": true,
+    "statusFactureLivreur": true,
+    "statusFactureVendeur": true
   }
 }

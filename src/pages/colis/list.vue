@@ -1,7 +1,82 @@
 <script setup>
 import PrintColis from '@/components/colis/printColis.vue'
 import ShowColis from '@/components/colis/showColis.vue'
+import { statutInfos } from '@/composables/statutInfos'
+import { statusColis } from '@/utils/constants'
 import { can } from '@layouts/plugins/casl'
+import { addDays, endOfMonth, endOfWeek, startOfMonth, startOfWeek } from 'date-fns'
+
+const showCustomRange = ref(false)
+
+
+const dateOptions = ref([
+  {
+    title: 'Aujourd\'hui',
+    value: 'today',
+  },
+  {
+    title: 'Hier',
+    value: 'yesterday',
+  },  
+  {
+    title: 'La semaine dernière',
+    value: 'lastWeek',
+  },
+  {
+    title: 'Ce mois',
+    value: 'thisMonth',
+  },
+  {
+    title: 'Le mois précédent',
+    value: 'lastMonth',
+  },
+  {
+    title: 'Personnalisé',
+    value: 'custom',
+  },
+])
+
+const isActionGestionnaire = can('gestionnaire', 'action')
+const begin_date = ref()
+const end_date = ref()
+
+
+const selectedRange = ref('today')
+
+const onRangeChange = () => {
+  const today = new Date()
+
+  showCustomRange.value = selectedRange.value === 'custom'
+  switch (selectedRange.value) {
+  case 'today':
+    begin_date.value = today.toISOString().split('T')[0]
+    end_date.value = today.toISOString().split('T')[0]
+    break
+  case 'yesterday':
+    const yesterday = addDays(today, -1)
+
+    begin_date.value = yesterday.toISOString().split('T')[0]
+    end_date.value = yesterday.toISOString().split('T')[0]
+    break
+
+  case 'lastWeek':
+    begin_date.value = startOfWeek(addDays(today, -7)).toISOString().split('T')[0]
+    end_date.value = endOfWeek(addDays(today, -7)).toISOString().split('T')[0]
+    break
+  case 'thisMonth':
+    begin_date.value = startOfMonth(today).toISOString().split('T')[0]
+    end_date.value = endOfMonth(today).toISOString().split('T')[0]
+    break
+  case 'lastMonth':
+    const lastMonth = addDays(startOfMonth(today), -1)
+
+    begin_date.value = startOfMonth(lastMonth).toISOString().split('T')[0]
+    end_date.value = endOfMonth(lastMonth).toISOString().split('T')[0]
+    break
+  }
+}
+
+onRangeChange()
 
 definePage({
   meta: {
@@ -57,6 +132,8 @@ const searchCode = ref()
 const searchStatut = ref()
 const searchNameClient = ref()
 const searchTelClient = ref()
+const livreur_id = ref()
+const vendeur_id = ref()
 
 const loadingDelete = ref(false)
 const isDeletingItem = ref(false)
@@ -86,6 +163,9 @@ const dialogDelete = object =>{
   deleteObject.value = object
 }
 
+const livreurs = await $api('/api/ramasseurs').then(response => response.data)
+const vendeurs = await $api('/api/vendeurs').then(response => response.data)
+
 const deleteItem = async () => {
 
   let url = "/api/colis/"+deleteObject.value.id
@@ -112,6 +192,10 @@ const {
   execute: fetchItems,
 } = await useApi(createUrl('/api/colis', {
   query: {
+    livreur_id: livreur_id,
+    vendeur_id: vendeur_id,
+    begin_date: begin_date,
+    end_date: end_date,
     code: searchCode,
     statut: searchStatut,
     nom_client: searchNameClient,
@@ -150,14 +234,55 @@ const showItemDialog = object =>{
       <VCardText>
         <VRow>
           <VCol
+            v-if="isActionGestionnaire"
             cols="12"
-            sm="2"
+            sm="3"
           >
-            <AppTextField
+            <AppAutocomplete
+              v-model="vendeur_id"
+              placeholder="Vendeurs"
+              :items="vendeurs"
+              clearable
+              clear-icon="tabler-x"
+              autocomplete="no-autocompeletse"
+            />
+          </VCol>  
+          <VCol
+            v-if="isActionGestionnaire"
+            cols="12"
+            sm="3"
+          >
+            <AppAutocomplete
+              v-model="livreur_id"
+              placeholder="Livreurs"
+              :items="livreurs"
+              clearable
+              clear-icon="tabler-x"
+            />
+          </VCol>  
+          <VCol
+            cols="12"
+            sm="3"
+          >
+            <AppSelect
               v-model="searchStatut"
               placeholder="Statut"
-            />
-          </VCol><VCol
+              :items="statusColis"
+              clearable
+              clear-icon="tabler-x"
+            >
+              <template #item="{ item, props }">
+                <VListItem
+                  v-bind="props"
+                  :title="statutInfos(item.value).text"
+                />
+              </template>
+              <template #selection="{ item }">
+                {{ statutInfos(item.value).text }}
+              </template>
+            </AppSelect>
+          </VCol>
+          <VCol
             cols="12"
             sm="2"
           >
@@ -182,6 +307,46 @@ const showItemDialog = object =>{
             <AppTextField
               v-model="searchTelClient"
               placeholder="Telephone du client"
+            />
+          </VCol>
+        </VRow>
+        <VRow>
+          <VCol
+            cols="12"
+            sm="3"
+          >
+            <AppSelect
+              v-model="selectedRange"
+              placeholder="Plage de dates"
+              :items="dateOptions"
+              :label="begin_date +' - '+ end_date "
+              @update:model-value="onRangeChange"
+            />
+          </VCol>
+
+
+          <VCol
+            v-if="showCustomRange"
+           
+            cols="12"
+            sm="3"
+          >
+            <AppDateTimePicker
+              v-model="begin_date"
+              label="Début"
+              placeholder="date"
+            />
+          </VCol>
+          <VCol
+            v-if="showCustomRange"
+           
+            cols="12"
+            sm="3"
+          >
+            <AppDateTimePicker
+              v-model="end_date"
+              label="Fin"
+              placeholder="date"
             />
           </VCol>
         </VRow>
@@ -247,7 +412,6 @@ const showItemDialog = object =>{
               size="small"
             />
           </span>
-          
         </template>
         <template #item.actions="{ item }">
           <div>
