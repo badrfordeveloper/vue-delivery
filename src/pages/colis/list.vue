@@ -8,7 +8,6 @@ import { addDays, endOfMonth, endOfWeek, startOfMonth, startOfWeek } from 'date-
 
 const showCustomRange = ref(false)
 
-
 const dateOptions = ref([
   {
     title: 'Aujourd\'hui',
@@ -135,6 +134,9 @@ const searchTelClient = ref()
 const livreur_id = ref()
 const vendeur_id = ref()
 
+const livreurs = await $api('/api/ramasseurs').then(response => response.data)
+const vendeurs = await $api('/api/vendeurs').then(response => response.data)
+
 const loadingDelete = ref(false)
 const isDeletingItem = ref(false)
 const deleteObject = ref()
@@ -163,8 +165,7 @@ const dialogDelete = object =>{
   deleteObject.value = object
 }
 
-const livreurs = await $api('/api/ramasseurs').then(response => response.data)
-const vendeurs = await $api('/api/vendeurs').then(response => response.data)
+
 
 const deleteItem = async () => {
 
@@ -416,7 +417,7 @@ const showItemDialog = object =>{
         <template #item.actions="{ item }">
           <div>
             <IconBtn
-              v-if="can('update','colis') && item.statut == 'EN_ATTENTE'"
+              v-if=" can('update','colis') && (item.statut == 'EN_ATTENTE' || (item.statut == 'EN_COURS_LIVRAISON' && isActionGestionnaire))"
               @click="router.push('/colis/'+item.id)"
             >
               <VIcon icon="tabler-edit" />

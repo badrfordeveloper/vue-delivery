@@ -108,11 +108,16 @@ const actions = computed(() => {
     color: "secondary",
     statut: "COMMENTAIRE",
   })
-
+  if( isActionGestionnaire  ){
+    result.push({
+      ...statutInfos("ANNULE"),
+      statut: "ANNULE",
+    })
+  }
 
  
   if(statut.value == "EN_ATTENTE"){
-    if(isActionLivreur){
+    if(isActionGestionnaire){
       result.push({
         ...statutInfos("PREPARER"),
         statut: "PREPARER",

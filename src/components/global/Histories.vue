@@ -1,5 +1,6 @@
 <script setup>
 import { statutInfos } from '@/composables/statutInfos'
+import { can } from '@layouts/plugins/casl'
 import { format, parseISO } from 'date-fns'
 
 const props = defineProps({
@@ -10,26 +11,8 @@ const props = defineProps({
 })
 
 
-const resolveIcon = statusMsg => {
-  if (statusMsg === "EN_ATTENTE" || statusMsg === "COMMENTAIRE" ){
-    return {
-      "icon": "tabler-circle-check",
-      "icon-color": "secondary",
-    }
-  } 
-  else if ( ["EN_COURS_RAMASSAGE", "RAMASSE", "ENTREPOT", "EN_COURS_LIVRAISON", "LIVRE", "LIVRE_PARTIELLEMENT" ].includes(statusMsg) ){
-    return {
-      "icon": "tabler-circle-check",
-      
-    }
-  }
-  else if ( ["REPORTE", "ANNULE", "PAS_REPONSE",  "REFUSE"].includes(statusMsg) ){
-    return {
-      "icon": "tabler-circle-check",
-    }
-  }
 
-}
+
 
 
 
@@ -52,6 +35,10 @@ const showImage = src => {
   isDialogImgVisible.value = true
   imgSrc.value = src
 }
+
+const isActionVendeur = can('vendeur', 'action')
+const isActionGestionnaire = can('gestionnaire', 'action')
+const isActionAdmin = can('admin', 'action')
 </script>
 
 <template>
@@ -66,14 +53,18 @@ const showImage = src => {
     <VTimelineItem
       v-for="history in props.histories"
       :key="history.id" 
-      v-bind="resolveIcon(history.statut)"
       :icon-color="statutInfos(history.statut).color"
       icon="tabler-circle-check"
       dot-color="rgba(var(--v-theme-surface))"
       size="20"
     >
       <div :class="'text-body-2 text-uppercase' + ' text-'+statutInfos(history.statut).color">
-        {{ statutInfos(history.statut).text }}  <span class="creator-name text-secondary"> par {{ history.creator_name }} </span>
+        {{ statutInfos(history.statut).text }}  
+        <span v-if="isActionVendeur && (!isActionGestionnaire || !isActionAdmin) " />        
+        <span
+          v-else
+          class="creator-name text-secondary"
+        > par {{ history.creator_name }} </span>
       </div>
       <p
         v-if="history.commentaire"

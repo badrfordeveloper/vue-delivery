@@ -80,7 +80,8 @@ const onReset = () => {
 }
 
 const isActionGestionnaire = can('gestionnaire', 'action')
-
+const isActionLivreur = can('livreur', 'action')
+const isActionVendeur = can('vendeur', 'action')
 
 
 
@@ -188,12 +189,21 @@ const parametrerColis = async () => {
                         </h6>
                       </td>
                       <td>
-                        <p class="text-body-1 mb-2">
+                        <p
+                          v-if="isActionVendeur && !isActionGestionnaire"
+                          class="text-body-1 mb-2"
+                        >
+                          Livreur Drop
+                        </p>
+                        <p
+                          v-else
+                          class="text-body-1 mb-2"
+                        >
                           {{ itemData.livreur }} 
                         </p>
                       </td>
                     </tr>
-                    <tr>
+                    <tr v-if="isActionGestionnaire">
                       <td>
                         <h6 class="text-h6 text-no-wrap mb-2">
                           Tel Livreur : 

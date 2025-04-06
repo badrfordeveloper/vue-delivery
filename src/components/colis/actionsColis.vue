@@ -105,15 +105,30 @@ const updateAction = async action => {
 }
 
 const isActionLivreur = can('livreur', 'action')
+const isActionAdmin = can('admin', 'action')
 const isActionGestionnaire = can('gestionnaire', 'action')
 
 const actions = computed(() => {
   let result = []
+  if(isActionAdmin){
+    result.push({
+      ...statutInfos("EN_ATTENTE"),
+      statut: "EN_ATTENTE",
+    })
+    result.push({
+      ...statutInfos("ENTREPOT"),
+      statut: "ENTREPOT",
+    })
+  }
+
+
   result.push({
     text: "Commentaire",
     color: "secondary",
     statut: "COMMENTAIRE",
   })
+
+
 
   if(["ENTREPOT", "REPORTE", "PAS_REPONSE"].includes(statut.value) && isActionLivreur){
     result.push({

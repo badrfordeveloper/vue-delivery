@@ -30,11 +30,12 @@ const refForm = ref()
 const userData = ref({
   lastName: '',
   firstName: '',
+  cin: '',
   email: '',
   password: 'Badr123@',
   active: 0,
   phone: '',
-  store_name: '',
+  store: '',
   role: null,
   ville: '',
   address: '',
@@ -154,6 +155,18 @@ const isCurrentPasswordVisible = ref(false)
                   label="Prenom"
                 />
               </VCol>
+              <!-- 👉 CIN -->
+              <VCol
+                md="6"
+                cols="12"
+              >
+                <AppTextField
+                  v-model="userData.cin"
+                  :rules="[requiredValidator]"
+                  placeholder="N° CIN"
+                  label="N° CIN"
+                />
+              </VCol>
 
               <!-- roles -->
               <VCol
@@ -206,7 +219,8 @@ const isCurrentPasswordVisible = ref(false)
                 md="6"
               >
                 <AppTextField
-                  v-model="userData.store_name"
+                  v-model="userData.store"
+                  :rules="[requiredValidator]"
                   label="Nom de store"
                   placeholder="Nom de store"
                 />
