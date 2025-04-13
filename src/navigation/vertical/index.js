@@ -1,71 +1,41 @@
+
+
+import gestionColis from './navColis'
+import gestionFacturesLivreur from './navFactureLivreur'
+import gestionFacturesVendeur from './navFactureVendeur'
+import gestionRamasage from './navRamassage'
+import gestionRetour from './navRetour'
+import gestionUsers from './navUsers'
+
+
 export default [
   {
     title: 'Home',
     to: { name: 'root' },
     icon: { icon: 'tabler-smart-home' },
   },
+
+  ...gestionColis,
+  ...gestionRamasage,
+  ...gestionRetour,
+  ...gestionUsers,
+  ...gestionFacturesVendeur,
+  ...gestionFacturesLivreur,
+
+
   {
-    title: 'Roles',
+    title: 'Gestion roles',
     to: { name: 'role-list' },
     icon: { icon: 'tabler-smart-home' },
     action: 'list',
     subject: 'role',
   },
+
   {
-    title: 'Utilisateurs',
-    to: { name: 'user-list' },
-    icon: { icon: 'tabler-smart-home' },
-    action: 'list',
-    subject: 'user',
-  },
-  {
-    title: 'Tarifs des villes',
+    title: 'Liste des tarifs',
     to: { name: 'tarif-list' },
     icon: { icon: 'tabler-smart-home' },
     action: 'list',
     subject: 'tarif',
-  },
-  {
-    title: 'Gestion Colis',
-    to: { name: 'colis-list' },
-    icon: { icon: 'tabler-smart-home' },
-    action: 'list',
-    subject: 'colis',
-  },
-
-  {
-    title: 'Gestion Ramassage',
-    to: { name: 'ramassage-list' },
-    icon: { icon: 'tabler-smart-home' },
-    action: 'list',
-    subject: 'ramassage',
-  },
-  {
-    title: 'Gestion Retours',
-    to: { name: 'retour-list' },
-    icon: { icon: 'tabler-smart-home' },
-    action: 'list',
-    subject: 'retour',
-  },
-  {
-    title: 'Scanner retours',
-    to: { name: 'retour-scan' },
-    icon: { icon: 'tabler-smart-home' },
-    action: 'scan',
-    subject: 'retour',
-  },
-  {
-    title: 'Factures par livreur',
-    to: { name: 'facture-livreur-list' },
-    icon: { icon: 'tabler-smart-home' },
-    action: 'list',
-    subject: 'factureLivreur',
-  },
-  {
-    title: 'Factures par vendeur',
-    to: { name: 'facture-vendeur-list' },
-    icon: { icon: 'tabler-smart-home' },
-    action: 'list',
-    subject: 'factureVendeur',
   },
 ]

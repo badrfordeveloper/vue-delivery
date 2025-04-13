@@ -7,124 +7,124 @@ export const statutInfos = statut => {
   if(statut == "EN_ATTENTE"){
     object =  {
       text: "En attente",
-      color: "warning",
+      color: "en-attente",
     }
   }else if (statut === "EN_COURS_RAMASSAGE"){
     return {
       text: 'En cours ramassage',
-      color: 'info',
+      color: 'en-cours-ramassage',
     }
   }
   else if (statut === "REPORTE"){
     return {
       text: 'Reporté',
-      color: 'error',
+      color: 'reporte',
     }
   }
   else if (statut === "ANNULE"){
     return {
       text: 'Annule',
-      color: 'error',
+      color: 'annule',
     }
   }
   else if (statut === "RAMASSE"){
     return {
       text: 'Ramassé',
-      color: 'info',
+      color: 'ramasse',
     }
   }
   else if (statut === "ENTREPOT"){
     return {
       text: 'Entrepot',
-      color: 'primary',
+      color: 'entrepot',
     }
   }
   else if (statut === "EN_COURS_LIVRAISON"){
     return {
       text: 'En cours de livraison',
-      color: 'info',
+      color: 'en-cours-de-livraison',
     }
   } 
   else if (statut === "LIVRE_PARTIELLEMENT"){
     return {
       text: 'Livré partiel',
-      color: 'info',
+      color: 'livre-partiellement',
     }
   }  
   else if (statut === "LIVRE"){
     return {
       text: 'Livré',
-      color: 'info',
+      color: 'livre',
     }
   } 
   else if (statut === "PAS_REPONSE"){
     return {
       text: 'Pas de reponse',
-      color: 'error',
+      color: 'pas-reponse',
     }
   }  
   else if (statut === "REFUSE"){
     return {
       text: 'Refuser',
-      color: 'error',
+      color: 'refuse',
     }
   }
   else if (statut === "EN_ATTENTE_RETOUR"){
     return {
       text: 'En attente de retour',
-      color: 'error',
+      color: 'en-attente-retour',
     }
   }
   else if (statut === "RETOURNE_ENTREPOT"){
     return {
       text: 'Retournée à l\'entrepot',
-      color: 'info',
+      color: 'retourne-entrepot',
     }
   }
   else if (statut === "RETOURNE_AU_VENDEUR"){
     return {
       text: 'Retourner au vendeur',
-      color: 'info',
+      color: 'retourne-au-vendeur',
     }
   }
   else if (statut === "PREPARER"){
     return {
       text: 'Préparer',
-      color: 'info',
+      color: 'preparer',
     }
   }
   else if (statut === "EN_COURS_RETOUR"){
     return {
       text: 'En cours de livraison ',
-      color: 'info',
+      color: 'en-cours-retour',
     }
   }
   else if (statut === "RETOURNER"){
     return {
       text: 'Retourner',
-      color: 'info',
+      color: 'retourner',
     }
   }else if (statut === "FACTURE"){
     return {
       text: 'Facturée',
-      color: 'info',
+      color: 'facture',
     }
   }else if (statut === "VALIDE"){
     return {
       text: 'Valide',
-      color: 'info',
+      color: 'valide',
     }
   }
   else if (statut === "EN_COURS"){
     return {
       text: 'En cours',
-      color: 'info',
+      color: 'en-cours',
     }
   }
   else if (statut === "PAYE"){
     return {
       text: 'Payée',
-      color: 'info',
+      color: 'paye',
     }
   }
   

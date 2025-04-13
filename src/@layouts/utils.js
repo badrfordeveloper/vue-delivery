@@ -54,6 +54,20 @@ export const isNavLinkActive = (link, router) => {
     return false
   
   return matchedRoutes.some(route => {
+    return route.meta.navActiveLink === resolveRoutedName
+  })
+}
+
+export const isNavLinkGroupActive = (link, router) => {
+  // Matched routes array of current route
+  const matchedRoutes = router.currentRoute.value.matched
+
+  // Check if provided route matches route's matched route
+  const resolveRoutedName = resolveNavLinkRouteName(link, router)
+  if (!resolveRoutedName)
+    return false
+  
+  return matchedRoutes.some(route => {
     return route.name === resolveRoutedName || route.meta.navActiveLink === resolveRoutedName
   })
 }
@@ -68,7 +82,7 @@ export const isNavGroupActive = (children, router) => children.some(child => {
     return isNavGroupActive(child.children, router)
 
   // else it's link => Check for matched Route
-  return isNavLinkActive(child, router)
+  return isNavLinkGroupActive(child, router)
 })
 
 /**

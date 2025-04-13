@@ -1,4 +1,4 @@
-export const staticPrimaryColor = '#7367F0'
+export const staticPrimaryColor = '#ff8808' //'#7367F0'
 export const staticPrimaryDarkenColor = '#675DD8'
 export const themes = {
   light: {
@@ -78,6 +78,27 @@ export const themes = {
     dark: true,
     colors: {
       'primary': staticPrimaryColor,
+      'en-attente': '#d9d9d9',
+      'en-cours-ramassage': '#f5c944',
+      'reporte': '#8c52ff',
+      'annule': '#ff3131',
+      'ramasse': "#ff914d",
+      'entrepot': "#285ff4 ",
+      'en-cours-de-livraison': '#64ff66',
+      'livre-partiellement': '#28a745',
+      'livre': '#00c466',
+      'pas-reponse': '#f2ff00',
+      'refuse': '#0097b2',
+      'en-attente-retour': "#d9d9d9",
+      'retourne-entrepot': "#a2eeff",
+      'retourne-au-vendeur': "#7effbd",
+      'preparer': "#f5c944",
+      'en-cours-retour': "#80ff80",
+      'retourner': "#a6a6a6",
+      'facture': "#0078d7",
+      'valide': "#00bf63",
+      'en-cours': "#e6b800",
+      'valide': "#00bf63",
       'on-primary': '#fff',
       'primary-darken-1': '#675DD8',
       'secondary': '#808390',

@@ -1,5 +1,4 @@
 <script setup>
-import { TransitionGroup } from 'vue'
 import { layoutConfig } from '@layouts'
 import {
   TransitionExpand,
@@ -13,6 +12,7 @@ import {
   isNavGroupActive,
   openGroups,
 } from '@layouts/utils'
+import { TransitionGroup } from 'vue'
 
 const props = defineProps({
   item: {
@@ -61,6 +61,9 @@ updates isActive & isOpen based on active state of group.
 */
 watch(() => route.path, () => {
   const isActive = isNavGroupActive(props.item.children, router)
+
+  console.log('isActive')
+  console.log(isActive)
 
   // Don't open group if vertical nav is collapsed and window size is more than overlay nav breakpoint
   isGroupOpen.value = isActive && !configStore.isVerticalNavMini(isVerticalNavHovered).value
