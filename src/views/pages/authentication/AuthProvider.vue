@@ -15,11 +15,6 @@ const authProviders = [
     colorInDark: '#1da1f2',
   },
   {
-    icon: 'tabler-brand-github-filled',
-    color: '#272727',
-    colorInDark: '#fff',
-  },
-  {
     icon: 'tabler-brand-google-filled',
     color: '#dd4b39',
     colorInDark: '#db4437',

@@ -36,6 +36,7 @@ declare module 'vue-router/auto-routes' {
     'ramassage-add': RouteRecordInfo<'ramassage-add', '/ramassage/add', Record<never, never>, Record<never, never>>,
     'ramassage-list': RouteRecordInfo<'ramassage-list', '/ramassage/list', Record<never, never>, Record<never, never>>,
     'ramassage-list-statut': RouteRecordInfo<'ramassage-list-statut', '/ramassage/list/:statut', { statut: ParamValue<true> }, { statut: ParamValue<false> }>,
+    'register': RouteRecordInfo<'register', '/register', Record<never, never>, Record<never, never>>,
     'retour-id': RouteRecordInfo<'retour-id', '/retour/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
     'retour-add': RouteRecordInfo<'retour-add', '/retour/add', Record<never, never>, Record<never, never>>,
     'retour-list': RouteRecordInfo<'retour-list', '/retour/list', Record<never, never>, Record<never, never>>,

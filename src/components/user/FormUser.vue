@@ -32,7 +32,7 @@ const userData = ref({
   firstName: '',
   cin: '',
   email: '',
-  password: 'Badr123@',
+  password: '',
   active: 0,
   phone: '',
   store: '',
@@ -225,6 +225,17 @@ const isCurrentPasswordVisible = ref(false)
                   placeholder="Nom de store"
                 />
               </VCol>
+              <!-- 👉 ville -->
+              <VCol
+                cols="12"
+                md="6"
+              >
+                <AppTextField
+                  v-model="userData.ville"
+                  label="Ville"
+                  placeholder="Ville"
+                />
+              </VCol>    
               <!-- 👉 Address -->
               <VCol
                 cols="12"
