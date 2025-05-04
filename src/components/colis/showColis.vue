@@ -124,6 +124,44 @@ const parametrerColis = async () => {
       }
     })
 }
+
+const openWhatsApp = () => {
+
+  let phoneNumber = itemData.value.tel_client
+
+  // Remove all non-digit characters
+  phoneNumber = phoneNumber.replace(/\D/g, '')
+
+  // Check if number starts with 0 (Moroccan local format)
+  if (phoneNumber.startsWith('0')) {
+    phoneNumber = '+212' + phoneNumber.substring(1)
+  } 
+
+  // If number doesn't start with +, add +212
+  else if (!phoneNumber.startsWith('+')) {
+    phoneNumber = '+212' + phoneNumber
+  }
+
+
+  // Dynamic message with seller name and price
+  const sellerName = itemData.value.vendeur 
+  const price = itemData.value.montant
+  
+  // Multilingual message
+  const message = `
+Dropoff سلام، معك موزع من شركة 
+، (${price} درهم) ${sellerName} عندي ليك طلبية من عند
+واش ممكن ترسل ليا الموقع ديالك؟
+
+Bonjour, je suis livreur chez Dropoff, j'ai un colis pour vous de la part de ${sellerName} (${price} DH). Pouvez-vous m'envoyer votre localisation ?
+  `.trim()
+  
+  // Encode the message for URL
+  const encodedMessage = encodeURIComponent(message)
+  
+  // Open WhatsApp with the message
+  window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank')
+}
 </script>
 
 <template>
@@ -173,7 +211,7 @@ const parametrerColis = async () => {
                     <tr>
                       <td>
                         <h6 class="text-h6 text-no-wrap mb-2">
-                          Code : 
+                          Code :    {{ itemData.vendeur }}
                         </h6>
                       </td>
                       <td>
@@ -349,14 +387,28 @@ const parametrerColis = async () => {
                       </td>
                       <td>
                         <p class="text-body-1 mb-2">
-                          {{ itemData.tel_client }}
+                          {{ itemData.tel_client }}  
+
+                          <VBtn
+                            color="test"
+
+                            icon
+                            @click="openWhatsApp"
+                          >
+                            <VIcon
+                              color="success"
+
+                              size="30"
+                              icon="tabler-brand-whatsapp"
+                            />
+                          </VBtn>
                         </p>
                       </td>
                     </tr>
                     <tr>
                       <td>
                         <h6 class="text-h6 text-no-wrap mb-2">
-                          Distination : 
+                          Destination : 
                         </h6>
                       </td>
                       <td>

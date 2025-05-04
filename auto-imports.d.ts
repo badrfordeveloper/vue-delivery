@@ -55,8 +55,11 @@ declare global {
   const getActivePinia: typeof import('pinia')['getActivePinia']
   const getCurrentInstance: typeof import('vue')['getCurrentInstance']
   const getCurrentScope: typeof import('vue')['getCurrentScope']
+  const getHorairesLabel: typeof import('./src/utils/constants.js')['getHorairesLabel']
+  const getPoidsLabel: typeof import('./src/utils/constants.js')['getPoidsLabel']
   const h: typeof import('vue')['h']
   const hexToRgb: typeof import('./src/@core/utils/colorConverter.js')['hexToRgb']
+  const horaires: typeof import('./src/utils/constants.js')['horaires']
   const ignorableWatch: typeof import('@vueuse/core')['ignorableWatch']
   const inject: typeof import('vue')['inject']
   const injectLocal: typeof import('@vueuse/core')['injectLocal']
@@ -73,6 +76,8 @@ declare global {
   const isToday: typeof import('./src/@core/utils/helpers.js')['isToday']
   const kFormatter: typeof import('./src/@core/utils/formatters.js')['kFormatter']
   const lengthValidator: typeof import('./src/@core/utils/validators.js')['lengthValidator']
+  const listHoraires: typeof import('./src/utils/constants.js')['listHoraires']
+  const listPoids: typeof import('./src/utils/constants.js')['listPoids']
   const logicAnd: typeof import('@vueuse/math')['logicAnd']
   const logicNot: typeof import('@vueuse/math')['logicNot']
   const logicOr: typeof import('@vueuse/math')['logicOr']
@@ -425,6 +430,8 @@ declare module 'vue' {
     readonly getActivePinia: UnwrapRef<typeof import('pinia')['getActivePinia']>
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
+    readonly getHorairesLabel: UnwrapRef<typeof import('./src/utils/constants.js')['getHorairesLabel']>
+    readonly getPoidsLabel: UnwrapRef<typeof import('./src/utils/constants.js')['getPoidsLabel']>
     readonly h: UnwrapRef<typeof import('vue')['h']>
     readonly hexToRgb: UnwrapRef<typeof import('./src/@core/utils/colorConverter.js')['hexToRgb']>
     readonly ignorableWatch: UnwrapRef<typeof import('@vueuse/core')['ignorableWatch']>
@@ -443,6 +450,8 @@ declare module 'vue' {
     readonly isToday: UnwrapRef<typeof import('./src/@core/utils/helpers.js')['isToday']>
     readonly kFormatter: UnwrapRef<typeof import('./src/@core/utils/formatters.js')['kFormatter']>
     readonly lengthValidator: UnwrapRef<typeof import('./src/@core/utils/validators.js')['lengthValidator']>
+    readonly listHoraires: UnwrapRef<typeof import('./src/utils/constants.js')['listHoraires']>
+    readonly listPoids: UnwrapRef<typeof import('./src/utils/constants.js')['listPoids']>
     readonly logicAnd: UnwrapRef<typeof import('@vueuse/math')['logicAnd']>
     readonly logicNot: UnwrapRef<typeof import('@vueuse/math')['logicNot']>
     readonly logicOr: UnwrapRef<typeof import('@vueuse/math')['logicOr']>

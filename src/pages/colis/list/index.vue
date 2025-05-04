@@ -1,5 +1,4 @@
 <script setup>
-import PrintColis from '@/components/colis/printColis.vue'
 import ShowColis from '@/components/colis/showColis.vue'
 import { statutInfos } from '@/composables/statutInfos'
 import { statusColis } from '@/utils/constants'
@@ -43,9 +42,10 @@ const dateOptions = ref([
 ])
 
 const isActionGestionnaire = can('gestionnaire', 'action')
+const isActionLivreur = can('livreur', 'action')
+const isActionVendeur = can('vendeur', 'action')
 const begin_date = ref()
 const end_date = ref()
-
 
 const selectedRange = ref('today')
 
@@ -135,6 +135,7 @@ const headers = [
 ]
 
 const searchCode = ref()
+const selected_colis = ref([])
 const searchStatut = ref()
 const searchNameClient = ref()
 const searchTelClient = ref()
@@ -149,6 +150,7 @@ const isDeletingItem = ref(false)
 const deleteObject = ref()
 
 const isPrintColis = ref(false)
+const isPrintGroupColis = ref(false)
 const printObject = ref()
 
 // Data table options
@@ -224,11 +226,21 @@ const {
 )
 
 
+
+const resetSelectedRows = () =>{
+  selected_colis.value=[]
+}
+
+const printGroup = object =>{
+  isPrintGroupColis.value=true
+}
+
 const router = useRouter()
 const items = computed(() => itemsData.value.items)
 const totalItems = computed(() => itemsData.value.total)
 
 const isShowItem = ref(false)
+const isShowGroupActions = ref(false)
 const dialogKey = ref(0)
 const showId = ref(0)
 
@@ -236,6 +248,10 @@ const showItemDialog = object =>{
   showId.value = object.id
   dialogKey.value++
   isShowItem.value=true
+}
+
+const ShowGroupActions = object =>{
+  isShowGroupActions.value=true
 }
 </script>
 
@@ -372,6 +388,39 @@ const showItemDialog = object =>{
       <div class="d-flex flex-wrap gap-4 ma-6">
         <VSpacer />
         <div class="d-flex gap-4 flex-wrap align-center">
+          <VMenu v-if="isActionVendeur || isActionGestionnaire">
+            <template #activator="{ props }">
+              <VBtn
+                color="secondary"
+                v-bind="props"
+              >
+                Group actions 
+              </VBtn>
+            </template>
+            <VList>
+              <VListItem
+                value="print"
+                prepend-icon="tabler-text-scan-2"
+                @click="printGroup"
+              >
+                Print
+              </VListItem>
+              <VListItem
+                v-if=" isActionGestionnaire"
+                value="print"
+                prepend-icon="tabler-text-scan-2"
+                @click="ShowGroupActions"
+              >
+                Affectation
+              </VListItem>
+              <DataTableExport
+              
+                :items="items"
+                :headers="headers"
+                file-name="colis-export"
+              />
+            </VList>
+          </VMenu>
           <AppSelect
             v-model="itemsPerPage"
             :items="[5, 10, 20, 25, 50]"
@@ -390,10 +439,15 @@ const showItemDialog = object =>{
 
       <VDivider class="mt-4" />
 
+   
+
       <!-- 👉 Datatable  -->
       <VDataTableServer
+        v-model:model-value="selected_colis"
         v-model:items-per-page="itemsPerPage"
         v-model:page="page"
+        show-select
+        :item-value="item => item"
         :loading="isFetching"
         :headers="headers"
         :items="items"
@@ -498,12 +552,26 @@ const showItemDialog = object =>{
         </VCard>
       </VDialog>
     </VCard>
-    <PrintColis
+    <!-- for one colis -->
+    <PrintGroupColis
       v-if="isPrintColis"
-      v-model:is-print-colis="isPrintColis"
-      :item="printObject"
+      v-model:is-print-group-colis="isPrintColis"
+      :items="[printObject]"
     />
 
+    <!-- for multiple colis -->
+    <PrintGroupColis
+      v-if="isPrintGroupColis"
+      v-model:is-print-group-colis="isPrintGroupColis"
+      :items="selected_colis"
+    />
+    <GroupActions
+      v-if="isShowGroupActions"
+      v-model:is-show-item="isShowGroupActions"
+      :items="selected_colis"
+      @reset-selected-rows="resetSelectedRows"
+    />
+   
     <ShowColis
       v-if="isShowItem"
       :id="showId"

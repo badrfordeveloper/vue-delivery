@@ -5,18 +5,18 @@ import { themeConfig } from '@themeConfig'
 import QrcodeVue from 'qrcode.vue'
 
 const props = defineProps({
-  item: {
+  items: {
     type: Object,
     required: true,
   },
-  isPrintColis: {
+  isPrintGroupColis: {
     type: Boolean,
     required: true,
   },
 })
 
 const emit = defineEmits([
-  'update:isPrintColis',
+  'update:isPrintGroupColis',
 ])
 
 definePage({
@@ -35,21 +35,25 @@ setTimeout(() => {
 }, 500)
 
 window.onafterprint = function () {
-  emit('update:isPrintColis', false)
+  emit('update:isPrintGroupColis', false)
 }
 </script>
 
 <template>
-  <div v-if="props.isPrintColis">
+  <div v-if="props.isPrintGroupColis">
     <!--   <button onclick="window.print()"  class="d-print-none">Print</button> -->
 
     <div id="print-area">
       <!-- Page 1 -->
-      <div class="print-content">
+      <div
+        v-for="(item, index) in props.items"
+        :key="index"
+        class="print-content"
+      >
         <VCard class="props.item-preview-wrapper">
           <!-- SECTION Header -->
           <div />
-          <div class="props.item-header-preview d-flex flex-wrap justify-space-between flex-column flex-sm-row print-row bg-var-theme-background gap-6 rounded ">
+          <div class="item-header-preview d-flex flex-wrap justify-space-between flex-column flex-sm-row print-row bg-var-theme-background gap-6 rounded ">
             <!-- 👉 Left Content -->
             <div>
               <div class="d-flex align-center app-logo ">
@@ -66,7 +70,7 @@ window.onafterprint = function () {
             <!-- 👉 Right Content -->
             <div class="d-flex align-center destination">
               <!--  Code : {{  }} -->
-              {{ props.item.destination }}
+              {{ item.destination }}
             </div>
           </div>
           <!-- !SECTION -->
@@ -78,39 +82,39 @@ window.onafterprint = function () {
               <div class="d-flex flex-wrap justify-space-between flex-column flex-sm-row gap-6">
                 <div>
                   <p class="mb-0">
-                    Code : {{ props.item.code }}
+                    Code : {{ item.code }}
                   </p><p class="mb-0">
-                    Nom : {{ props.item.nom_client }}
+                    Nom : {{ item.nom_client }}
                   </p>
                   <p class="mb-0">
-                    tel :  {{ props.item.tel_client }}
+                    tel :  {{ item.tel_client }}
                   </p>
                 </div>
                 <div>
                   <p class="mb-0">
                     <QrcodeVue
                       size="70"
-                      :value="props.item.code"
+                      :value="item.code"
                     />
                   </p>
                 </div>
               </div>
               <p class="mb-0">
-                Adresse : {{ props.item.adresse }}
+                Adresse : {{ item.adresse }}
               </p>
             </VCol>
           </VRow>
           <VDivider class=" border-solid" />
-          <!-- 👉 props.item Table -->
+          <!-- 👉 item Table -->
 
 
           <VRow class="align-right little-margin">
             <VCol cols="12">
               <p class="mb-0">
-                Produits :  {{ props.item.produit }}
+                Produits :  {{ item.produit }}
               </p>
               <p class="mb-0">
-                Montant :  {{ props.item.montant }}
+                Montant :  {{ item.montant }}
               </p>
             </Vcol>
           </VRow>
@@ -119,11 +123,11 @@ window.onafterprint = function () {
           <VRow class="align-right little-margin">
             <VCol cols="12">
               <p class="mb-0">
-                Essayage :  {{ props.item.essayage ? 'OUI' : 'NON' }} | Ouvrir :  {{ props.item.ouvrir ? 'OUI' : 'NON' }} | Echange :    {{ props.item.echange ? 'OUI' : 'NON' }}
+                Essayage :  {{ item.essayage ? 'OUI' : 'NON' }} | Ouvrir :  {{ item.ouvrir ? 'OUI' : 'NON' }} | Echange :    {{ item.echange ? 'OUI' : 'NON' }}
               </p>
             </Vcol>
           </VRow>
-          <!-- 👉 props.item Table -->
+          <!-- 👉 item Table -->
 
           <VDivider class=" border-solid" />
 

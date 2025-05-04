@@ -19,15 +19,20 @@ const router = useRouter()
 
 
 const refForm = ref()
-const tarifs = ref([])
+const selectedPricing = ref()
+const zones = ref([])
+const zoneHoraires = ref([])
 const loadingSubmit = ref(false)
 
-tarifs.value = await $api('/api/tarifs').then(response => response.data.items)
+zones.value = await $api('/api/zones').then(response => response.data.items)
 
 let defaultItem = {
   nom_client: '',
   tel_client: '',
-  tarif_id: '',
+  zone_id: '',
+  pricing_id: '',
+  horaire: "",
+  poids: "1kg_6kg",
   frais_livraison: '',
   adresse: '',
   produit: "",
@@ -50,11 +55,36 @@ watch(
   }, { immediate: true }, // Trigger the watcher immediately
 )
 
-watch(() => itemData.value.tarif_id, newId => {
+watch(() => itemData.value.zone_id, newId => {
 
-  const selectedTarif = tarifs.value.find(t => t.id === newId)
+  const selectedZone = zones.value.find(t => t.id === newId)
 
-  itemData.value.frais_livraison = selectedTarif ? selectedTarif.tarif +"DH à "+ selectedTarif.delai_livraison : ''
+  zoneHoraires.value = selectedZone ? selectedZone.horaires : []
+
+  if(selectedZone && itemData.value.poids){
+    
+    selectedPricing.value = selectedZone.pricings.find(t => t.poids === itemData.value.poids)
+
+    itemData.value.frais_livraison = selectedPricing.value ? selectedPricing.value.frais_livraison+' DH à '+selectedZone.delai_livraison :''
+    itemData.value.pricing_id = selectedPricing.value ? selectedPricing.value.id: null
+
+  }
+
+}, { immediate: true })
+
+watch(() => itemData.value.poids, newPoid => {
+
+  if(itemData.value.zone_id){
+  
+    const selectedZone = zones.value.find(t => t.id === itemData.value.zone_id)
+
+    selectedPricing.value = selectedZone.pricings.find(t => t.poids === newPoid)
+
+    itemData.value.frais_livraison = selectedPricing.value ? selectedPricing.value.frais_livraison+' DH à '+selectedZone.delai_livraison :''
+    itemData.value.pricing_id = selectedPricing.value ? selectedPricing.value.id: null
+
+  }
+
 }, { immediate: true })
 
 const onSubmit = async () => {
@@ -154,6 +184,15 @@ const onSubmit = async () => {
                     placeholder="0655554747"
                   />
                 </VCol>
+                <VCol cols="12">
+                  <AppTextField
+                    v-model="itemData.adresse"
+                    prepend-inner-icon="tabler-map-pin"
+                    :rules="[requiredValidator]"
+                    label="Adresse"
+                    placeholder="Adresse"
+                  />
+                </VCol>
               </VRow>
             </VCardText>
           </VCard>
@@ -163,7 +202,6 @@ const onSubmit = async () => {
           cols="12"
           class="px-0"
         >
-          <!-- 👉 Delete Account -->
           <VCard title="Informations d'adresse">
             <VCardText>
               <VRow>
@@ -172,14 +210,64 @@ const onSubmit = async () => {
                   cols="12"
                 >
                   <AppAutocomplete
-                    v-model="itemData.tarif_id"
+                    v-model="itemData.zone_id"
                     :rules="[requiredValidator]"
                     label="Destination"
-                    :items="tarifs"
-                    item-title="destination"
+                    :items="zones"
+                    item-title="zone"
                     item-value="id"
                     placeholder="Select State"
+                    autocomplete="off"
                   />
+                </VCol>
+
+              
+
+
+                <VCol
+                  cols="12"
+                  class="app-text-field"
+                >
+                  <VLabel
+                    text="Les horaires auxquelles il sera disponible"
+                    class="mb-1 text-body-2 text-wrap "
+                  />
+                  <VRadioGroup
+                    v-model="itemData.horaire"
+                    :rules="[requiredValidator]"
+                    inline
+                  >
+                    <VRadio
+                      v-for="horaire in zoneHoraires"
+                      :key="horaire"
+                      :label="getHorairesLabel(horaire)"
+                      :value="horaire"
+                      density="compact"
+                    />
+                  </VRadioGroup>
+                </VCol>
+
+                <VCol
+                  cols="12"
+                  class="app-text-field"
+                >
+                  <VLabel
+                    text="Poids"
+                    class="mb-1 text-body-2 text-wrap "
+                  />
+                  <VRadioGroup
+                    v-model="itemData.poids"
+                    :rules="[requiredValidator]"
+                    inline
+                  >
+                    <VRadio
+                      v-for="poid in listPoids"
+                      :key="poid.value"
+                      :label="poid.label"
+                      :value="poid.value"
+                      density="compact"
+                    />
+                  </VRadioGroup>
                 </VCol>
               
                 <VCol
@@ -191,16 +279,6 @@ const onSubmit = async () => {
                     disabled
                     label="Frais de livraison"
                     placeholder=""
-                  />
-                </VCol>
-            
-                <VCol cols="12">
-                  <AppTextField
-                    v-model="itemData.adresse"
-                    prepend-inner-icon="tabler-map-pin"
-                    :rules="[requiredValidator]"
-                    label="Adresse"
-                    placeholder="Adresse"
                   />
                 </VCol>
               </VRow>

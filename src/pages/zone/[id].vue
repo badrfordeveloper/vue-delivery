@@ -1,20 +1,20 @@
 <script setup>
-import FormTarif from '@/components/tarif/FormTarif.vue';
+import FormZone from '@/components/zone/FormZone.vue'
 
 definePage({
   meta: {
     action: 'update',
-    subject: 'tarif',
+    subject: 'zone',
   },
 })
 
 const route = useRoute()
 
-const item = await $api('/api/tarifs/'+route.params.id).then(response =>response.data )
+const item = await $api('/api/zones/'+route.params.id).then(response =>response.data )
 </script>
 
 <template>
-  <FormTarif
+  <FormZone
     :item="item"
     :identity="route.params.id"
     method="PUT"

@@ -44,12 +44,12 @@ declare module 'vue-router/auto-routes' {
     'retour-scan': RouteRecordInfo<'retour-scan', '/retour/scan', Record<never, never>, Record<never, never>>,
     'role-list': RouteRecordInfo<'role-list', '/role/list', Record<never, never>, Record<never, never>>,
     'second-page': RouteRecordInfo<'second-page', '/second-page', Record<never, never>, Record<never, never>>,
-    'tarif-id': RouteRecordInfo<'tarif-id', '/tarif/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
-    'tarif-add': RouteRecordInfo<'tarif-add', '/tarif/add', Record<never, never>, Record<never, never>>,
-    'tarif-list': RouteRecordInfo<'tarif-list', '/tarif/list', Record<never, never>, Record<never, never>>,
     'user-id': RouteRecordInfo<'user-id', '/user/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
     'user-add': RouteRecordInfo<'user-add', '/user/add', Record<never, never>, Record<never, never>>,
     'user-list': RouteRecordInfo<'user-list', '/user/list', Record<never, never>, Record<never, never>>,
     'user-list-role': RouteRecordInfo<'user-list-role', '/user/list/:role', { role: ParamValue<true> }, { role: ParamValue<false> }>,
+    'zone-id': RouteRecordInfo<'zone-id', '/zone/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
+    'zone-add': RouteRecordInfo<'zone-add', '/zone/add', Record<never, never>, Record<never, never>>,
+    'zone-list': RouteRecordInfo<'zone-list', '/zone/list', Record<never, never>, Record<never, never>>,
   }
 }

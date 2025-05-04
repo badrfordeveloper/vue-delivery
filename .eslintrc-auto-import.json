@@ -371,6 +371,11 @@
     "statusRamassage": true,
     "statusRetour": true,
     "statusFactureLivreur": true,
-    "statusFactureVendeur": true
+    "statusFactureVendeur": true,
+    "horaires": true,
+    "listHoraires": true,
+    "listPoids": true,
+    "getPoidsLabel": true,
+    "getHorairesLabel": true
   }
 }

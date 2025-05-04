@@ -19,16 +19,16 @@ const router = useRouter()
 
 
 const refForm = ref()
-const tarifs = ref([])
+const zones = ref([])
 const loadingSubmit = ref(false)
 
-tarifs.value = await $api('/api/tarifs').then(response => response.data.items)
+zones.value = await $api('/api/zones').then(response => response.data.items)
 
 let defaultItem = {
   id: '',
   nom_vendeur: '',
   tel_vendeur: '',
-  tarif_id: '',
+  zone_id: '',
   adresse: '',
   colis: [],
 }
@@ -221,11 +221,11 @@ const totalItems = computed(() => itemsData.value.total)
                 cols="12"
               >
                 <AppAutocomplete
-                  v-model="itemData.tarif_id"
+                  v-model="itemData.zone_id"
                   :rules="[requiredValidator]"
                   label="Destination"
-                  :items="tarifs"
-                  item-title="destination"
+                  :items="zones"
+                  item-title="zone"
                   item-value="id"
                   placeholder="Select State"
                 />
@@ -276,19 +276,19 @@ const totalItems = computed(() => itemsData.value.total)
           <!--  @click:row="handleRowClick" -->
           <template #item.statut="{ item }">
             <VChip
-            v-bind="statutInfos(item.statut)"
-            density="default"
-            label
-            size="small"
-          />
-          <span v-if="item.statut_retour"> -
-            <VChip
-              v-bind="statutInfos(item.statut_retour)"
+              v-bind="statutInfos(item.statut)"
               density="default"
               label
               size="small"
             />
-          </span>
+            <span v-if="item.statut_retour"> -
+              <VChip
+                v-bind="statutInfos(item.statut_retour)"
+                density="default"
+                label
+                size="small"
+              />
+            </span>
           </template>
 
           <!-- pagination -->

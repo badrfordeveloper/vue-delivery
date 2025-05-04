@@ -4,19 +4,20 @@ import { can } from '@layouts/plugins/casl'
 definePage({
   meta: {
     action: 'list',
-    subject: 'tarif',
+    subject: 'zone',
   },
 })
 
 const headers = [
+
   {
-    title: 'destination',
-    key: 'destination',
+    title: 'zone',
+    key: 'zone',
     sortable: false,
   },
   {
-    title: 'tarif',
-    key: 'tarif',
+    title: 'Ville',
+    key: 'ville',
     sortable: false,
   },
   {
@@ -36,7 +37,7 @@ const headers = [
   },
 ]
 
-const searchDestination = ref()
+const searchZone = ref()
 const searchPrefix= ref()
 
 
@@ -56,9 +57,9 @@ const updateOptions = options => {
 const {
   data: itemsData, error, statusCode, isFetching,
   execute: fetchItems,
-} = await useApi(createUrl('/api/tarifs', {
+} = await useApi(createUrl('/api/zones', {
   query: {
-    destination: searchDestination,
+    zone: searchZone,
     prefix: searchPrefix,
     page,
     itemsPerPage,
@@ -88,8 +89,8 @@ const totalProduct = computed(() => itemsData.value.total)
             sm="2"
           >
             <AppTextField
-              v-model="searchDestination"
-              placeholder="Destination"
+              v-model="searchZone"
+              placeholder="Zone"
             />
           </VCol><VCol
             cols="12"
@@ -114,12 +115,12 @@ const totalProduct = computed(() => itemsData.value.total)
           />
 
           <VBtn
-            v-if="can('create','tarif')"
+            v-if="can('create','zone')"
             color="primary"
             prepend-icon="tabler-plus"
-            @click="router.push({name: 'tarif-add'})"
+            @click="router.push({name: 'zone-add'})"
           >
-            Ajouter Tarif
+            Ajouter Zone
           </VBtn>
         </div>
       </div>
@@ -141,8 +142,8 @@ const totalProduct = computed(() => itemsData.value.total)
         <!-- Actions -->
         <template #item.actions="{ item }">
           <IconBtn
-            v-if="can('update','tarif')"
-            @click="router.push('/tarif/'+item.id)"
+            v-if="can('update','zone')"
+            @click="router.push('/zone/'+item.id)"
           >
             <VIcon icon="tabler-edit" />
           </IconBtn>

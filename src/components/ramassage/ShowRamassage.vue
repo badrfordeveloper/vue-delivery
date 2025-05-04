@@ -231,6 +231,18 @@ const colisHeaders = [
                       {{ itemData.destination }} 
                     </p>
                   </td>
+                </tr> 
+                <tr>
+                  <td>
+                    <h6 class="text-h6 text-no-wrap mb-2">
+                      Adresse :
+                    </h6>
+                  </td>
+                  <td>
+                    <p class="text-body-1 mb-2">
+                      {{ itemData.adresse }} 
+                    </p>
+                  </td>
                 </tr>
                 <tr>
                   <td>

@@ -1,5 +1,48 @@
 export const COOKIE_MAX_AGE_1_YEAR = 365 * 24 * 60 * 60
 
+export const listHoraires = [
+  {
+    label: 'Normale',
+    value: 'normale',
+  }, 
+  {
+    label: 'Matin',
+    value: 'matin',
+  }, 
+  {
+    label: 'Après midi',
+    value: 'apres_midi',
+  }, 
+  {
+    label: 'Soirée',
+    value: 'soiree',
+  },
+]
+export const listPoids = [
+  {
+    label: "1kg  jusqu'à 6 kg",
+    value: '1kg_6kg',
+  }, 
+  {
+    label: "7kg  jusqu'à 11 kg",
+    value: '7kg_11kg',
+  }, 
+  {
+    label: "12kg  jusqu'à 20kg",
+    value: '12kg_20kg',
+  }, 
+]
+export function getHorairesLabel(value) {
+  const found = listHoraires.find(item => item.value === value)
+  
+  return found ? found.label : ''
+}
+export function getPoidsLabel(value) {
+  const found = listPoids.find(item => item.value === value)
+  
+  return found ? found.label : ''
+}
+
 export const statusColis = [
   "EN_ATTENTE",
   "ENTREPOT",
@@ -12,6 +55,7 @@ export const statusColis = [
   "ANNULE",
   "EN_COURS_RAMASSAGE",
 ]
+
       
     
 export const statusRamassage = [

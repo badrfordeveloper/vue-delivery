@@ -32,10 +32,10 @@ export default [
   },
 
   {
-    title: 'Liste des tarifs',
-    to: { name: 'tarif-list' },
+    title: 'Gestion des zones',
+    to: { name: 'zone-list' },
     icon: { icon: 'tabler-smart-home' },
     action: 'list',
-    subject: 'tarif',
+    subject: 'zone',
   },
 ]
