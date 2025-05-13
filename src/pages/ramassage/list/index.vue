@@ -1,4 +1,5 @@
 <script setup>
+import GroupActionsRamassage from '@/components/ramassage/GroupActionsRamassage.vue'
 import PrintRamassage from '@/components/ramassage/printRamassage.vue'
 import { statusRamassage } from '@/utils/constants'
 import { can } from '@layouts/plugins/casl'
@@ -132,7 +133,7 @@ const headers = [
 
 const searchCode = ref()
 const searchStatut = ref()
-
+const selected_ramassages = ref([])
 const loadingDelete = ref(false)
 const isDeletingItem = ref(false)
 const deleteObject = ref()
@@ -230,6 +231,16 @@ const showItemDialog = object =>{
   showId.value = object.id
   dialogKey.value++
   isShowItem.value=true
+}
+
+const resetSelectedRows = () =>{
+  selected_ramassages.value=[]
+}
+
+const isShowGroupActions = ref(false)
+
+const ShowGroupActions = object =>{
+  isShowGroupActions.value=true
 }
 </script>
 
@@ -348,6 +359,27 @@ const showItemDialog = object =>{
       <div class="d-flex flex-wrap gap-4 ma-6">
         <VSpacer />
         <div class="d-flex gap-4 flex-wrap align-center">
+          <VMenu v-if="isActionVendeur || isActionGestionnaire">
+            <template #activator="{ props }">
+              <VBtn
+                color="secondary"
+                v-bind="props"
+              >
+                Group actions 
+              </VBtn>
+            </template>
+            <VList>
+              <VListItem
+                v-if=" isActionGestionnaire"
+                value="print"
+                prepend-icon="tabler-text-scan-2"
+                @click="ShowGroupActions"
+              >
+                Affectation
+              </VListItem>
+            </VList>
+          </VMenu>
+
           <AppSelect
             v-model="itemsPerPage"
             :items="[5, 10, 20, 25, 50]"
@@ -368,8 +400,11 @@ const showItemDialog = object =>{
 
       <!-- 👉 Datatable  -->
       <VDataTableServer
+        v-model:model-value="selected_ramassages"
         v-model:items-per-page="itemsPerPage"
         v-model:page="page"
+        show-select
+        :item-value="item => item"
         :loading="isFetching"
         :headers="headers"
         :items="items"
@@ -463,6 +498,13 @@ const showItemDialog = object =>{
       v-if="isPrintRamassage"
       v-model:is-print-ramassage="isPrintRamassage"
       :item="printObject"
+    />
+
+    <GroupActionsRamassage
+      v-if="isShowGroupActions"
+      v-model:is-show-item="isShowGroupActions"
+      :items="selected_ramassages"
+      @reset-selected-rows="resetSelectedRows"
     />
 
     <ShowRamassage

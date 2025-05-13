@@ -36,7 +36,8 @@ $api.interceptors.response.use(
         useCookie('accessToken').value = ''
         useCookie('userAbilityRules').value = []
         ability.update([])
-       // show not authhorized page if we are not in login page
+
+        // show not authhorized page if we are not in login page
         if(router.currentRoute.value.name != "login" ){
           router.push('not-authorized')
         }

@@ -21,23 +21,23 @@ const emit = defineEmits([
 
 
 let defaultItem = {
-  frais_livreur: '',
-  livreur_id: '',
+  frais_ramasseur: '',
+  ramasseur_id: '',
 }
 
-const livreurs = await $api('/api/ramasseurs').then(response => response.data)
+const ramasseurs = await $api('/api/ramasseurs').then(response => response.data)
 
 const itemData = ref(structuredClone(toRaw(defaultItem)))
 
 const loadingItem = ref(false)
-const colis_ids = ref()
+const ramassages_ids = ref()
 
 
 watch(
   () => props.items,
   newItems => {
     // Map the items to their IDs
-    colis_ids.value = newItems.map(item => item.id)
+    ramassages_ids.value = newItems.map(item => item.id)
   },
   { 
     immediate: true, // Run immediately on component mount
@@ -61,11 +61,11 @@ const parametrerGroupColis = async () => {
   loadingUpdate.value = true
   await $api({
     method: "POST",
-    url: "/api/parametrerGroupColis",
+    url: "/api/parametrerGroupRamassage",
     data: {
-      ids: colis_ids.value,
-      livreur_id: itemData.value.livreur_id,
-      frais_livreur: itemData.value.frais_livreur,
+      ids: ramassages_ids.value,
+      ramasseur_id: itemData.value.ramasseur_id,
+      frais_ramasseur: itemData.value.frais_ramasseur,
     },
   })
     .then(async response => {
@@ -99,7 +99,7 @@ const parametrerGroupColis = async () => {
 
     <!-- 👉 Billing Address -->
     <AppCardActions
-      title="Affectation des Colis"
+      title="Affectation des Ramassages"
       style="overflow: scroll;max-height: 90vh;"
       :loading="loadingItem"
       no-actions
@@ -112,10 +112,10 @@ const parametrerGroupColis = async () => {
               cols="12"
             >
               <AppSelect
-                v-model="itemData.livreur_id"
-                placeholder="Livreurs"
-                label="Livreurs"
-                :items="livreurs"
+                v-model="itemData.ramasseur_id"
+                placeholder="Ramasseurs"
+                label="Ramasseurs"
+                :items="ramasseurs"
                 clearable
                 clear-icon="tabler-x"
               />
@@ -125,11 +125,11 @@ const parametrerGroupColis = async () => {
               md="6"
             >
               <AppTextField
-                v-model="itemData.frais_livreur"
+                v-model="itemData.frais_ramasseur"
                 :rules="[requiredValidator]"
-                label="Frais de livreur"
+                label="Frais de ramasseur"
                 type="number"
-                placeholder="Frais de livreur"
+                placeholder="Frais de ramasseur"
               />
             </VCol>
           </VRow>

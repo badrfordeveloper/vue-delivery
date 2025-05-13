@@ -1,4 +1,5 @@
 <script setup>
+import ImportColis from '@/components/colis/ImportColis.vue'
 import ShowColis from '@/components/colis/showColis.vue'
 import { statutInfos } from '@/composables/statutInfos'
 import { statusColis } from '@/utils/constants'
@@ -241,6 +242,7 @@ const totalItems = computed(() => itemsData.value.total)
 
 const isShowItem = ref(false)
 const isShowGroupActions = ref(false)
+const isShowImportColis = ref(false)
 const dialogKey = ref(0)
 const showId = ref(0)
 
@@ -252,6 +254,10 @@ const showItemDialog = object =>{
 
 const ShowGroupActions = object =>{
   isShowGroupActions.value=true
+}
+
+const ShowImportColis = object =>{
+  isShowImportColis.value=true
 }
 </script>
 
@@ -419,6 +425,15 @@ const ShowGroupActions = object =>{
                 :headers="headers"
                 file-name="colis-export"
               />
+
+              <VListItem
+                v-if=" isActionGestionnaire"
+                value="print"
+                prepend-icon="tabler-text-scan-2"
+                @click="ShowImportColis"
+              >
+                Importer
+              </VListItem>
             </VList>
           </VMenu>
           <AppSelect
@@ -565,9 +580,16 @@ const ShowGroupActions = object =>{
       v-model:is-print-group-colis="isPrintGroupColis"
       :items="selected_colis"
     />
+
     <GroupActions
       v-if="isShowGroupActions"
       v-model:is-show-item="isShowGroupActions"
+      :items="selected_colis"
+      @reset-selected-rows="resetSelectedRows"
+    />
+    <ImportColis
+      v-if="isShowImportColis"
+      v-model:is-show-item="isShowImportColis"
       :items="selected_colis"
       @reset-selected-rows="resetSelectedRows"
     />

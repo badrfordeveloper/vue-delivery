@@ -128,6 +128,37 @@ const colisHeaders = [
   { title: 'code', key: 'code' },
   { title: 'destination', key: 'destination' },
 ]
+
+const openWhatsApp = () => {
+
+  let phoneNumber = itemData.value.tel_vendeur
+
+  // Remove all non-digit characters
+  phoneNumber = phoneNumber.replace(/\D/g, '')
+
+  // Check if number starts with 0 (Moroccan local format)
+  if (phoneNumber.startsWith('0')) {
+    phoneNumber = '+212' + phoneNumber.substring(1)
+  } 
+
+  // If number doesn't start with +, add +212
+  else if (!phoneNumber.startsWith('+')) {
+    phoneNumber = '+212' + phoneNumber
+  }
+
+  // Multilingual message
+  const message = `
+ Dropoff سلام، أنا موزع لدى 
+ وسأتولى استلام طردكم اليوم. يُرجى مشاركة موقعكم لتسهيل عملية الاستلام. نشكركم على ثقتكم في خدماتنا 
+Bonjour, je suis livreur chez Dropoff et je prendrai en charge la collecte de votre colis aujourd'hui. Merci de partager votre localisation pour faciliter le ramassage. Nous vous remercions pour votre confiance.
+`.trim()
+
+  // Encode the message for URL
+  const encodedMessage = encodeURIComponent(message)
+
+  // Open WhatsApp with the message
+  window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank')
+}
 </script>
 
 <template>
@@ -290,6 +321,21 @@ const colisHeaders = [
                   <td>
                     <p class="text-body-1 mb-2">
                       {{ itemData.tel_vendeur }}
+                      <VBtn
+
+                        v-if="isActionLivreur"
+                        color="test"
+
+                        icon
+                        @click="openWhatsApp"
+                      >
+                        <VIcon
+                          color="success"
+
+                          size="30"
+                          icon="tabler-brand-whatsapp"
+                        />
+                      </VBtn>
                     </p>
                   </td>
                 </tr>

@@ -390,14 +390,13 @@ Bonjour, je suis livreur chez Dropoff, j'ai un colis pour vous de la part de ${s
                           {{ itemData.tel_client }}  
 
                           <VBtn
+                            v-if="isActionLivreur"
                             color="test"
-
                             icon
                             @click="openWhatsApp"
                           >
                             <VIcon
                               color="success"
-
                               size="30"
                               icon="tabler-brand-whatsapp"
                             />
