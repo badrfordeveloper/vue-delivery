@@ -16,7 +16,6 @@ const props = defineProps({
 const emit = defineEmits([
   'update:isShowItem',
   'fetchItems',
-  'resetSelectedRows',
 ])
 
 
@@ -49,7 +48,6 @@ watch(
 const onReset = () => {
   emit('update:isShowItem', false)
   emit('fetchItems')
-  emit('resetSelectedRows')
   itemData.value = structuredClone(toRaw(defaultItem))
 }
 
@@ -57,15 +55,19 @@ const isActionGestionnaire = can('gestionnaire', 'action')
 
 
 const loadingUpdate = ref(false)
+const validationErrors = ref([])
 
-const parametrerGroupColis = async () => {
 
-  
+
+
+const importColis = async () => {
   const formData = new FormData()
 
   formData.append('file', file.value)
 
   loadingUpdate.value = true
+
+  validationErrors.value = []
   await $api({
     method: "POST",
     url: "/api/importColis",
@@ -76,7 +78,7 @@ const parametrerGroupColis = async () => {
   })
     .then(async response => {
       if (response.status === 200) {
-        toast.success(response.data)
+        toast.success(response.data.message)
         onReset()
       }
       loadingUpdate.value = false
@@ -85,6 +87,12 @@ const parametrerGroupColis = async () => {
       loadingUpdate.value = false
       if (error.response && error.response.status === 422) {
         toast.error(error.response.data.message)
+
+        /*  for (let field in error.response.data.errors) {
+          toast.error(` ${errors[field].join(', ')}`)       
+        } */
+        validationErrors.value =error.response.data.errors
+    
       }else{
         toast.error("something wrong")
       }
@@ -139,10 +147,23 @@ const fileRules =[
             >
               <VBtn
                 :loading="loadingUpdate"
-                @click="parametrerGroupColis"
+                @click="importColis"
               >
                 Envoyer 
               </VBtn>
+            </VCol>
+          </VRow>
+
+          <VRow>
+            <!-- 👉 Form Actions -->
+            <VCol
+              v-for="error in validationErrors"
+              :key="error"
+              cols="12"
+            >
+              <VAlert color="error">
+                {{ error[0].replace('There was an error on row', 'Il y a une erreur à la ligne') }}
+              </VAlert>
             </VCol>
           </VRow>
         </VCardText>

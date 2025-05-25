@@ -15,6 +15,14 @@ export default [
     icon: { icon: 'tabler-smart-home' },
   },
 
+  {
+    title: 'Dashboard',
+    to: { name: 'dashboards-vendeur' },
+    icon: { icon: 'tabler-smart-home' },
+    action: 'dashboard',
+    subject: 'vendeur',
+  },
+
   ...gestionColis,
   ...gestionRamasage,
   ...gestionRetour,

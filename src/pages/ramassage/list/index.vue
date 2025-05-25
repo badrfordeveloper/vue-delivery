@@ -1,6 +1,5 @@
 <script setup>
 import GroupActionsRamassage from '@/components/ramassage/GroupActionsRamassage.vue'
-import PrintRamassage from '@/components/ramassage/printRamassage.vue'
 import { statusRamassage } from '@/utils/constants'
 import { can } from '@layouts/plugins/casl'
 import { addDays, endOfMonth, endOfWeek, startOfMonth, startOfWeek } from 'date-fns'
@@ -135,11 +134,16 @@ const searchCode = ref()
 const searchStatut = ref()
 const selected_ramassages = ref([])
 const loadingDelete = ref(false)
+
 const isDeletingItem = ref(false)
 const deleteObject = ref()
 
-const isPrintRamassage = ref(false)
-const printObject = ref()
+
+
+const isPrintGroupColis = ref(false)
+const isloadingColis = ref(false)
+const colis_ramassage = ref()
+const vendeurColis = ref()
 
 watch(
   () => props.statut, 
@@ -149,10 +153,29 @@ watch(
 )
 
 
-const dialogPrint = object =>{
-  isPrintRamassage.value=true
-  printObject.value = object
+const printRamassage = async item => {
+  isloadingColis.value = true
+  await $api("/api/ramassage/"+item.id)
+    .then(async response => {
+      if (response.status === 200) {
+        isPrintGroupColis.value=true
+        colis_ramassage.value = response.data.colis
+        vendeurColis.value = item.vendeur
+      }
+
+      isloadingColis.value = false
+    })
+    .catch(error => {
+      isloadingColis.value = false
+      if (error.response && error.response.status === 422) {
+        toast.error(error.response.data.message)
+      }else{
+        toast.error("something wrong")
+      }
+    })
 }
+
+
 
 // Data table options
 const itemsPerPage = ref(5)
@@ -451,6 +474,12 @@ const ShowGroupActions = object =>{
                 >
                   Delete
                 </VListItem>
+                <VListItem 
+                  prepend-icon="tabler-trash"
+                  @click="printRamassage(item)"
+                >
+                  Print
+                </VListItem>
               </VList>
             </VMenu>
           </IconBtn>
@@ -494,11 +523,15 @@ const ShowGroupActions = object =>{
         </VCard>
       </VDialog>
     </VCard>
-    <PrintRamassage
-      v-if="isPrintRamassage"
-      v-model:is-print-ramassage="isPrintRamassage"
-      :item="printObject"
+
+
+    <PrintGroupColis
+      v-if="isPrintGroupColis"
+      v-model:is-print-group-colis="isPrintGroupColis"
+      :vendeur-colis="vendeurColis"
+      :items="colis_ramassage"
     />
+
 
     <GroupActionsRamassage
       v-if="isShowGroupActions"

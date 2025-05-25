@@ -591,7 +591,7 @@ const ShowImportColis = object =>{
       v-if="isShowImportColis"
       v-model:is-show-item="isShowImportColis"
       :items="selected_colis"
-      @reset-selected-rows="resetSelectedRows"
+      @fetch-items="fetchItems"
     />
    
     <ShowColis

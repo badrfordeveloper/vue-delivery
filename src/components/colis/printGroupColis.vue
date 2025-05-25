@@ -2,6 +2,7 @@
 <script setup>
 import { VNodeRenderer } from '@layouts/components/VNodeRenderer'
 import { themeConfig } from '@themeConfig'
+import { format, parseISO } from 'date-fns'
 import QrcodeVue from 'qrcode.vue'
 
 const props = defineProps({
@@ -12,6 +13,10 @@ const props = defineProps({
   isPrintGroupColis: {
     type: Boolean,
     required: true,
+  },
+  vendeurColis: {
+    type: String,
+    required: false,
   },
 })
 
@@ -37,6 +42,12 @@ setTimeout(() => {
 window.onafterprint = function () {
   emit('update:isPrintGroupColis', false)
 }
+
+const resolveDateReporte= oldDate => {
+  const newDate = parseISO(oldDate) // Parse the ISO string
+  
+  return format(newDate, 'yyyy-MM-d') // Format the date
+}
 </script>
 
 <template>
@@ -53,7 +64,7 @@ window.onafterprint = function () {
         <VCard class="props.item-preview-wrapper">
           <!-- SECTION Header -->
           <div />
-          <div class="item-header-preview d-flex flex-wrap justify-space-between flex-column flex-sm-row print-row bg-var-theme-background gap-6 rounded ">
+          <div class="item-header-preview grid print-row bg-var-theme-background gap-6 rounded ">
             <!-- 👉 Left Content -->
             <div>
               <div class="d-flex align-center app-logo ">
@@ -68,7 +79,7 @@ window.onafterprint = function () {
             </div>
 
             <!-- 👉 Right Content -->
-            <div class="d-flex align-center destination">
+            <div class=" align-center text-end destination ">
               <!--  Code : {{  }} -->
               {{ item.destination }}
             </div>
@@ -79,24 +90,31 @@ window.onafterprint = function () {
           <!-- 👉 Payment Details -->
           <VRow class="print-row little-margin ">
             <VCol class="text">
-              <div class="d-flex flex-wrap justify-space-between flex-column flex-sm-row gap-6">
+              <div class="grid gap-6 parent-qrcode">
                 <div>
                   <p class="mb-0">
-                    Code : {{ item.code }}
+                    Le : {{ resolveDateReporte(item.created_at ) }}
+                  </p>
+                  <p
+                    v-if="item.vendeur || vendeurColis"
+                    class="mb-0"
+                  >
+                    Vendeur : {{ item.vendeur ? item.vendeur: vendeurColis }}
                   </p><p class="mb-0">
+                    Code : {{ item.code }}
+                  </p>
+                  <p class="mb-0">
                     Nom : {{ item.nom_client }}
                   </p>
                   <p class="mb-0">
                     tel :  {{ item.tel_client }}
                   </p>
                 </div>
-                <div>
-                  <p class="mb-0">
-                    <QrcodeVue
-                      size="70"
-                      :value="item.code"
-                    />
-                  </p>
+                <div class="mb-0">
+                  <QrcodeVue
+                    size="70"
+                    :value="item.code"
+                  />
                 </div>
               </div>
               <p class="mb-0">
@@ -144,8 +162,33 @@ window.onafterprint = function () {
 </template>
 
 <style lang="scss" scoped>
-.print-content {
+/* .print-content {
   display: none;
+}
+ */
+.item-header-preview {
+  grid-template-columns: 130px 1fr;
+}
+
+.grid {
+  display: grid !important;
+}
+
+.parent-qrcode {
+  grid-template-columns: 1fr 70px;
+}
+
+.destination {
+  display: grid;
+  width: 100%;
+  color: #000;
+  font-size: 13px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+#print-area {
+  width: 100mm;
 }
 
 .v-table{
@@ -185,13 +228,6 @@ window.onafterprint = function () {
 
   h6 {
     color: #000;
-  }
-
-  .destination {
-    color: #000;
-    font-size: 16px;
-    font-weight: bold;
-    text-transform: uppercase;
   }
 
   /* Ensure print content fits exactly into a page */

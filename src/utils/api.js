@@ -14,6 +14,8 @@ $api.interceptors.request.use(
     if (accessToken) {
       config.headers['Authorization'] = `Bearer ${accessToken}`
     }
+
+
     
     return config
   },

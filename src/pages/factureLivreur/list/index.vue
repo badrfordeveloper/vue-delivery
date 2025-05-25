@@ -1,5 +1,4 @@
 <script setup>
-import PrintRamassage from '@/components/ramassage/printRamassage.vue'
 import { statusFactureLivreur } from '@/utils/constants'
 import { can } from '@layouts/plugins/casl'
 import { addDays, endOfMonth, endOfWeek, startOfMonth, startOfWeek } from 'date-fns'
@@ -129,18 +128,6 @@ const headers = [
 const searchCode = ref()
 const searchStatut = ref()
 
-const loadingDelete = ref(false)
-const isDeletingItem = ref(false)
-const deleteObject = ref()
-
-const isPrintRamassage = ref(false)
-const printObject = ref()
-
-const dialogPrint = object =>{
-  isPrintRamassage.value=true
-  printObject.value = object
-}
-
 // Data table options
 const itemsPerPage = ref(5)
 const page = ref(1)
@@ -157,31 +144,8 @@ watch(
 )
 
 
-const dialogDelete = object =>{
-  isDeletingItem.value=true
-  deleteObject.value = object
-}
 
-const deleteItem = async () => {
 
-  let url = "/api/ramassage/"+deleteObject.value.id
-
-  loadingDelete.value = true
-  $api({
-    method: "DELETE",
-    url,
-  })
-    .then(async response => {
-      if (response.status === 200) {
-        isDeletingItem.value=false
-        toast.success(response.data)   
-        fetchItems()    
-      }
-      loadingDelete.value = false
-    }).catch(error => {
-      loadingDelete.value = false
-    })
-}
 
 const isGenertingFactures = ref(false)
 
@@ -231,20 +195,6 @@ const {
 const router = useRouter()
 const items = computed(() => itemsData.value.items)
 const totalItems = computed(() => itemsData.value.total)
-
-
-
-
-const isShowItem = ref(false)
-const dialogKey = ref(0)
-const showId = ref(0)
-
-
-const showItemDialog = object =>{
-  showId.value = object.id
-  dialogKey.value++
-  isShowItem.value=true
-}
 </script>
 
 <template>
@@ -398,23 +348,7 @@ const showItemDialog = object =>{
           />
         </template>
         <!-- Actions -->
-        <template #item.actions="{ item }">
-          <IconBtn v-if=" item.statut == 'EN_ATTENTE' ">
-            <VIcon icon="tabler-dots-vertical" />
-            <VMenu activator="parent">
-              <VList>
-                <VListItem 
-                  v-if="can('delete','ramassage')"
-                  value="delete"
-                  prepend-icon="tabler-trash"
-                  @click="dialogDelete(item)"
-                >
-                  Delete
-                </VListItem>
-              </VList>
-            </VMenu>
-          </IconBtn>
-        </template>
+      
 
 
         <!-- pagination -->
@@ -426,46 +360,6 @@ const showItemDialog = object =>{
           />
         </template>
       </VDataTableServer>
-
-      <VDialog
-        v-model="isDeletingItem"
-        persistent
-        class="v-dialog-sm"
-      >
-        <!-- Dialog close btn -->
-        <DialogCloseBtn @click="isDeletingItem = !isDeletingItem" />
-        <!-- Dialog Content -->
-        <VCard :title="'Êtes-vous sûr de vouloir supprimer le ramassage '+deleteObject.code+' ?'">
-          <VCardText class="d-flex justify-end gap-3 flex-wrap">
-            <VBtn
-              color="secondary"
-              variant="tonal"
-              @click="isDeletingItem = false"
-            >
-              Non
-            </VBtn>
-            <VBtn
-              :loading="loadingDelete"
-              @click="deleteItem"
-            >
-              Oui
-            </VBtn>
-          </VCardText>
-        </VCard>
-      </VDialog>
     </VCard>
-    <PrintRamassage
-      v-if="isPrintRamassage"
-      v-model:is-print-ramassage="isPrintRamassage"
-      :item="printObject"
-    />
-
-    <ShowRamassage
-      v-if="isShowItem"
-      :id="showId"
-      :key="dialogKey"
-      v-model:is-show-item="isShowItem"
-      @fetch-items="fetchItems"
-    />
   </div>
 </template>
