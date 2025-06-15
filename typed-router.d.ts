@@ -24,6 +24,7 @@ declare module 'vue-router/auto-routes' {
     'colis-add': RouteRecordInfo<'colis-add', '/colis/add', Record<never, never>, Record<never, never>>,
     'colis-list': RouteRecordInfo<'colis-list', '/colis/list', Record<never, never>, Record<never, never>>,
     'colis-list-statut': RouteRecordInfo<'colis-list-statut', '/colis/list/:statut', { statut: ParamValue<true> }, { statut: ParamValue<false> }>,
+    'dashboards-admin': RouteRecordInfo<'dashboards-admin', '/dashboards/admin', Record<never, never>, Record<never, never>>,
     'dashboards-vendeur': RouteRecordInfo<'dashboards-vendeur', '/dashboards/vendeur', Record<never, never>, Record<never, never>>,
     'facture-livreur-id': RouteRecordInfo<'facture-livreur-id', '/factureLivreur/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
     'facture-livreur-list': RouteRecordInfo<'facture-livreur-list', '/factureLivreur/list', Record<never, never>, Record<never, never>>,

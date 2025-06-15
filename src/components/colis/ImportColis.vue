@@ -104,8 +104,14 @@ const importColis = async () => {
 
 
 const fileRules =[
-  fileList => !fileList || !fileList.length || fileList[0].size < 1000000 || 'La taille de fichier doit être inférieure à 1 Mo !',
+  fileList => !fileList || !fileList.length || fileList[0].size < 1000000 || 'La taille de fichier doit être inférieure à 1 Mo !',
 ]
+
+
+
+const downloadExampleFile = () => {
+  window.open(import.meta.env.VITE_API_BASE_URL + '/demos/example-import-colis.xlsx', '_blank')
+}
 </script>
 
 <template>
@@ -127,7 +133,22 @@ const fileRules =[
       no-actions
     >
       <VCard>
-        <VCardText v-if="isActionGestionnaire">
+        <VCardText
+          v-if="isActionGestionnaire"
+          class="text-center"
+        >
+          <!-- Download Example File Button -->
+          <VBtn
+            color="primary"
+            class="mb-4"
+            prepend-icon="mdi-download"
+            variant="outlined"
+            style="text-transform: none;"
+            @click="downloadExampleFile"
+          >
+            Télécharger un fichier exemple
+          </VBtn>
+          <!-- Instruction: Place your example_import_colis.xlsx file in the public/ directory -->
           <VFileInput
             v-model="file"
             label="Excel File"

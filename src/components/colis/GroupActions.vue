@@ -21,7 +21,6 @@ const emit = defineEmits([
 
 
 let defaultItem = {
-  frais_livreur: '',
   livreur_id: '',
 }
 
@@ -65,7 +64,6 @@ const parametrerGroupColis = async () => {
     data: {
       ids: colis_ids.value,
       livreur_id: itemData.value.livreur_id,
-      frais_livreur: itemData.value.frais_livreur,
     },
   })
     .then(async response => {
@@ -118,18 +116,6 @@ const parametrerGroupColis = async () => {
                 :items="livreurs"
                 clearable
                 clear-icon="tabler-x"
-              />
-            </VCol>
-            <VCol
-              cols="12"
-              md="6"
-            >
-              <AppTextField
-                v-model="itemData.frais_livreur"
-                :rules="[requiredValidator]"
-                label="Frais de livreur"
-                type="number"
-                placeholder="Frais de livreur"
               />
             </VCol>
           </VRow>

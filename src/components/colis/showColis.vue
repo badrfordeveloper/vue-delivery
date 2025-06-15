@@ -19,7 +19,7 @@ const emit = defineEmits([
 ])
 
 
-let defaultItem = {
+const defaultItem = {
   id: '',
   nom_vendeur: '',
   tel_vendeur: '',
@@ -34,6 +34,10 @@ let defaultItem = {
   statut: '',
   vendeur: '',
   colisHistories: [],
+  horaire: '',
+  poids: '',
+  zone_id: '',
+  pricing_id: '',
 }
 
 const livreurs = await $api('/api/ramasseurs').then(response => response.data)
@@ -62,10 +66,14 @@ const getItemData = async id => {
     })
 }
 
+const zoneInfos = ref({})
+
 watch(
   () => props.id, 
-  newVal => {
-    getItemData(newVal)
+  async newVal => {
+    await  getItemData(newVal)
+    zoneInfos.value = await $api('/api/zones/'+ itemData.value.zone_id ).then(response => response.data)
+
   }, { immediate: true }, // Trigger the watcher immediately
 )
 
@@ -97,6 +105,15 @@ const tabsData = [
 const showParams = ref(false)
 const loadingUpdate = ref(false)
 
+const listParams = ref([])
+
+const listParamsOptions = [
+  { id: 'updateLivreur', label: 'Livreur' },
+  { id: 'updateFraisLivreur', label: 'Frais du livreur' },
+  { id: 'updateHoraire', label: 'Horaires' },
+  { id: 'updatePoids', label: 'Poids' },
+]
+
 const parametrerColis = async () => {
   loadingUpdate.value = true
   await $api({
@@ -106,12 +123,18 @@ const parametrerColis = async () => {
       id: itemData.value.id,
       livreur_id: itemData.value.livreur_id,
       frais_livreur: itemData.value.frais_livreur,
+      horaire: itemData.value.horaire,
+      pricing_id: itemData.value.pricing_id,
+      listParams: listParams.value,
     },
   })
     .then(async response => {
       if (response.status === 200) {
         toast.success(response.data)
         getItemData(itemData.value.id)
+
+        // Reset params after successful update
+        listParams.value = []
       }
       loadingUpdate.value = false
     })
@@ -471,8 +494,30 @@ Bonjour, je suis livreur chez Dropoff, j'ai un colis pour vous de la part de ${s
           v-show="showParams"
           v-if="isActionGestionnaire"
         >
-          <VRow>  
+          <VRow>
+            <VCol cols="12">
+              <VLabel
+                text="Mettre à jour"
+                class="mb-1 text-body-2 text-wrap "
+              />
+              <VRow>
+                <VCol
+                  v-for="param in listParamsOptions"
+                  :key="param.id"
+                  cols="auto"
+                >
+                  <VCheckbox
+                    v-model="listParams"
+                    :label="param.label"
+                    :value="param.id"
+                    density="compact"
+                  />
+                </VCol>
+              </VRow>
+            </VCol>
+
             <VCol
+              v-if="listParams.includes('updateLivreur')"
               md="6"
               cols="12"
             >
@@ -485,7 +530,9 @@ Bonjour, je suis livreur chez Dropoff, j'ai un colis pour vous de la part de ${s
                 clear-icon="tabler-x"
               />
             </VCol>
+
             <VCol
+              v-if="listParams.includes('updateFraisLivreur')"
               cols="12"
               md="6"
             >
@@ -497,6 +544,56 @@ Bonjour, je suis livreur chez Dropoff, j'ai un colis pour vous de la part de ${s
                 placeholder="Frais de livreur"
               />
             </VCol>
+
+            <VCol
+              v-if="listParams.includes('updateHoraire')"
+              cols="12"
+              md="12"
+            >
+              <VLabel
+                text="Horaires"
+                class="mb-1 text-body-2 text-wrap "
+              />
+              <VRadioGroup
+                v-if="zoneInfos?.horaires?.length > 0"
+                v-model="itemData.horaire"
+                :rules="[requiredValidator]"
+                inline
+                class="mt-4"
+              >
+                <VRadio
+                  v-for="horaire in zoneInfos?.horaires"
+                  :key="horaire"
+                  :label="horaire"
+                  :value="horaire"
+                  density="compact"
+                />
+              </VRadioGroup>
+            </VCol>
+
+            <VCol
+              v-if="listParams.includes('updatePoids')"
+              cols="12"
+              md="12"
+            >
+              <VLabel
+                text="Poids"
+                class="mb-1 text-body-2 text-wrap "
+              />
+              <VRadioGroup
+                v-model="itemData.pricing_id"
+                :rules="[requiredValidator]"
+                inline
+              >
+                <VRadio
+                  v-for="pricing in zoneInfos?.pricings"
+                  :key="pricing.id"
+                  :label="getPoidsLabel(pricing.poids)"
+                  :value="pricing.id"
+                  density="compact"
+                />
+              </VRadioGroup>
+            </VCol>
           </VRow>
 
           <VRow>
@@ -507,7 +604,10 @@ Bonjour, je suis livreur chez Dropoff, j'ai un colis pour vous de la part de ${s
             >
               <VBtn
                 color="secondary"
-                @click="showParams = false"
+                @click="() => {
+                  showParams = false
+                  listParams.value = []
+                }"
               >
                 retour 
               </VBtn>

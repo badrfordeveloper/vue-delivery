@@ -38,8 +38,8 @@ let defaultItem = {
   produit: "",
   montant: '',
   commentaire_vendeur: '',
-  essayage: 0,
-  ouvrir: 0,
+  essayage: 1,
+  ouvrir: 1,
   echange: 0,
 }
 

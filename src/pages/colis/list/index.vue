@@ -136,6 +136,8 @@ const headers = [
 ]
 
 const searchCode = ref()
+const searchPoids = ref()
+const searchHoraire = ref()
 const selected_colis = ref([])
 const searchStatut = ref()
 const searchNameClient = ref()
@@ -210,6 +212,8 @@ const {
   execute: fetchItems,
 } = await useApi(createUrl('/api/colis', {
   query: {
+    horaire: searchHoraire,
+    poids: searchPoids,
     livreur_id: livreur_id,
     vendeur_id: vendeur_id,
     begin_date: begin_date,
@@ -297,6 +301,7 @@ const ShowImportColis = object =>{
               clear-icon="tabler-x"
             />
           </VCol>  
+         
           <VCol
             cols="12"
             sm="3"
@@ -318,6 +323,34 @@ const ShowImportColis = object =>{
                 {{ statutInfos(item.value).text }}
               </template>
             </AppSelect>
+          </VCol>
+          <VCol
+            cols="12"
+            sm="3"
+          >
+            <AppSelect
+              v-model="searchPoids"
+              item-title="label"
+              item-value="value"
+              placeholder="Poids"
+              :items="listPoids"
+              clearable
+              clear-icon="tabler-x"
+            />
+          </VCol>
+          <VCol
+            cols="12"
+            sm="3"
+          >
+            <AppSelect
+              v-model="searchHoraire"
+              item-title="label"
+              item-value="value"
+              placeholder="Horaires"
+              :items="listHoraires"
+              clearable
+              clear-icon="tabler-x"
+            />
           </VCol>
           <VCol
             cols="12"
@@ -427,7 +460,7 @@ const ShowImportColis = object =>{
               />
 
               <VListItem
-                v-if=" isActionGestionnaire"
+                v-if=" isActionGestionnaire || isActionVendeur"
                 value="print"
                 prepend-icon="tabler-text-scan-2"
                 @click="ShowImportColis"

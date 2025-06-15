@@ -16,6 +16,13 @@ export default [
   },
 
   {
+    title: 'Dashboard Admin',
+    to: { name: 'dashboards-admin' },
+    icon: { icon: 'tabler-smart-home' },
+    action: 'dashboard',
+    subject: 'admin',
+  },
+  {
     title: 'Dashboard',
     to: { name: 'dashboards-vendeur' },
     icon: { icon: 'tabler-smart-home' },
