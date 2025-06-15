@@ -1,0 +1,1 @@
+import{_ as e}from"./_plugin-vue_export-helper-DlAUqK2U.js";import{V as r}from"./VCard-CNbNQKcS.js";import{c as o,o as t,b as c}from"./index-ozxdH-7b.js";import"./VAvatar-CqlEylcw.js";import"./VImg-DVerLASX.js";import"./VCardText-DsXbz0Qj.js";const n={};function a(i,m){return t(),o("div",null,[c(r,{title:"Bienvenue"})])}const u=e(n,[["render",a]]);export{u as default};
